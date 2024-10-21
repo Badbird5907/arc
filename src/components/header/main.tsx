@@ -1,17 +1,21 @@
 "use client";
 
 import { appConfig } from "@/app/app-config";
+import { SidebarTrigger } from "@/components/ui/sidebar";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import * as React from "react";
 
-export function MainNav() {
+export function MainNav({ admin }: { admin?: boolean }) {
   const pathname = usePathname();
 
   return (
     <div className="mr-4 hidden md:flex">
+      {admin && (
+        <SidebarTrigger />
+      )}
       <Link href="/" className="mr-6 flex items-center space-x-3">
         <Image src="/img/logo.png" width={32} height={32} alt={appConfig.title} className="self-center" />
         <span className="hidden font-bold sm:inline-block">{appConfig.title}</span>
