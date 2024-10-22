@@ -7,9 +7,11 @@ export default function StoreLayout({
   children: React.ReactNode
 }) {
   return (
-    <main className="bg-zinc-800 min-h-screen w-full">
+    <>
       <SiteHeader />
-      {children}
-    </main>
+      <main className="bg-background min-h-screen w-full">
+        {children}
+      </main>
+    </>
   )
 }

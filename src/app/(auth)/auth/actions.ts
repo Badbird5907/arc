@@ -44,15 +44,3 @@ export async function signup(formData: FormData) {
   revalidatePath('/', 'layout')
   redirect('/')
 }
-export async function signInWithDiscord() {
-  const supabase = createClient()
-  const { data, error } = await supabase.auth.signInWithOAuth({
-    provider: 'discord',
-  })
-  if (error) {
-    redirect('/error')
-  }
-
-  revalidatePath('/', 'layout')
-  redirect('/')
-}

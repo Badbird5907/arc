@@ -13,6 +13,13 @@ import { ZodError } from "zod";
 
 import { db } from "@/server/db";
 import { getSession } from "@/server/actions/auth";
+import { getUser } from "@/utils/server/helpers";
+import { RBAC } from "@/lib/permissions";
+
+interface Meta {
+  permissions: string[] | string;
+  validateSome?: boolean;
+}
 
 /**
  * 1. CONTEXT
@@ -43,7 +50,7 @@ export const createTRPCContext = async (opts: { headers: Headers }) => {
  * ZodErrors so that you get typesafety on the frontend if your procedure fails due to validation
  * errors on the backend.
  */
-const t = initTRPC.context<typeof createTRPCContext>().create({
+const t = initTRPC.context<typeof createTRPCContext>().meta<Meta>().create({
   transformer: superjson,
   errorFormatter({ shape, error }) {
     return {
@@ -111,14 +118,43 @@ const timingMiddleware = t.middleware(async ({ next, path }) => {
 export const publicProcedure = t.procedure.use(timingMiddleware);
 
 /** Reusable middleware that enforces users are logged in before running the procedure. */
-const enforceUserIsAuthed = t.middleware(({ ctx, next }) => {
-  if (!ctx.session) {
+const enforceUserIsAuthed = t.middleware(async ({ ctx, next, meta }) => {
+  if (!ctx.session?.data?.user) {
     throw new TRPCError({ code: "UNAUTHORIZED" });
   }
+  if (!meta || !meta.permissions) {
+    throw new TRPCError({
+      code: "INTERNAL_SERVER_ERROR",
+      message: "Permissions not defined on procedure",
+    });
+  }
+  const user = await getUser(ctx.session.data.user.id);
+  if (!user) {
+    throw new TRPCError({ code: "UNAUTHORIZED" });
+  }
+  const { permissions } = meta;
+  const perms = Array.isArray(permissions) ? permissions : [permissions];
+  const results = await Promise.all(
+    perms.map((permission) => RBAC.can(user.role, permission))
+  );
+  let passed = false;
+  if (meta.validateSome) {
+    passed = results.some((result) => result);
+  } else {
+    passed = results.every((result) => result);
+  }
+  if (!passed) {
+    throw new TRPCError({
+      code: "FORBIDDEN",
+      message: "You do not have permission to access this resource"
+     });
+  }
+  
   return next({
     ctx: {
       // infers the `session` as non-nullable
       session: { ...ctx.session }, // TODO: fetch user here maybe?
+      user,
     },
   });
 });
