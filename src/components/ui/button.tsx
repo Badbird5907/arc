@@ -3,6 +3,8 @@ import { Slot } from "@radix-ui/react-slot"
 import { cva, type VariantProps } from "class-variance-authority"
 
 import { cn } from "@/lib/utils"
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
+import { Spinner } from "@/components/ui/spinner"
 
 const buttonVariants = cva(
   "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
@@ -34,25 +36,103 @@ const buttonVariants = cva(
     },
   }
 )
-
 export interface ButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement>,
     VariantProps<typeof buttonVariants> {
-  asChild?: boolean
+  asChild?: boolean;
+  asDiv?: boolean;
+  element?: React.ElementType;
+  loading?: boolean;
+  disableLoadingText?: boolean;
+  loadingText?: string;
+  onClickLoading?: (
+    e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
+  ) => Promise<unknown>;
+  loadingStateChange?: (loading: boolean) => void;
+  toggle?: [boolean, React.Dispatch<React.SetStateAction<boolean>>];
+  tooltip?: React.ReactNode;
 }
 
-const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant, size, asChild = false, ...props }, ref) => {
-    const Comp = asChild ? Slot : "button"
-    return (
-      <Comp
-        className={cn(buttonVariants({ variant, size, className }))}
-        ref={ref}
-        {...props}
-      />
-    )
-  }
-)
-Button.displayName = "Button"
+const Button = React.memo(
+  React.forwardRef<HTMLButtonElement, ButtonProps>(
+    (
+      {
+        className,
+        variant,
+        size,
+        asChild = false,
+        asDiv = false,
+        element,
+        loadingText = "Loading...",
+        disableLoadingText,
+        loading,
+        ...props
+      },
+      ref,
+    ) => {
+      const [loadingState, setLoading] = React.useState(false);
+      React.useEffect(
+        () => setLoading(loading ?? false),
+        [loading],
+      );
+      React.useEffect(
+        () => props.loadingStateChange?.(loadingState),
+        [loadingState, props],
+      );
 
-export { Button, buttonVariants }
+      const Comp = (element ??
+        (asChild ? Slot : asDiv ? "div" : "button")) as React.ElementType;
+      const disabled = props.disabled ?? loadingState;
+      const children = loadingState ? ( // TODO: fix the width changing
+        <div className={"flex flex-row items-center gap-1"}>
+          <Spinner /> {!disableLoadingText && <span>{loadingText}</span>}
+        </div>
+      ) : (
+        props.children
+      );
+      const onClick = (
+        event: React.MouseEvent<HTMLButtonElement, MouseEvent>,
+      ) => {
+        if (props.onClickLoading) {
+          setLoading(true);
+          const promise = props.onClickLoading(event);
+          if (promise instanceof Promise) {
+            // sanity check
+            void promise.finally(() => setLoading(false));
+          }
+        } else if (props.onClick) {
+          props.onClick(event);
+        } else if (props.toggle) {
+          props.toggle[1]((prev) => !prev);
+        }
+      };
+
+      const actualComponent = (
+        <Comp
+          {...props}
+          className={cn(buttonVariants({ variant, size, className }))}
+          ref={ref}
+          disabled={disabled}
+          onClick={onClick}
+        >
+          {children}
+        </Comp>
+      );
+
+      if (props.tooltip) {
+        return (
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger>{actualComponent}</TooltipTrigger>
+              <TooltipContent>{props.tooltip}</TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        );
+      }
+      return actualComponent;
+    },
+  ),
+);
+Button.displayName = "Button";
+
+export { Button, buttonVariants };

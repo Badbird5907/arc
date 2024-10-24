@@ -7,7 +7,7 @@ import { redirect } from "next/navigation";
 
 export async function getSession() {
   unstable_noStore();
-  const supabase = createClient();
+  const supabase = await createClient();
   return supabase.auth.getUser();
 }
 
@@ -22,7 +22,7 @@ export async function getUser() {
 }
 
 export async function login(email: string, password: string, next?: string) {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { error } = await supabase.auth.signInWithPassword({ email, password });
   if (error) {
     return JSON.stringify(error);
@@ -32,7 +32,7 @@ export async function login(email: string, password: string, next?: string) {
 }
 
 export async function signup(email: string, password: string) {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data, error } = await supabase.auth.signUp({ email, password });
   return JSON.stringify({ data, error });
 }
@@ -42,7 +42,7 @@ export async function logout() {
   if (!session.data.user) {
     return redirect("/");
   }
-  const supabase = createClient();
+  const supabase = await createClient();
   await supabase.auth.signOut();
   return redirect("/");
 }

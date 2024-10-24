@@ -1,8 +1,37 @@
 "use client";
 
-import { Product } from "@/types";
+import { CreateProductButton } from "@/app/(admin)/admin/products/create-product";
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import { DataTable } from "@/components/ui/data-table";
+import { api } from "@/trpc/react";
+import { type Product } from "@/types";
 import type { ColumnDef } from "@tanstack/react-table";
+import { ArrowUpDown, Edit } from "lucide-react";
+import Link from "next/link";
 export const productsCols: ColumnDef<Product>[] = [
+  {
+    id: "select",
+    header: ({ table }) => (
+      <Checkbox
+        checked={
+          table.getIsAllPageRowsSelected() ||
+          (table.getIsSomePageRowsSelected() && "indeterminate")
+        }
+        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+        aria-label="Select all"
+      />
+    ),
+    cell: ({ row }) => (
+      <Checkbox
+        checked={row.getIsSelected()}
+        onCheckedChange={(value) => row.toggleSelected(!!value)}
+        aria-label="Select row"
+      />
+    ),
+    enableSorting: false,
+    enableHiding: false,
+  },
   {
     accessorKey: "id",
     header: "ID",
@@ -13,21 +42,76 @@ export const productsCols: ColumnDef<Product>[] = [
   },
   {
     accessorKey: "price",
-    header: "Price",
+    enableSorting: true,
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          className="translate-x-[-20px]" // TODO: fix
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Price
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      )
+    },
+    cell: ({ row }) => `$${Number(row.original.price).toFixed(2)}`,
   },
   {
     accessorKey: "description",
     header: "Description",
+    cell: ({ row }) => {
+      if (!row.original.description) {
+        return "No Description";
+      }
+      if (row.original.description.length > 100) { // TODO: tweak
+        return row.original.description.slice(0, 100) + "...";
+      }
+      return row.original.description;
+    }
   },
   {
     accessorKey: "hidden",
     header: "Hidden",
+    cell: ({ row }) => row.original.hidden ? "Yes" : "No",
   },
   {
     accessorKey: "createdAt",
-    header: "Created At",
+    header: "Created ",
+    cell: ({ row }) => new Date(row.original.createdAt).toLocaleString(),
   },
+  {
+    accessorKey: "modifiedAt",
+    header: "Last Modified",
+    cell: ({ row }) => new Date(row.original.createdAt).toLocaleString(),
+  },
+  {
+    accessorKey: "__dummy__",
+    header: "Actions",
+    enableHiding: false,
+    cell: ({ row }) => {
+      return (
+        <div className="flex flex-row gap-2">
+          <Link href={`/admin/products/${row.original.id}`}>
+            <Button>
+              <Edit />
+              Edit
+            </Button>
+          </Link>
+        </div>
+      )
+    }
+  }
 ]
-export const ProductsDataTable = ({ products }: { products: Product[] }) => {
-  
+export const ProductsDataTable = () => {
+  const products = api.products.getProducts.useQuery({});
+  return (
+    <div className="flex flex-col gap-4">
+      <DataTable columns={productsCols} data={products.data ?? []}
+        actionsBar={<>
+          <CreateProductButton />
+        </>}
+      />
+    </div>
+  );
 }

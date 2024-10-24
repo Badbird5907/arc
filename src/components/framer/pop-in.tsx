@@ -16,7 +16,7 @@ const PopIn = ({ once = true, ...props }: PopInProps) => {
   const delay = props.delay ?? contextDelay.delay;
   return (
     <motion.div
-      className={props.className}
+      {...props}
       initial={"hidden"}
       whileInView={"visible"}
       viewport={{ once }}

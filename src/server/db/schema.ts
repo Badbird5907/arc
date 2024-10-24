@@ -3,6 +3,7 @@ import { v4 as uuidv4 } from "uuid";
 import {
   boolean,
   decimal,
+  index,
   integer,
   numeric,
   pgEnum,
@@ -12,6 +13,7 @@ import {
   uuid,
 } from "drizzle-orm/pg-core";
 import { rolesArr } from "@/lib/permissions";
+import { sql } from "drizzle-orm";
 
 /**
  * This is an example of how to use the multi-project schema feature of Drizzle ORM. Use the same
@@ -52,8 +54,8 @@ export const products = createTable(
       .notNull()
       .$defaultFn(() => uuidv4()),
     name: text("name").notNull(),
-    price: decimal("price", { precision: 2 }).notNull(),
-    description: text("description").notNull(),
+    price: decimal("price", { precision: 10, scale: 2 }).$type<number>().notNull(),
+    description: text("description"),
     minQuantity: integer("min_quantity").default(1).notNull(),
     hidden: boolean("hidden").default(false).notNull(),
     expiryPeriod: expiryPeriod("expiry_period").notNull().default("month"),
@@ -65,5 +67,14 @@ export const products = createTable(
       .defaultNow()
       .$onUpdate(() => new Date())
       .notNull(),
-  }
+  },
+  (table) => ({
+    searchIndex: index("search_index").using(
+      "gin",
+      sql`(
+        setweight(to_tsvector('english', ${table.name}), 'A') ||
+        setweight(to_tsvector('english', ${table.description}), 'B')
+      )`
+    )
+  })
 )

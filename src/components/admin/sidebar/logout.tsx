@@ -7,7 +7,7 @@ export const AdminSidebarLogout = () => {
   return (
     <DropdownMenuItem onClick={() => {
       const supabase = createClient();
-      supabase.auth.signOut().then(() => {
+      void supabase.auth.signOut().then(() => {
         window.location.href = "/";
       })
     }}>

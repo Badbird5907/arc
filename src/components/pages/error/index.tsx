@@ -1,6 +1,10 @@
+"use client";
+
 import { Button } from "@/components/ui/button"
 import { AlertCircle, ArrowLeft, Lock, CreditCard, Server } from "lucide-react"
 import Link from "next/link"
+
+import type { JSX } from "react";
 
 export type ErrorCode = "404" | "401" | "402" | "500";
 

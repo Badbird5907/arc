@@ -1,5 +1,3 @@
-"use client";
-
 import { SiteHeader } from "@/components/header";
 import { ErrorPage } from "@/components/pages/error";
 

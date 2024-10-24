@@ -5,6 +5,7 @@ import { Poppins } from "next/font/google";
 
 import { TRPCReactProvider } from "@/trpc/react";
 import { appConfig } from "@/app/app-config";
+import { Toaster } from "@/components/ui/sonner";
 
 export const metadata: Metadata = {
   title: appConfig.title,
@@ -22,6 +23,7 @@ export default function RootLayout({
       <body className="dark">
         <TRPCReactProvider>
           {children}
+          <Toaster />
         </TRPCReactProvider>
       </body>
     </html>

@@ -122,7 +122,7 @@ const enforceUserIsAuthed = t.middleware(async ({ ctx, next, meta }) => {
   if (!ctx.session?.data?.user) {
     throw new TRPCError({ code: "UNAUTHORIZED" });
   }
-  if (!meta || !meta.permissions) {
+  if (!meta?.permissions) {
     throw new TRPCError({
       code: "INTERNAL_SERVER_ERROR",
       message: "Permissions not defined on procedure",
@@ -168,3 +168,7 @@ const enforceUserIsAuthed = t.middleware(async ({ ctx, next, meta }) => {
  * @see https://trpc.io/docs/procedures
  */
 export const protectedProcedure = t.procedure.use(enforceUserIsAuthed);
+
+export const procedure = (permissions: string | string[]) => {
+  return protectedProcedure.meta({ permissions });
+}

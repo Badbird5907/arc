@@ -2,11 +2,11 @@
 
 import confetti from "canvas-confetti";
 
-import { useRef, RefObject } from "react";
+import { useRef, type RefObject } from "react";
 
-export const useConfetti = (): { fire: (anchor: RefObject<HTMLElement>) => void } => {
+export const useConfetti = (): { fire: (anchor: RefObject<HTMLElement | null>) => void } => {
   return {
-    fire: (anchor: RefObject<HTMLElement>) => {
+    fire: (anchor: RefObject<HTMLElement | null>) => {
       let origin: undefined | { x: number; y: number } = undefined;
       if (anchor.current) {
         const rect = anchor.current.getBoundingClientRect();
@@ -17,14 +17,14 @@ export const useConfetti = (): { fire: (anchor: RefObject<HTMLElement>) => void 
           y: y / window.innerHeight
         }
       }
-      confetti({
+      void confetti({
         origin: {
           x: origin?.x ?? 0.5,
           y: origin?.y ?? 0.5,
         }
       })
     }
-  }
+  };
 }
 
 export const HoverConfetti = ({ children }: { children: React.ReactNode | React.ReactNode[] }) => {
