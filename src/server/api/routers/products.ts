@@ -1,8 +1,8 @@
 import { createTRPCRouter, procedure, protectedProcedure } from "@/server/api/trpc";
 import { db } from "@/server/db";
 import { products } from "@/server/db/schema";
-import { createProductInput, getProductsInput } from "@/trpc/schema/products";
-import { type AnyColumn, asc, desc, getTableColumns, type SQL, sql, type SQLWrapper } from "drizzle-orm";
+import { createProductInput, getProductsInput, modifyProductInput } from "@/trpc/schema/products";
+import { type AnyColumn, asc, desc, eq, getTableColumns, type SQL, sql, type SQLWrapper } from "drizzle-orm";
 import { z } from "zod";
 
 export const productRouter = createTRPCRouter({
@@ -55,9 +55,33 @@ export const productRouter = createTRPCRouter({
 
     return db.select(getTableColumns(products)).from(products).orderBy(orderBy);
   }),
+  getProduct: procedure("products:read")
+  .input(z.object({ id: z.string() }))
+  .query(async ({ input }) => {
+    return db.query.products.findFirst({
+      where: (p, { eq }) => eq(p.id, input.id)
+    })
+  }),
   createProduct: procedure("products:create")
   .input(createProductInput)
   .mutation(async ({ input }) => {
     return db.insert(products).values(input).returning(getTableColumns(products));
   }),
+  modifyProduct: procedure("products:modify")
+  .input(modifyProductInput)
+  .mutation(async ({ input }) => {
+    // remove null/undefined values
+    const newValues = Object.fromEntries(
+      Object.entries(input.data).filter(([_, v]) => v !== null && v !== undefined)
+    )
+
+    return db.update(products)
+    .set(newValues).where(eq(products.id, input.id));
+  }),
+  deleteProduct: procedure("products:delete")
+  .input(z.object({ id: z.string() }))
+  .mutation(async ({ input }) => {
+    return db.delete(products).where(eq(products.id, input.id));
+  })
+
 })

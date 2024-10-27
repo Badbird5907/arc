@@ -21,7 +21,7 @@ import { toast } from "sonner";
 
 const formSchema = z.object({
   name: z.string(),
-  price: z.number().min(0, "Price must be positive"),
+  price: z.coerce.number().min(0, "Price must be positive"),
   hidden: z.boolean().default(false),
 })
 export const CreateProductButton = () => {
@@ -97,11 +97,12 @@ export const CreateProductButton = () => {
                         step="0.01"
                         min={0}
                         {...field}
-                        onChange={(e) => field.onChange(parseFloat(e.target.value))}
+                        onChange={(e) => field.onChange(e.target.value)}
                       />
                     </FormControl>
                     <FormDescription className={fieldState.error && "text-red-500"}>
                       This is your product price
+                      {fieldState.error && ` - ${fieldState.error.message}`}
                     </FormDescription>
                   </FormItem>
                 )} />

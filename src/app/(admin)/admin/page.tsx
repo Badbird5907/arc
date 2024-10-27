@@ -4,13 +4,6 @@ import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList } from "@/co
 const Page = adminWrapper(async ({ user }) => {
   return (
     <div>
-      <Breadcrumb>
-        <BreadcrumbList>
-          <BreadcrumbItem>
-            <BreadcrumbLink href="/">Home</BreadcrumbLink>
-          </BreadcrumbItem>
-        </BreadcrumbList>
-      </Breadcrumb>
       <h1 className="text-3xl font-bold">Admin Panel</h1>
       <p>Welcome, {user.displayName}!</p>
     </div>

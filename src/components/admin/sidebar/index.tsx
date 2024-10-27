@@ -12,10 +12,10 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
-import { User } from "@/types"
+import { type User } from "@/types"
 import { Boxes, Home, Settings, ChevronUp } from "lucide-react"
 
-const items = [
+export const adminSidebarItems = [
   {
     title: "Home",
     url: "",
@@ -29,7 +29,7 @@ const items = [
   },
   {
     title: "Settings",
-    url: "#",
+    url: "/settings",
     icon: Settings,
   },
 ]
@@ -43,7 +43,7 @@ export function AdminSidebar({ user }: { user: User }) {
           <SidebarGroupLabel>{appConfig.title}</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {items.map((item) => (
+              {adminSidebarItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild>
                     <a href={`/admin/${item.url}`}>

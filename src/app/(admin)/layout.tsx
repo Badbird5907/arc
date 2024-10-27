@@ -6,8 +6,9 @@ import { SidebarProvider } from "@/components/ui/sidebar"
 import { getSession } from "@/server/actions/auth"
 import { getUser } from "@/utils/server/helpers";
 import { redirect } from "next/navigation";
+import React from "react";
 
-export default async function Layout({ children }: { children: React.ReactNode }) {
+export default async function Layout({ children, breadcrumbs }: { children: React.ReactNode; breadcrumbs: React.ReactNode }) {
   const session = await getSession();
   if (!session.data.user) {
     return redirect("/auth/login");
@@ -23,6 +24,7 @@ export default async function Layout({ children }: { children: React.ReactNode }
         <SiteHeader admin />
         <div className="p-4">
           <UserProvider user={user}>
+            {breadcrumbs}
             {children}
           </UserProvider>
         </div>

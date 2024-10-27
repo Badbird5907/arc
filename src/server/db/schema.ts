@@ -58,6 +58,8 @@ export const products = createTable(
     description: text("description"),
     minQuantity: integer("min_quantity").default(1).notNull(),
     hidden: boolean("hidden").default(false).notNull(),
+    images: text("images").array().default([]).notNull(),
+    type: productType("type").notNull().default("single"),
     expiryPeriod: expiryPeriod("expiry_period").notNull().default("month"),
     expiryLength: integer("expiry_length").notNull().default(1),
     createdAt: timestamp("created_at", { precision: 3, mode: "date" })
