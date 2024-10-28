@@ -1,7 +1,9 @@
 "use client";
 import { ProductActionsCard } from "@/app/(admin)/admin/products/[id]/actions-card";
 import { EditProductBasic } from "@/app/(admin)/admin/products/[id]/edit-basic";
+import { ModifyImagesCard } from "@/app/(admin)/admin/products/[id]/modify-images";
 import { ErrorPage } from "@/components/pages/error";
+import { Badge } from "@/components/ui/badge";
 import { api } from "@/trpc/react";
 
 const ProductPageClient = ({ id }: { id: string }) => {
@@ -9,11 +11,17 @@ const ProductPageClient = ({ id }: { id: string }) => {
   if (!product) return <ErrorPage code="404" />;
   return (
     <div className="flex flex-col gap-4 pt-4">
-      <h1 className="text-4xl">Product: {product.name}</h1>
+      <div className="flex flex-col md:flex-row gap-4">
+        <h1 className="text-4xl">Product: {product.name}</h1>
+        {product.hidden && <Badge variant={"destructive"} className="h-fit w-fit place-self-auto md:place-self-center">Hidden</Badge>}
+      </div>
 
-      <div className="grid grid-flow-col grid-cols-4 gap-4">
-        <EditProductBasic product={product} className="col-span-3" />
-        <ProductActionsCard product={product} />
+      <div className="grid grid-flow-row md:grid-flow-col grid-cols-1 md:grid-cols-4 gap-4">
+        <EditProductBasic product={product} className="col-span-1 md:col-span-3" />
+        <div className="col-span-1 gap-4 flex flex-col">
+          <ProductActionsCard product={product} />
+          <ModifyImagesCard product={product} />
+        </div>
       </div>
     </div>
   );

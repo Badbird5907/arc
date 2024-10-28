@@ -1,6 +1,7 @@
 import "server-only";
 
 import { createServerClient } from '@supabase/ssr'
+import { createClient as createSupabaseClient } from "@supabase/supabase-js";
 import { cookies } from 'next/headers';
 import { env } from "@/env";
 
@@ -9,7 +10,7 @@ export async function createClient() {
 
   return createServerClient(
     env.SUPABASE_PROJECT_URL,
-    env.SUPABASE_ANON_KEY,
+    env.SUPABASE_SECRET_KEY,
     {
       cookies: {
         getAll() {
@@ -18,6 +19,7 @@ export async function createClient() {
         setAll(cookiesToSet) {
           try {
             cookiesToSet.forEach(({ name, value, options }) =>
+              // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
               cookieStore.set(name, value, options)
             )
           } catch {
@@ -28,5 +30,11 @@ export async function createClient() {
         },
       },
     }
+  )
+}
+export async function createBareServerClient() {
+  return createSupabaseClient(
+    env.SUPABASE_PROJECT_URL,
+    env.SUPABASE_SECRET_KEY
   )
 }

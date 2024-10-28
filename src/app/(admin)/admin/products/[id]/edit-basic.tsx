@@ -102,10 +102,7 @@ export const EditProductBasic = ({ product, className }: { product: Product; cla
                       <FormLabel>Description</FormLabel>
                       <FormControl>
                         <div className="border rounded-lg h-[40vh] overflow-y-auto">
-                          <EditorComp markdown={field.value ?? ""} onChange={(md) => {
-                            console.log(md);
-                            field.onChange(md);
-                          }} initialMarkdown={product.description ?? ""} className="h-full dark-editor" />
+                          <EditorComp markdown={field.value ?? ""} onChange={field.onChange} initialMarkdown={product.description ?? ""} className="h-full dark-editor" />
                           {fieldState.error && <div className="text-destructive">{fieldState.error.message}</div>}
                         </div>
                       </FormControl>

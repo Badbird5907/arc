@@ -45,7 +45,7 @@ export const ProductActionsCard = ({ product }: { product: Product }) => {
   const deleteProduct = api.products.deleteProduct.useMutation();
 
   return (
-    <Card className="col-span-1 h-fit">
+    <Card className="h-fit">
       <CardHeader>
         <CardTitle>Product Actions</CardTitle>
       </CardHeader>

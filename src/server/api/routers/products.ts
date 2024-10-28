@@ -2,8 +2,11 @@ import { createTRPCRouter, procedure, protectedProcedure } from "@/server/api/tr
 import { db } from "@/server/db";
 import { products } from "@/server/db/schema";
 import { createProductInput, getProductsInput, modifyProductInput } from "@/trpc/schema/products";
+import { createBareServerClient, createClient } from "@/utils/supabase/server";
 import { type AnyColumn, asc, desc, eq, getTableColumns, type SQL, sql, type SQLWrapper } from "drizzle-orm";
 import { z } from "zod";
+import { v4 as uuid } from "uuid";
+import { TRPCError } from "@trpc/server";
 
 export const productRouter = createTRPCRouter({
   getProducts: procedure("products:read")
@@ -82,6 +85,38 @@ export const productRouter = createTRPCRouter({
   .input(z.object({ id: z.string() }))
   .mutation(async ({ input }) => {
     return db.delete(products).where(eq(products.id, input.id));
-  })
+  }),
+  requestUploadUrl: procedure("products:modify")
+  .input(z.object({ productId: z.string(), extension: z.string() }))
+  .mutation(async ({ input }) => {
+    const supabase = await createBareServerClient();
+    const id = uuid();
+    const ext = input.extension.startsWith(".") ? input.extension.slice(1) : input.extension;
+    console.log("Creating signed url for", `${input.productId}/${id}.${ext}`);
+    // check if storage bucket exists
+    /*const { data: bucket } = await supabase.storage.getBucket("products");
+    if (!bucket) {
+      // console.log("Creating bucket");
+      // await supabase.storage.createBucket("products", { public: true, allowedMimeTypes: ["image/*"] });
+      throw new TRPCError({
+        code: "INTERNAL_SERVER_ERROR",
+        message: "Supabase storage bucket does not exist! Please create one named \"products\" with public access and allowed mime types of \"image/*\", and \"video/*\"!"
+      })
+    }*/
+    const { data, error } = await supabase.storage.from("products").createSignedUploadUrl(`${input.productId}/${id}.${ext}`);
+    if (error) {
+      throw new TRPCError({
+        code: "INTERNAL_SERVER_ERROR",
+        message: error.message
+      })
+    }
+    return {
+      id,
+      ext,
+      url: data.signedUrl,
+      token: data.token,
+      path: data.path,
+    }
+  }),
 
 })
