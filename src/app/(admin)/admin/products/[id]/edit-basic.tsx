@@ -33,7 +33,12 @@ export const EditProductBasic = ({ product, className }: { product: Product; cla
   });
   
   const [isPending, startTransition] = useTransition();
-  const modifyProduct = api.products.modifyProduct.useMutation();
+  const utils = api.useUtils();
+  const modifyProduct = api.products.modifyProduct.useMutation({
+    onSuccess: async () => {
+      await utils.products.getProduct.invalidate();
+    }
+  });
 
   const onSubmit = (values: z.infer<typeof optionalProductData>) => {
     startTransition(async () => {

@@ -86,6 +86,24 @@ export const productRouter = createTRPCRouter({
   .mutation(async ({ input }) => {
     return db.delete(products).where(eq(products.id, input.id));
   }),
+  deleteImage: procedure("products:modify")
+  .input(z.object({ productId: z.string(), imageId: z.string() }))
+  .mutation(async ({ input }) => {
+    const supabase = await createBareServerClient();
+    const { data, error } = await supabase.storage.from("products").remove([`${input.productId}/${input.imageId}`]);
+    if (error) {
+      throw new TRPCError({
+        code: "INTERNAL_SERVER_ERROR",
+        message: error.message
+      })
+    }
+    // remove from products
+    await db.update(products)
+    .set({ images: sql`array_remove(${products.images}, ${input.imageId})` })
+    .where(eq(products.id, input.productId));
+    
+    return data;
+  }),
   requestUploadUrl: procedure("products:modify")
   .input(z.object({ productId: z.string(), extension: z.string() }))
   .mutation(async ({ input }) => {

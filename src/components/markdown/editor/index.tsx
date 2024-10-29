@@ -2,7 +2,7 @@
 
 import '@mdxeditor/editor/style.css'
 import "@/components/markdown/editor/editor.css";
-import { AdmonitionDirectiveDescriptor, BlockTypeSelect, BoldItalicUnderlineToggles, CreateLink, DiffSourceToggleWrapper, InsertAdmonition, InsertImage, InsertTable, InsertThematicBreak, JsxComponentDescriptor, KitchenSinkToolbar, ListsToggle, MDXEditor, type MDXEditorMethods, StrikeThroughSupSubToggles, UndoRedo, codeBlockPlugin, diffSourcePlugin, directivesPlugin, frontmatterPlugin, headingsPlugin, imagePlugin, linkDialogPlugin, linkPlugin, listsPlugin, markdownShortcutPlugin, quotePlugin, tablePlugin, thematicBreakPlugin, toolbarPlugin } from '@mdxeditor/editor'
+import { AdmonitionDirectiveDescriptor, BlockTypeSelect, BoldItalicUnderlineToggles, CreateLink, DiffSourceToggleWrapper, InsertAdmonition, InsertImage, InsertTable, InsertThematicBreak, ListsToggle, MDXEditor, type MDXEditorMethods, StrikeThroughSupSubToggles, UndoRedo, codeBlockPlugin, diffSourcePlugin, directivesPlugin, frontmatterPlugin, headingsPlugin, imagePlugin, linkDialogPlugin, linkPlugin, listsPlugin, markdownShortcutPlugin, quotePlugin, tablePlugin, thematicBreakPlugin, toolbarPlugin } from '@mdxeditor/editor'
 import { type FC } from "react";
 
 
