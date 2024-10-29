@@ -1,9 +1,9 @@
 import { Button } from "@/components/ui/button"
 import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { ColumnDef, ColumnFiltersState, flexRender, getCoreRowModel, getFilteredRowModel, getPaginationRowModel, getSortedRowModel, SortingState, useReactTable, VisibilityState } from "@tanstack/react-table"
+import { Cell, type ColumnDef, type ColumnFiltersState, flexRender, getCoreRowModel, getFilteredRowModel, getPaginationRowModel, getSortedRowModel, type SortingState, useReactTable, type VisibilityState } from "@tanstack/react-table"
 import { ChevronDown } from "lucide-react"
-import React, { JSX } from "react"
+import React, { useEffect, type JSX } from "react"
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
@@ -15,9 +15,11 @@ export function DataTable<TData, TValue>({
   data,
   hideIdDefault = true,
   actionsBar,
+  globalFilter,
 }: DataTableProps<TData, TValue> & {
   hideIdDefault?: boolean;
   actionsBar?: JSX.Element | JSX.Element[];
+  globalFilter?: string;
 }) {
   const [sorting, setSorting] = React.useState<SortingState>([])
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
@@ -39,13 +41,30 @@ export function DataTable<TData, TValue>({
     getFilteredRowModel: getFilteredRowModel(),
     onColumnVisibilityChange: setColumnVisibility,
     onRowSelectionChange: setRowSelection,
+    globalFilterFn: (row, colId, filterValue) => {
+      const lowerCaseFilterValue = String(filterValue).toLowerCase()
+      const cells: Cell<TData, unknown>[] = row.getAllCells();
+      const filtered = cells.some((cell) => {
+        const value = cell.getValue();
+        return value?.toString().toLowerCase().includes(lowerCaseFilterValue);
+      });
+      return filtered;
+    },
     state: {
       sorting,
       columnFilters,
       columnVisibility,
       rowSelection,
+      globalFilter
     },
-  })
+  });
+
+  useEffect(() => {
+    if (globalFilter !== undefined) {
+      console.log("Setting global filter", globalFilter)
+      table.setGlobalFilter(globalFilter)
+    }
+  }, [globalFilter, table]);
 
   return (
     <div className="w-full">

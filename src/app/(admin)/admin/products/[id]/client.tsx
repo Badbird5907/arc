@@ -22,6 +22,7 @@ const ProductPageClient = ({ id }: { id: string }) => {
           <ProductActionsCard product={product} />
           <ModifyImagesCard product={product} />
         </div>
+        
       </div>
     </div>
   );

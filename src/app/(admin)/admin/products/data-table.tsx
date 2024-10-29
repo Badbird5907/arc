@@ -4,11 +4,13 @@ import { CreateProductButton } from "@/app/(admin)/admin/products/create-product
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { DataTable } from "@/components/ui/data-table";
+import { Input } from "@/components/ui/input";
 import { api } from "@/trpc/react";
 import { type Product } from "@/types";
 import type { ColumnDef } from "@tanstack/react-table";
-import { ArrowUpDown, Edit } from "lucide-react";
+import { ArrowUpDown, Edit, Search } from "lucide-react";
 import Link from "next/link";
+import { useState } from "react";
 export const productsCols: ColumnDef<Product>[] = [
   {
     id: "select",
@@ -105,12 +107,26 @@ export const productsCols: ColumnDef<Product>[] = [
 ]
 export const ProductsDataTable = () => {
   const products = api.products.getProducts.useQuery({});
+  const [filter, setFilter] = useState("");
   return (
     <div className="flex flex-col gap-4">
-      <DataTable columns={productsCols} data={products.data ?? []}
-        actionsBar={<>
-          <CreateProductButton />
-        </>}
+      <DataTable
+        columns={productsCols}
+        data={products.data ?? []}
+        globalFilter={filter}
+        actionsBar={(
+          <div className="flex w-full items-center">
+            <CreateProductButton />
+            <Input
+              className="w-1/3 mx-4"
+              type="text"
+              placeholder="Search"
+              startContent={<Search />}
+              value={filter}
+              onChange={(e) => setFilter(e.target.value)}
+            />
+          </div>
+        )}
       />
     </div>
   );

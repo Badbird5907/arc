@@ -67,7 +67,7 @@ export const ProductActionsCard = ({ product }: { product: Product }) => {
                   window.location.href = "/admin/products";
                 })}
               >Delete</Button>
-              <DialogClose className="w-full">
+              <DialogClose className="w-full" asChild>
                 <Button variant="ghost" className="w-full">Cancel</Button>
               </DialogClose>
             </DialogFooter>

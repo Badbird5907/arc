@@ -4,10 +4,11 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Form, FormControl, FormField, FormItem, FormLabel } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Spinner } from "@/components/ui/spinner";
 import { cn } from "@/lib/utils";
 import { api } from "@/trpc/react";
-import { optionalProductData } from "@/trpc/schema/products";
+import { type optionalProductData } from "@/trpc/schema/products";
 import { type Product } from "@/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import dynamic from "next/dynamic";
@@ -22,6 +23,10 @@ const basicProductData = z.object({
   name: z.string(),
   description: z.string().optional(),
   price: z.coerce.number().min(0, { message: "Price must be positive" }),
+  minQuantity: z.coerce.number().min(1).default(1),
+  type: z.enum(["single", "subscription"]).optional(),
+  expiryPeriod: z.enum(["day", "month", "year"]).optional(),
+  expiryLength: z.coerce.number().min(1).optional(),
 });
 
 export const EditProductBasic = ({ product, className }: { product: Product; className: string }) => {
@@ -31,7 +36,7 @@ export const EditProductBasic = ({ product, className }: { product: Product; cla
       ...product
     }
   });
-  
+
   const [isPending, startTransition] = useTransition();
   const utils = api.useUtils();
   const modifyProduct = api.products.modifyProduct.useMutation({
@@ -64,7 +69,7 @@ export const EditProductBasic = ({ product, className }: { product: Product; cla
       <CardContent>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-4">
-            <div className="flex flex-row gap-2 w-full">
+            <div className="flex flex-col md:flex-row gap-2 w-full">
               <FormField
                 control={form.control}
                 name="name"
@@ -77,13 +82,14 @@ export const EditProductBasic = ({ product, className }: { product: Product; cla
                   </FormItem>
                 )}
               />
-              <FormField
-                control={form.control}
-                name="price"
-                render={({ field }) => (
-                  <FormItem className="w-full">
-                    <FormLabel>Price</FormLabel>
-                    <Input
+              <div className="w-full flex flex-col md:flex-row gap-2">
+                <FormField
+                  control={form.control}
+                  name="price"
+                  render={({ field }) => (
+                    <FormItem className="w-full">
+                      <FormLabel>Price</FormLabel>
+                      <Input
                         startContent="$"
                         endContent="USD"
                         type="number"
@@ -93,10 +99,96 @@ export const EditProductBasic = ({ product, className }: { product: Product; cla
                         {...field}
                         onChange={(e) => field.onChange(e.target.value)}
                       />
-                  </FormItem>
-                )}
-              />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="minQuantity"
+                  render={({ field }) => (
+                    <FormItem className="mt-2 md:mt-0">
+                      <FormLabel>Minimum Quantity</FormLabel>
+                      <Input
+                        type="number"
+                        step="1"
+                        className="w-full"
+                        min={0}
+                        {...field}
+                        onChange={(e) => field.onChange(e.target.value)}
+                      />
+                    </FormItem>
+                  )}
+                />
+              </div>
             </div>
+            <FormField
+              control={form.control}
+              name="type"
+              render={({ field }) => (
+                <FormItem className="">
+                  <FormLabel>Type</FormLabel>
+                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select Product Type" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="single">Single</SelectItem>
+                      <SelectItem value="subscription">Subscription</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </FormItem>
+              )}
+            />
+            {form.watch("type") === "subscription" && (
+
+              <Card>
+                <CardContent>
+                  <CardHeader><CardTitle>Subscription Details</CardTitle></CardHeader>
+                  <div className="flex flex-col md:flex-row gap-2 w-full">
+                    <FormField
+                      control={form.control}
+                      name="expiryPeriod"
+                      render={({ field }) => (
+                        <FormItem className="w-full">
+                          <FormLabel>Expiry Period</FormLabel>
+                          <Select onValueChange={field.onChange} defaultValue={field.value}>
+                            <FormControl>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select Expiry Period" />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              <SelectItem value="day">Day</SelectItem>
+                              <SelectItem value="month">Month</SelectItem>
+                              <SelectItem value="year">Year</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="expiryLength"
+                      render={({ field }) => (
+                        <FormItem className="w-full">
+                          <FormLabel>Expiry Length</FormLabel>
+                          <Input
+                            type="number"
+                            step="1"
+                            className="w-full"
+                            min={0}
+                            {...field}
+                            onChange={(e) => field.onChange(e.target.value)}
+                          />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                </CardContent>
+              </Card>
+            )}
             <div className="gap-4 max-h-[40vh] h-[40vh]">
               <Suspense fallback={<div>Loading editor <Spinner /></div>}>
                 <FormField
