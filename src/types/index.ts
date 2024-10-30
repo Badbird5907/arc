@@ -3,7 +3,6 @@ import type {
   DBQueryConfig,
   ExtractTablesWithRelations,
 } from "drizzle-orm";
-import type { NodePgDatabase } from "drizzle-orm/node-postgres";
 
 import type * as schema from "@/server/db/schema";
 
@@ -30,3 +29,8 @@ export type InferResultType<
 
 export type User = InferResultType<"users">;
 export type Product = InferResultType<"products">;
+export type Category = InferResultType<"categories">;
+
+export type ProductAndCategory = Product & {
+  category?: Category;
+}

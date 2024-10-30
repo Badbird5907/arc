@@ -1,5 +1,6 @@
 "use client";
 
+import { CreateCategoryButton } from "@/app/(admin)/admin/products/create-category";
 import { CreateProductButton } from "@/app/(admin)/admin/products/create-product";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -115,10 +116,11 @@ export const ProductsDataTable = () => {
         data={products.data ?? []}
         globalFilter={filter}
         actionsBar={(
-          <div className="flex w-full items-center">
+          <div className="flex w-full items-center gap-2">
             <CreateProductButton />
+            <CreateCategoryButton />
             <Input
-              className="w-1/3 mx-4"
+              className="w-1/3 mx-2"
               type="text"
               placeholder="Search"
               startContent={<Search />}

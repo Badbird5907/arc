@@ -21,18 +21,14 @@ import { CSS } from '@dnd-kit/utilities';
 import { api } from "@/trpc/react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import { useModifyProduct } from "@/components/admin/hooks";
 
 
 export const ImageDndList = ({ product }: { product: Product }) => {
   const [images, setImages] = useState<string[]>(product.images);
   const [isDirty, setIsDirty] = useState(false);
   const [isPending, startTransition] = useTransition();
-  const utils = api.useUtils();
-  const modifyProduct = api.products.modifyProduct.useMutation({
-    async onSuccess() {
-      await utils.products.getProduct.invalidate();
-    }
-  });
+  const modifyProduct = useModifyProduct();
   useEffect(() => {
     if (isDirty) return;
     setImages(product.images);

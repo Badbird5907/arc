@@ -4,10 +4,13 @@ import { EditProductBasic } from "@/app/(admin)/admin/products/[id]/edit-basic";
 import { ModifyImagesCard } from "@/app/(admin)/admin/products/[id]/modify-images";
 import { ErrorPage } from "@/components/pages/error";
 import { Badge } from "@/components/ui/badge";
+import { Spinner } from "@/components/ui/spinner";
 import { api } from "@/trpc/react";
 
 const ProductPageClient = ({ id }: { id: string }) => {
-  const { data: product } = api.products.getProduct.useQuery({ id });
+  const { isLoading, isError, data: product } = api.products.getProduct.useQuery({ id });
+  if (isLoading) return <Spinner />
+  if (isError) return <ErrorPage code="500" />
   if (!product) return <ErrorPage code="404" />;
   return (
     <div className="flex flex-col gap-4 pt-4">

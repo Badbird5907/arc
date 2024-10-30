@@ -1,12 +1,13 @@
-import { createTRPCRouter, procedure, protectedProcedure } from "@/server/api/trpc";
+import { createTRPCRouter, procedure } from "@/server/api/trpc";
 import { db } from "@/server/db";
-import { products } from "@/server/db/schema";
+import { categories, products } from "@/server/db/schema";
 import { createProductInput, getProductsInput, modifyProductInput } from "@/trpc/schema/products";
-import { createBareServerClient, createClient } from "@/utils/supabase/server";
-import { type AnyColumn, asc, desc, eq, getTableColumns, type SQL, sql, type SQLWrapper } from "drizzle-orm";
+import { createBareServerClient } from "@/utils/supabase/server";
+import { and, type AnyColumn, asc, desc, eq, getTableColumns, SQL, sql, type SQLWrapper } from "drizzle-orm";
 import { z } from "zod";
 import { v4 as uuid } from "uuid";
 import { TRPCError } from "@trpc/server";
+import { ProductAndCategory } from "@/types";
 
 export const productRouter = createTRPCRouter({
   getProducts: procedure("products:read")
@@ -18,6 +19,14 @@ export const productRouter = createTRPCRouter({
       } else {
         return desc(inQuery)
       }
+    }
+
+    const canReadHidden = true;
+    const filterHidden = (input: SQL<unknown>) => {
+      if (canReadHidden) {
+        return input
+      }
+      return and(input, eq(products.hidden, false))
     }
 
     const orderBy = (t: { name: SQLWrapper, price: SQLWrapper, createdAt: SQLWrapper, modifiedAt: SQLWrapper, hidden: SQLWrapper, rank?: SQLWrapper}) => {
@@ -49,33 +58,68 @@ export const productRouter = createTRPCRouter({
         rankCd: sql`ts_rank_cd(${matchQuery})`
       }).from(products)
       .where(
-        sql`(
-        setweight(to_tsvector('english', ${products.name}), 'A') ||
-        setweight(to_tsvector('english', ${products.description}), 'B')
-        ) @@ to_tsquery('english', ${input.search})`,
+        filterHidden(
+          sql`(
+            setweight(to_tsvector('english', ${products.name}), 'A') ||
+            setweight(to_tsvector('english', ${products.description}), 'B')
+            ) @@ to_tsquery('english', ${input.search})`
+        ),
       ).orderBy(orderBy);
     }
 
-    return db.select(getTableColumns(products)).from(products).orderBy(orderBy);
+    return db.select(getTableColumns(products)).from(products)
+      .where(filterHidden(sql`true`))
+      .orderBy(orderBy);
   }),
   getProduct: procedure("products:read")
   .input(z.object({ id: z.string() }))
   .query(async ({ input }) => {
-    return db.query.products.findFirst({
-      where: (p, { eq }) => eq(p.id, input.id)
-    })
+    const val = await db.query.products.findFirst({
+      where: (p, { eq }) => eq(p.id, input.id),
+      with: {
+        category: true
+      }
+    });
+    return val as ProductAndCategory;
+  }),
+  getCategories: procedure("products:read")
+  .query(async () => {
+    return db.select(getTableColumns(categories)).from(categories);
+  }),
+  getCategory: procedure("products:read")
+  .input(z.object({ id: z.string() }))
+  .query(async ({ input }) => {
+    return db.query.categories.findFirst({
+      where: (c, { eq }) => eq(c.id, input.id)
+    });
+  }),
+  getCategoryTree: procedure("products:read")
+  .input(z.object({ id: z.string().optional() }))
+  .query(async ({ input }) => {
+    const tree = await db.query.categories.findMany({
+      where: (c, { eq }) => eq(c.id, input.id ?? sql`null`),
+      with: {
+        children: true
+      }
+    });
+    return tree;
   }),
   createProduct: procedure("products:create")
   .input(createProductInput)
   .mutation(async ({ input }) => {
     return db.insert(products).values(input).returning(getTableColumns(products));
   }),
+  createCategory: procedure("products:create")
+  .input(z.object({ name: z.string() }))
+  .mutation(async ({ input }) => {
+    return db.insert(categories).values({ name: input.name }).returning(getTableColumns(categories));
+  }),
   modifyProduct: procedure("products:modify")
   .input(modifyProductInput)
   .mutation(async ({ input }) => {
-    // remove null/undefined values
+    // remove undefined values (keep nulls)
     const newValues = Object.fromEntries(
-      Object.entries(input.data).filter(([_, v]) => v !== null && v !== undefined)
+      Object.entries(input.data).filter(([_, v]) => v !== undefined)
     )
 
     return db.update(products)

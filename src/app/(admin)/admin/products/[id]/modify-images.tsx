@@ -1,6 +1,7 @@
 "use client";
 
 import { ImageDndList } from "@/app/(admin)/admin/products/[id]/image-dnd";
+import { useModifyProduct } from "@/components/admin/hooks";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
@@ -15,16 +16,10 @@ import { toast } from "sonner";
 export const ModifyImagesCard = ({ product }: { product: Product }) => {
   const { images } = product;
   const requestUploadUrl = api.products.requestUploadUrl.useMutation();
+  const modifyProduct = useModifyProduct();
   const utils = api.useUtils();
-  const modifyProduct = api.products.modifyProduct.useMutation({
-    onSuccess: async () => {
-      await utils.products.getProduct.invalidate();
-    }
-  });
   const deleteImage = api.products.deleteImage.useMutation({
-    onSuccess: async () => {
-      await utils.products.getProduct.invalidate();
-    }
+    onSuccess: async () => utils.products.getProduct.invalidate()
   })
   const uploadNewImage = () => {
     console.log("uploading new image");

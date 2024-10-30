@@ -1,20 +1,17 @@
 "use client";
+import { useModifyProduct } from "@/components/admin/hooks";
+import { SetProductCategoryDropdown } from "@/components/admin/products/set-category";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle } from "@/components/ui/card"
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { api } from "@/trpc/react";
-import { type Product } from "@/types";
+import { ProductAndCategory, type Product } from "@/types";
 import { Eye, EyeClosed, Trash } from "lucide-react";
 import { useTransition } from "react";
 import { toast } from "sonner";
 
 const ToggleVisibilityButton = ({ product }: { product: Product }) => {
-  const utils = api.useUtils();
-  const modifyProduct = api.products.modifyProduct.useMutation({
-    async onSuccess() {
-      await utils.products.getProduct.invalidate();
-    }
-  });
+  const modifyProduct = useModifyProduct();
   const [isPending, startTransition] = useTransition();
   return (
     <Button loading={isPending}
@@ -41,7 +38,7 @@ const ToggleVisibilityButton = ({ product }: { product: Product }) => {
   )
 }
 
-export const ProductActionsCard = ({ product }: { product: Product }) => {
+export const ProductActionsCard = ({ product }: { product: ProductAndCategory }) => {
   const deleteProduct = api.products.deleteProduct.useMutation();
 
   return (
@@ -75,6 +72,7 @@ export const ProductActionsCard = ({ product }: { product: Product }) => {
         </Dialog>
         <ToggleVisibilityButton product={product} />
       </div>
+        <SetProductCategoryDropdown product={product} />
     </Card>
   )
 }

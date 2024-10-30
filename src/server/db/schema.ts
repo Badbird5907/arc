@@ -1,6 +1,7 @@
 import { v4 as uuidv4 } from "uuid";
 
 import {
+  AnyPgColumn,
   boolean,
   decimal,
   index,
@@ -13,7 +14,8 @@ import {
   uuid,
 } from "drizzle-orm/pg-core";
 import { rolesArr } from "@/lib/permissions";
-import { sql } from "drizzle-orm";
+import { relations, sql } from "drizzle-orm";
+import { foreignKey } from "drizzle-orm/pg-core";
 
 /**
  * This is an example of how to use the multi-project schema feature of Drizzle ORM. Use the same
@@ -46,6 +48,42 @@ export const users = createTable(
 export const productType = pgEnum("product_type", ["single", "subscription"]);
 export const expiryPeriod = pgEnum("expiry_period", ["day", "month", "year"]);
 
+export const categories = createTable(
+  "categories",
+  {
+    id: uuid("id")
+      .primaryKey()
+      .notNull()
+      .$defaultFn(() => uuidv4()),
+    name: text("name").notNull(),
+    parentCategoryId: uuid("parent_category_id").references((): AnyPgColumn => categories.id, { onDelete: "restrict" }),
+    createdAt: timestamp("created_at", { precision: 3, mode: "date" })
+      .defaultNow()
+      .notNull(),
+    modifiedAt: timestamp("modified_at", { precision: 3, mode: "date" })
+      .defaultNow()
+      .$onUpdate(() => new Date())
+      .notNull(),
+  },
+  (table) => ({
+    searchIndex: index("categories_search_index").using(
+      "gin",
+      sql`(
+        setweight(to_tsvector('english', ${table.name}), 'A')
+      )`
+    ),
+  })
+)
+export const categoryRelations = relations(categories, ({ one, many }) => ({
+  parentCategory: one(categories, {
+    fields: [categories.parentCategoryId],
+    references: [categories.id],
+    relationName: "parent_children_relation",
+  }),
+  children: many(categories, {
+    relationName: "parent_children_relation",
+  }),
+}))
 export const products = createTable(
   "products",
   {
@@ -60,8 +98,10 @@ export const products = createTable(
     hidden: boolean("hidden").default(false).notNull(),
     images: text("images").array().default([]).notNull(),
     type: productType("type").notNull().default("single"),
+    subAllowSinglePurchase: boolean("sub_allow_single_purchase").default(true).notNull(), // if it is a subscription, allow single term purchase in addition to subscription
     expiryPeriod: expiryPeriod("expiry_period").notNull().default("month"),
     expiryLength: integer("expiry_length").notNull().default(1),
+    categoryId: uuid("category_id").references(() => categories.id, { onDelete: "restrict" }),
     createdAt: timestamp("created_at", { precision: 3, mode: "date" })
       .defaultNow()
       .notNull(),
@@ -71,12 +111,20 @@ export const products = createTable(
       .notNull(),
   },
   (table) => ({
-    searchIndex: index("search_index").using(
+    searchIndex: index("products_search_index").using(
       "gin",
       sql`(
         setweight(to_tsvector('english', ${table.name}), 'A') ||
         setweight(to_tsvector('english', ${table.description}), 'B')
       )`
-    )
+    ),
   })
 )
+
+
+export const productRelations = relations(products, ({ one }) => ({
+  category: one(categories, {
+    fields: [products.categoryId],
+    references: [categories.id],
+  })
+}))

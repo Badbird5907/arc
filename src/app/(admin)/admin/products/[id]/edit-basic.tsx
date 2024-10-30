@@ -1,14 +1,14 @@
 "use client";
 
+import { useModifyProduct } from "@/components/admin/hooks";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Form, FormControl, FormField, FormItem, FormLabel } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Spinner } from "@/components/ui/spinner";
-import { cn } from "@/lib/utils";
-import { api } from "@/trpc/react";
-import { type optionalProductData } from "@/trpc/schema/products";
+import { Switch } from "@/components/ui/switch";
+import { basicProductDataForm } from "@/trpc/schema/products";
 import { type Product } from "@/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import dynamic from "next/dynamic";
@@ -19,15 +19,10 @@ import { z } from "zod";
 
 const EditorComp = dynamic(() => import('@/components/markdown/editor'), { ssr: false });
 
-const basicProductData = z.object({
+const basicProductData = basicProductDataForm.merge(z.object({
   name: z.string(),
-  description: z.string().optional(),
-  price: z.coerce.number().min(0, { message: "Price must be positive" }),
   minQuantity: z.coerce.number().min(1).default(1),
-  type: z.enum(["single", "subscription"]).optional(),
-  expiryPeriod: z.enum(["day", "month", "year"]).optional(),
-  expiryLength: z.coerce.number().min(1).optional(),
-});
+}));
 
 export const EditProductBasic = ({ product, className }: { product: Product; className: string }) => {
   const form = useForm({
@@ -38,14 +33,9 @@ export const EditProductBasic = ({ product, className }: { product: Product; cla
   });
 
   const [isPending, startTransition] = useTransition();
-  const utils = api.useUtils();
-  const modifyProduct = api.products.modifyProduct.useMutation({
-    onSuccess: async () => {
-      await utils.products.getProduct.invalidate();
-    }
-  });
+  const modifyProduct = useModifyProduct();
 
-  const onSubmit = (values: z.infer<typeof optionalProductData>) => {
+  const onSubmit = (values: z.infer<typeof basicProductData>) => {
     startTransition(async () => {
       await modifyProduct.mutateAsync({
         id: product.id,
@@ -142,7 +132,6 @@ export const EditProductBasic = ({ product, className }: { product: Product; cla
               )}
             />
             {form.watch("type") === "subscription" && (
-
               <Card>
                 <CardContent>
                   <CardHeader><CardTitle>Subscription Details</CardTitle></CardHeader>
@@ -186,6 +175,18 @@ export const EditProductBasic = ({ product, className }: { product: Product; cla
                       )}
                     />
                   </div>
+                    <FormField
+                      control={form.control}
+                      name="subAllowSinglePurchase"
+                      render={({ field }) => (
+                        <FormItem className="w-full flex flex-col pt-4">
+                          <FormLabel>Allow Single Purchase</FormLabel>
+                          <FormControl>
+                            <Switch checked={field.value} onCheckedChange={field.onChange} />
+                          </FormControl>
+                        </FormItem>
+                      )}
+                    />
                 </CardContent>
               </Card>
             )}

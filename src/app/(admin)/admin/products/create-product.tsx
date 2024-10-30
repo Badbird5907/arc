@@ -36,7 +36,6 @@ export const CreateProductButton = () => {
   const createProduct = api.products.createProduct.useMutation();
   const [isPending, startTransition] = useTransition();
   const onSubmit = (data: z.infer<typeof formSchema>) => {
-    console.log(data);
     startTransition(() => {
       createProduct.mutateAsync(data).then((data) => {
         form.reset();
@@ -59,7 +58,7 @@ export const CreateProductButton = () => {
       <DialogTrigger asChild>
         <Button>
           <Plus />
-          Create Product
+          Product
         </Button>
       </DialogTrigger>
       <DialogContent>
