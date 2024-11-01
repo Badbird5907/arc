@@ -3,11 +3,13 @@ import { db } from "@/server/db";
 import { categories, products } from "@/server/db/schema";
 import { createProductInput, getProductsInput, modifyProductInput } from "@/trpc/schema/products";
 import { createBareServerClient } from "@/utils/supabase/server";
-import { and, type AnyColumn, asc, desc, eq, getTableColumns, SQL, sql, type SQLWrapper } from "drizzle-orm";
+import { and, type AnyColumn, asc, desc, eq, getTableColumns, type SQL, sql, type SQLWrapper } from "drizzle-orm";
 import { z } from "zod";
 import { v4 as uuid } from "uuid";
 import { TRPCError } from "@trpc/server";
-import { ProductAndCategory } from "@/types";
+import { CategoryAndSlimProducts, SlimCategory, SlimProduct, type ProductAndCategory } from "@/types";
+import { mergeCategoriesAndProducts } from "@/utils/helpers/products";
+import { add } from "@dnd-kit/utilities";
 
 export const productRouter = createTRPCRouter({
   getProducts: procedure("products:read")
@@ -47,13 +49,14 @@ export const productRouter = createTRPCRouter({
       }
       return orderStuff(t.name)
     }
-    
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { description: _unused, ...rest } = getTableColumns(products);
     if (input.search) {
       const matchQuery = sql`(
         setweight(to_tsvector('english', ${products.name}), 'A') ||
         setweight(to_tsvector('english', ${products.description}), 'B')), to_tsquery('english', ${input.search})`;
       return db.select({
-        ...getTableColumns(products),
+        ...rest,
         rank: sql`ts_rank(${matchQuery})`,
         rankCd: sql`ts_rank_cd(${matchQuery})`
       }).from(products)
@@ -67,7 +70,7 @@ export const productRouter = createTRPCRouter({
       ).orderBy(orderBy);
     }
 
-    return db.select(getTableColumns(products)).from(products)
+    return db.select(rest).from(products)
       .where(filterHidden(sql`true`))
       .orderBy(orderBy);
   }),
@@ -96,13 +99,62 @@ export const productRouter = createTRPCRouter({
   getCategoryTree: procedure("products:read")
   .input(z.object({ id: z.string().optional() }))
   .query(async ({ input }) => {
-    const tree = await db.query.categories.findMany({
-      where: (c, { eq }) => eq(c.id, input.id ?? sql`null`),
+    const { id } = input;
+    if (id) {
+      return db.query.categories.findFirst({
+        where: (c, { eq }) => eq(c.id, id),
+        with: {
+          children: true,
+          parentCategory: true
+        }
+      });
+    }
+    return db.query.categories.findMany({
+      where: (c, { isNull }) => isNull(c.parentCategoryId),
       with: {
         children: true
       }
     });
-    return tree;
+  }),
+  getProductsAndCategoryTree: procedure("products:read")
+  .input(z.object({ mergeTree: z.boolean().optional().default(false) }))
+  .query(async ({ input }) => {
+    const [categories, selectedProducts] = await Promise.all([
+      db.query.categories.findMany({
+        where: (c, { isNull }) => isNull(c.parentCategoryId),
+        with: {
+          children: true,
+        }
+      }),
+      db.select({
+        id: products.id,
+        name: products.name,
+        hidden: products.hidden,
+        categoryId: products.categoryId,
+      }).from(products).orderBy(asc(products.name))
+    ]);
+    const fCategories = categories.map((category) => {
+      const addCategoryTag = (c: typeof categories[0] | Omit<typeof categories[0], "children">) => {
+        return {
+          ...c,
+          __category: true,
+        }
+      }
+      return {
+        ...addCategoryTag(category),
+        children: category.children?.map(addCategoryTag) ?? []
+      };
+    }) as unknown as CategoryAndSlimProducts[];
+    const fProducts: SlimProduct[] = selectedProducts.map((p) => {
+      return {
+        ...p,
+        __product: true,
+      }
+    });
+    if (!input.mergeTree) {
+      return { categories: fCategories, products: fProducts };
+    }
+    return mergeCategoriesAndProducts(fCategories, fProducts);
   }),
   createProduct: procedure("products:create")
   .input(createProductInput)

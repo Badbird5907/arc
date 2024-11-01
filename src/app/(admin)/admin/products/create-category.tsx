@@ -28,14 +28,21 @@ export const CreateCategoryButton = () => {
       name: "",
     }
   });
-  const createProduct = api.products.createCategory.useMutation();
+  const utils = api.useUtils();
+  const createCategory = api.products.createCategory.useMutation({
+    onSuccess: () => Promise.all([
+      utils.products.getCategories.invalidate(),
+      utils.products.getCategoryTree.invalidate(),
+      utils.products.getProductsAndCategoryTree.invalidate(),
+    ])
+  });
+
   const [isPending, startTransition] = useTransition();
   const onSubmit = (data: z.infer<typeof formSchema>) => {
-    console.log(data);
     startTransition(() => {
-      createProduct.mutateAsync(data).then(() => {
+      createCategory.mutateAsync(data).then(() => {
         form.reset();
-        toast.success("Product Created", {
+        toast.success("Category Created", {
           description: "The category been created successfully!",
         });
       }).catch((e) => {
@@ -48,7 +55,7 @@ export const CreateCategoryButton = () => {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant={"outline"}>
+        <Button variant={"outline"} className="w-full md:w-fit">
           <Plus />
           Category
         </Button>

@@ -56,7 +56,7 @@ export const CreateProductButton = () => {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button>
+        <Button className="w-full md:w-fit">
           <Plus />
           Product
         </Button>

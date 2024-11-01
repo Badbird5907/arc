@@ -34,3 +34,16 @@ export type Category = InferResultType<"categories">;
 export type ProductAndCategory = Product & {
   category?: Category;
 }
+
+
+export type SlimProduct = Pick<Product, "id" | "name" | "hidden" | "categoryId"> & { __product: true };
+export type SlimCategory = Omit<Category, "createdAt" | "modifiedAt"> & { __category: true };
+
+export type CategoryAndSlimProducts = SlimCategory & {
+  products: SlimProduct[];
+  children: CategoryAndSlimProducts[];
+}
+
+
+export type CategoryTreeNode = CategoryAndSlimProducts | SlimProduct;
+export type CategoryTree = CategoryTreeNode[];

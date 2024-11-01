@@ -68,7 +68,7 @@ export function DataTable<TData, TValue>({
 
   return (
     <div className="w-full">
-      <div className="flex items-center py-4">
+      <div className="flex flex-col md:flex-row items-center py-4">
         {/*
         <Input
           placeholder="Filter emails..."
@@ -81,7 +81,7 @@ export function DataTable<TData, TValue>({
         {actionsBar}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="ml-auto">
+            <Button variant="outline" className="ml-auto mt-2 md:mt-0 w-full md:w-fit">
               Columns <ChevronDown className="ml-2 h-4 w-4" />
             </Button>
           </DropdownMenuTrigger>

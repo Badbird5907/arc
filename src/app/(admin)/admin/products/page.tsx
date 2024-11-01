@@ -1,13 +1,16 @@
 import { adminWrapper } from "@/app/(admin)/admin-panel";
-import { ProductsDataTable } from "@/app/(admin)/admin/products/data-table";
+import { ProductsDataList } from "@/app/(admin)/admin/products/data-table";
 import { api, HydrateClient } from "@/trpc/server";
 
 const Page = adminWrapper(async ({ user }) => {
-  await api.products.getProducts.prefetch({});
+  await Promise.all([
+    api.products.getProducts.prefetch({}),
+    api.products.getProductsAndCategoryTree.prefetch({ mergeTree: true })
+  ]);
   return (
     <HydrateClient>
       <div>
-        <ProductsDataTable />
+        <ProductsDataList />
       </div>
     </HydrateClient>
   );

@@ -83,6 +83,9 @@ export const categoryRelations = relations(categories, ({ one, many }) => ({
   children: many(categories, {
     relationName: "parent_children_relation",
   }),
+  products: many(products, {
+    relationName: "product_category_relation",
+  }),
 }))
 export const products = createTable(
   "products",
@@ -126,5 +129,6 @@ export const productRelations = relations(products, ({ one }) => ({
   category: one(categories, {
     fields: [products.categoryId],
     references: [categories.id],
+    relationName: "product_category_relation",
   })
 }))
