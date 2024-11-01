@@ -3,11 +3,11 @@ import { db } from "@/server/db";
 import { categories, products } from "@/server/db/schema";
 import { createProductInput, getProductsInput, modifyProductInput } from "@/trpc/schema/products";
 import { createBareServerClient } from "@/utils/supabase/server";
-import { and, type AnyColumn, asc, desc, eq, getTableColumns, type SQL, sql, type SQLWrapper } from "drizzle-orm";
+import { and, type AnyColumn, asc, desc, eq, getTableColumns, inArray, or, type SQL, sql, type SQLWrapper } from "drizzle-orm";
 import { z } from "zod";
 import { v4 as uuid } from "uuid";
 import { TRPCError } from "@trpc/server";
-import { CategoryAndSlimProducts, SlimCategory, SlimProduct, type ProductAndCategory } from "@/types";
+import { Category, CategoryAndSlimProducts, SlimCategory, SlimProduct, type ProductAndCategory } from "@/types";
 import { mergeCategoriesAndProducts } from "@/utils/helpers/products";
 import { add } from "@dnd-kit/utilities";
 
@@ -117,22 +117,53 @@ export const productRouter = createTRPCRouter({
     });
   }),
   getProductsAndCategoryTree: procedure("products:read")
-  .input(z.object({ mergeTree: z.boolean().optional().default(false) }))
+  .input(z.object({ mergeTree: z.boolean().optional().default(false), categoryId: z.string().optional() }))
   .query(async ({ input }) => {
-    const [categories, selectedProducts] = await Promise.all([
-      db.query.categories.findMany({
-        where: (c, { isNull }) => isNull(c.parentCategoryId),
+    let categories: Category[] | null = null, selectedProducts: Omit<SlimProduct, "__product">[] | null = null;
+    if (!input.categoryId) {
+      [categories, selectedProducts] = await Promise.all([
+        db.query.categories.findMany({
+          where: (c, { isNull }) => isNull(c.parentCategoryId),
+          with: {
+            children: true,
+          }
+        }),
+        db.select({
+          id: products.id,
+          name: products.name,
+          hidden: products.hidden,
+          categoryId: products.categoryId,
+        }).from(products).orderBy(asc(products.name))
+      ])
+    } else {
+      const category = await db.query.categories.findFirst({
+        where: (c, { eq }) => eq(c.id, input.categoryId!),
         with: {
           children: true,
         }
-      }),
-      db.select({
+      });
+      categories = [{
+        ...category!,
+        parentCategoryId: null, // HACK: there is a bug in mergeCategoriesAndProducts that makes it return [] if parentCategoryId is null. I'm too lazy to fix it so this works.
+      }];
+      const categoryIds = categories.map((c) => c.id);
+      categories.forEach((c) => {
+        if ("children" in c) {
+          categoryIds.push(...(c.children as { id: string }[]).map((c) => c.id));
+        }
+      });
+      selectedProducts = await db.select({
         id: products.id,
         name: products.name,
         hidden: products.hidden,
         categoryId: products.categoryId,
-      }).from(products).orderBy(asc(products.name))
-    ]);
+      }).from(products)
+        .where(
+          // eq(products.categoryId, input.categoryId)
+          inArray(products.categoryId, categoryIds)
+        )
+        .orderBy(asc(products.name));
+    }
     const fCategories = categories.map((category) => {
       const addCategoryTag = (c: typeof categories[0] | Omit<typeof categories[0], "children">) => {
         return {
@@ -142,7 +173,7 @@ export const productRouter = createTRPCRouter({
       }
       return {
         ...addCategoryTag(category),
-        children: category.children?.map(addCategoryTag) ?? []
+        children: Array.isArray((category as { children?: typeof categories[0][] }).children) ? (category as { children?: typeof categories[0][] }).children!.map(addCategoryTag) : []
       };
     }) as unknown as CategoryAndSlimProducts[];
     const fProducts: SlimProduct[] = selectedProducts.map((p) => {

@@ -1,8 +1,10 @@
-import { type CategoryAndSlimProducts, type CategoryTree, type SlimCategory, type SlimProduct } from "@/types";
+import { type TreeNode } from "@/components/tree";
+import { type CategoryTreeNode, type CategoryAndSlimProducts, type CategoryTree, type SlimCategory, type SlimProduct } from "@/types";
 
 
 export const mergeCategoriesAndProducts = (categories: SlimCategory[], products: SlimProduct[]): CategoryTree => { // flat list of categories (incl children) | flat list of products
-  // console.dir(categories, { depth: null });
+  console.dir(categories, { depth: null });
+  console.dir(products, { depth: null }); 
   // we want to put the products into the categories, and put the children into the parent categories
   const categoryMap = new Map<string, CategoryAndSlimProducts>(); // using map for quick O(1) lookups
   const productMap = new Map<string, SlimProduct>(); // WE ARE NOT USING THIS IN THE FINAL TREE, JUST FOR QUICK O(1) LOOKUPS
@@ -24,7 +26,7 @@ export const mergeCategoriesAndProducts = (categories: SlimCategory[], products:
     } else {
       rootCategories.push(categoryWithProducts); // add to the root categories (this is a parent)
     }
-    
+
     const pending = pendingParentMap.get(category.id) ?? [] as CategoryAndSlimProducts[]; // get the children that were pending
     pending.forEach((child: CategoryAndSlimProducts) => {
       categoryWithProducts.children.push(child); // add the children that were pending
@@ -79,4 +81,58 @@ export const mergeCategoriesAndProducts = (categories: SlimCategory[], products:
   
   // console.dir(tree, { depth: null });
   return tree;
+}
+
+export const convertToTreeData = (tree: CategoryTree): TreeNode[] => {
+  const nodes: TreeNode[] = [];
+  const map = new Map<string, TreeNode>();
+  const handleNode = (node: CategoryTreeNode) => {
+    // console.log(node);
+    if ("__product" in node) {
+      // leaf node
+      return {
+        id: node.id,
+        parentId: node.categoryId,
+        data: node, // SlimProduct
+      }
+    }
+    const treeNode: TreeNode = {
+      id: node.id,
+      parentId: node.parentCategoryId,
+      children: [],
+      data: node, // CategoryAndSlimProducts
+      defaultOpen: true,
+    }
+    if (node.children) {
+      node.children.forEach((child) => {
+        treeNode.children!.push(handleNode(child));
+      })
+    }
+    if (node.products) {
+      node.products.forEach((product) => {
+        treeNode.children!.push({ // LEAF
+          id: product.id,
+          parentId: node.id,
+          data: product,
+        })
+      })
+    }
+    return treeNode;
+  }
+
+  tree.forEach((node) => {
+    const treeNode = handleNode(node);
+    nodes.push(treeNode);
+    map.set(node.id, treeNode);
+  });
+
+  nodes.forEach((node) => {
+    if (node.parentId && map.has(node.parentId)) {
+      const parent = map.get(node.parentId)!;
+      parent.children!.push(node);
+    } else if (node.parentId) {
+      console.warn("Parent not found for node", node);
+    }
+  })
+  return nodes;
 }

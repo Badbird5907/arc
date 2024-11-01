@@ -4,7 +4,10 @@ import { api, HydrateClient } from "@/trpc/server";
 
 const Page = adminWrapper<{ params: Promise<{ id: string }> }>(async ({ params }) => {
   const { id } = await params;
-  await api.products.getCategoryTree.prefetch({ id });
+  await Promise.all([
+    api.products.getCategory.prefetch({ id }),
+    api.products.getProductsAndCategoryTree.prefetch({ mergeTree: true, categoryId: id })
+  ]);
 
   return (
     <HydrateClient>

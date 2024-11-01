@@ -10,10 +10,11 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { api } from "@/trpc/react";
 import { type CategoryTreeNode, type SlimProduct, type CategoryTree, type Product } from "@/types";
 import type { ColumnDef } from "@tanstack/react-table";
-import { ArrowUpDown, ChevronDown, ChevronRight, Edit, EditIcon, Folder, FolderOpen, Search } from "lucide-react";
+import { ArrowUpDown, ChevronRight, Edit, EditIcon, Folder, FolderOpen, Search } from "lucide-react";
 import Link from "next/link";
 import React, { useMemo, useState } from "react";
-import { Tree, type TreeBranchProps, type TreeLeafProps, type TreeNode } from "@/components/tree";
+import { Tree, type TreeBranchProps, type TreeLeafProps } from "@/components/tree";
+import { convertToTreeData } from "@/utils/helpers/products";
 
 export const productsCols: ColumnDef<Omit<Product, "description">>[] = [
   {
@@ -96,7 +97,7 @@ export const productsCols: ColumnDef<Omit<Product, "description">>[] = [
     }
   }
 ]
-const CustomLeaf: React.FC<TreeLeafProps> = ({ node }) => {
+export const CustomTreeLeaf: React.FC<TreeLeafProps> = ({ node }) => {
   const data = node.data as SlimProduct;
   return (
     <div className="flex items-center justify-between hover:bg-accent p-4 border rounded-lg">
@@ -109,7 +110,7 @@ const CustomLeaf: React.FC<TreeLeafProps> = ({ node }) => {
     </div>
   )
 };
-const CustomBranch: React.FC<TreeBranchProps> = ({ node, isOpen, toggle, children }) => {
+export const CustomTreeBranch: React.FC<TreeBranchProps> = ({ node, isOpen, toggle, children }) => {
   const data = node.data as CategoryTreeNode;
   return (
     <div className="mb-1">
@@ -149,59 +150,7 @@ export const ProductsDataList = () => {
       return [];
     }
     const tree: CategoryTree = productTree.data;
-    console.log("tree", tree);
-    const nodes: TreeNode[] = [];
-    const map = new Map<string, TreeNode>();
-    const handleNode = (node: CategoryTreeNode) => {
-      // console.log(node);
-      if ("__product" in node) {
-        // leaf node
-        return {
-          id: node.id,
-          parentId: node.categoryId,
-          data: node, // SlimProduct
-        }
-      }
-      const treeNode: TreeNode = {
-        id: node.id,
-        parentId: node.parentCategoryId,
-        children: [],
-        data: node, // CategoryAndSlimProducts
-        defaultOpen: true,
-      }
-      if (node.children) {
-        node.children.forEach((child) => {
-          treeNode.children!.push(handleNode(child));
-        })
-      }
-      if (node.products) {
-        node.products.forEach((product) => {
-          treeNode.children!.push({ // LEAF
-            id: product.id,
-            parentId: node.id,
-            data: product,
-          })
-        })
-      }
-      return treeNode;
-    }
-
-    tree.forEach((node) => {
-      const treeNode = handleNode(node);
-      nodes.push(treeNode);
-      map.set(node.id, treeNode);
-    });
-
-    nodes.forEach((node) => {
-      if (node.parentId && map.has(node.parentId)) {
-        const parent = map.get(node.parentId)!;
-        parent.children!.push(node);
-      } else if (node.parentId) {
-        console.warn("Parent not found for node", node);
-      }
-    })
-    console.log("->", nodes);
-    return nodes;
+    return convertToTreeData(tree);
   }, [productTree.data])
 
 
@@ -215,8 +164,8 @@ export const ProductsDataList = () => {
         <h1 className="text-xl py-4">List</h1>
         <Tree
           data={treeData}
-          renderLeaf={CustomLeaf}
-          renderBranch={CustomBranch}
+          renderLeaf={CustomTreeLeaf}
+          renderBranch={CustomTreeBranch}
           className="border rounded-lg p-4 shadow-sm"
         />
       </TabsContent>
