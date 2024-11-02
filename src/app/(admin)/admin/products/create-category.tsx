@@ -13,19 +13,23 @@ import {
   FormItem,
   FormLabel,
 } from "@/components/ui/form";
-import { z } from "zod";
+import { type z } from "zod";
 import { api } from "@/trpc/react";
 import React, { useTransition } from "react";
 import { toast } from "sonner";
+import { SetProductCategoryDropdown } from "@/components/admin/products/set-category";
+import { categoryData } from "@/trpc/schema/products";
+import { Switch } from "@/components/ui/switch";
 
-const formSchema = z.object({
-  name: z.string(),
-})
+const formSchema = categoryData;
 export const CreateCategoryButton = () => {
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: "",
+      slug: "",
+      parentCategoryId: null,
+      hidden: false,
     }
   });
   const utils = api.useUtils();
@@ -78,6 +82,50 @@ export const CreateCategoryButton = () => {
                     </FormControl>
                     <FormDescription>
                     </FormDescription>
+                  </FormItem>
+                )} />
+              <FormField
+                control={form.control}
+                name="slug"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Slug</FormLabel>
+                    <FormControl>
+                      <Input placeholder="url-friendly-slug" {...field} />
+                    </FormControl>
+                    <FormDescription>
+                      Alphanumeric url-friendly characters only.
+                    </FormDescription>
+                  </FormItem>
+                )} />
+              <FormField
+                control={form.control}
+                name="parentCategoryId"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Parent Category</FormLabel>
+                    <FormControl>
+                      <SetProductCategoryDropdown
+                        product={null}
+                        allowMoreNested={false}
+                        setParent={(id) => field.onChange(id)}
+                      />
+                    </FormControl>
+                  </FormItem>
+                )} />
+              <FormField
+                control={form.control}
+                name="hidden"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Hidden</FormLabel>
+                    <FormControl>
+                      <Switch
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                        className="float-right"
+                      />
+                    </FormControl>
                   </FormItem>
                 )} />
               <DialogClose asChild>

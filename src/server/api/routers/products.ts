@@ -1,7 +1,7 @@
 import { createTRPCRouter, procedure } from "@/server/api/trpc";
 import { db } from "@/server/db";
 import { categories, products } from "@/server/db/schema";
-import { createProductInput, getProductsInput, modifyProductInput } from "@/trpc/schema/products";
+import { categoryData, createProductInput, getProductsInput, modifyProductInput } from "@/trpc/schema/products";
 import { createBareServerClient } from "@/utils/supabase/server";
 import { and, type AnyColumn, asc, desc, eq, getTableColumns, inArray, or, type SQL, sql, type SQLWrapper } from "drizzle-orm";
 import { z } from "zod";
@@ -193,9 +193,9 @@ export const productRouter = createTRPCRouter({
     return db.insert(products).values(input).returning(getTableColumns(products));
   }),
   createCategory: procedure("products:create")
-  .input(z.object({ name: z.string() }))
-  .mutation(async ({ input }) => {
-    return db.insert(categories).values({ name: input.name }).returning(getTableColumns(categories));
+  .input(categoryData)
+  .mutation(async ({ input: { name, parentCategoryId, slug } }) => {
+    return db.insert(categories).values({ name, parentCategoryId, slug }).returning(getTableColumns(categories));
   }),
   modifyProduct: procedure("products:modify")
   .input(modifyProductInput)
@@ -204,14 +204,75 @@ export const productRouter = createTRPCRouter({
     const newValues = Object.fromEntries(
       Object.entries(input.data).filter(([_, v]) => v !== undefined)
     )
-
     return db.update(products)
     .set(newValues).where(eq(products.id, input.id));
+  }),
+  modifyCategory: procedure("products:modify")
+  .input(z.object({ id: z.string(), data: categoryData }))
+  .mutation(async ({ input }) => {
+    // remove undefined values (keep nulls)
+    const newValues = Object.fromEntries(
+      Object.entries(input.data).filter(([_, v]) => v !== undefined)
+    )
+    // get current
+    const category = await db.query.categories.findFirst({
+      where: (c, { eq }) => eq(c.id, input.id),
+      with: {
+        children: true,
+      }
+    });
+    if (!category) {
+      throw new TRPCError({
+        code: "NOT_FOUND",
+        message: "Category not found!"
+      })
+    }
+    // check parent/child is valid (no circular references, no children)
+    if (newValues.parentCategoryId) {
+      if (newValues.parentCategoryId === category.id) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Category cannot be its own parent!"
+        })
+      }
+      if (category.children.length > 0) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Category has children! You cannot have deeply nested categories!"
+        })
+      }
+    }
+    return db.update(categories)
+    .set(newValues).where(eq(categories.id, input.id));
   }),
   deleteProduct: procedure("products:delete")
   .input(z.object({ id: z.string() }))
   .mutation(async ({ input }) => {
     return db.delete(products).where(eq(products.id, input.id));
+  }),
+  deleteCategory: procedure("products:delete")
+  .input(z.object({ id: z.string() }))
+  .mutation(async ({ input }) => {
+    // check if there are any dependant categories/products first!
+    const dependantCategories = await db.query.categories.findMany({
+      where: (c, { eq }) => eq(c.parentCategoryId, input.id)
+    });
+    if (dependantCategories.length > 0) {
+      throw new TRPCError({
+        code: "BAD_REQUEST",
+        message: "Cannot delete category as there are dependant categories! Please delete them first!"
+      })
+    }
+    const dependantProducts = await db.query.products.findMany({
+      where: (p, { eq }) => eq(p.categoryId, input.id)
+    }); // don't need to recursively check children categories as dependant products will be checked if the user tries to delete the children first
+    if (dependantProducts.length > 0) {
+      throw new TRPCError({
+        code: "BAD_REQUEST",
+        message: "Cannot delete category as there are dependant products! Please delete them first!"
+      })
+    }
+    return db.delete(categories).where(eq(categories.id, input.id));
   }),
   deleteImage: procedure("products:modify")
   .input(z.object({ productId: z.string(), imageId: z.string() }))

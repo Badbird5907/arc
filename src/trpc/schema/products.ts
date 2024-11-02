@@ -4,7 +4,8 @@ export const createProductInput = z.object({
   name: z.string(),
   price: z.number().min(0, { message: "Price must be positive" }),
   description: z.string().optional(),
-  hidden: z.boolean().default(false)
+  hidden: z.boolean().default(false),
+  categoryId: z.string().optional().nullable(),
 });
 
 export const getProductsInput = z.object(
@@ -35,3 +36,11 @@ export const modifyProductInput = z.object({
   id: z.string(),
   data: optionalProductData
 });
+
+export const categoryData = z.object({
+  name: z.string(),
+  slug: z.string().regex(/^[a-z0-9-]+$/, "Slug must be lowercase, alphanumeric and hyphenated")
+          .trim().toLowerCase(),
+  parentCategoryId: z.string().optional().nullable(),
+  hidden: z.boolean().default(false),
+})

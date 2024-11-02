@@ -31,6 +31,10 @@ export type User = InferResultType<"users">;
 export type Product = InferResultType<"products">;
 export type Category = InferResultType<"categories">;
 
+export type CategoryWithChildren = Category & {
+  children?: CategoryWithChildren[];
+};
+
 export type ProductAndCategory = Product & {
   category?: Category;
 }

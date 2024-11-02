@@ -83,7 +83,7 @@ export const mergeCategoriesAndProducts = (categories: SlimCategory[], products:
   return tree;
 }
 
-export const convertToTreeData = (tree: CategoryTree): TreeNode[] => {
+export const convertToTreeData = (tree: CategoryTree, filter?: string): TreeNode[] => {
   const nodes: TreeNode[] = [];
   const map = new Map<string, TreeNode>();
   const handleNode = (node: CategoryTreeNode) => {
@@ -105,7 +105,9 @@ export const convertToTreeData = (tree: CategoryTree): TreeNode[] => {
     }
     if (node.children) {
       node.children.forEach((child) => {
-        treeNode.children!.push(handleNode(child));
+        const val = handleNode(child);
+        if (!val) return;
+        treeNode.children!.push(val);
       })
     }
     if (node.products) {
@@ -122,6 +124,7 @@ export const convertToTreeData = (tree: CategoryTree): TreeNode[] => {
 
   tree.forEach((node) => {
     const treeNode = handleNode(node);
+    if (!treeNode) return;
     nodes.push(treeNode);
     map.set(node.id, treeNode);
   });
@@ -133,6 +136,26 @@ export const convertToTreeData = (tree: CategoryTree): TreeNode[] => {
     } else if (node.parentId) {
       console.warn("Parent not found for node", node);
     }
-  })
+  });
+
+  if (filter) {
+    const filterNodes = (nodes: TreeNode[], filter: string) => {
+      const filteredNodes: TreeNode[] = [];
+      nodes.forEach((node) => {
+        if ("children" in node) {
+          const children = filterNodes(node.children!, filter);
+          if (children.length > 0) {
+            filteredNodes.push({ ...node, children });
+          }
+        } else {
+          if ((node.data as SlimProduct).name.toLowerCase().includes(filter.toLowerCase())) {
+            filteredNodes.push(node);
+          }
+        }
+      });
+      return filteredNodes;
+    }
+    return filterNodes(nodes, filter);
+  }
   return nodes;
 }

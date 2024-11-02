@@ -18,11 +18,13 @@ import { z } from "zod";
 import { api } from "@/trpc/react";
 import React, { useTransition } from "react";
 import { toast } from "sonner";
+import { SetProductCategoryDropdown } from "@/components/admin/products/set-category";
 
 const formSchema = z.object({
   name: z.string(),
   price: z.coerce.number().min(0, "Price must be positive"),
   hidden: z.boolean().default(false),
+  categoryId: z.string().optional().nullable(),
 })
 export const CreateProductButton = () => {
   const form = useForm({
@@ -31,13 +33,14 @@ export const CreateProductButton = () => {
       name: "",
       price: 0,
       hidden: true,
+      categoryId: null,
     }
   });
   const createProduct = api.products.createProduct.useMutation();
   const [isPending, startTransition] = useTransition();
   const onSubmit = (data: z.infer<typeof formSchema>) => {
-    startTransition(() => {
-      createProduct.mutateAsync(data).then((data) => {
+    startTransition(async () => {
+      await createProduct.mutateAsync(data).then((data) => {
         form.reset();
         toast.success("Product Created", {
           description: "Your product has been created successfully!",
@@ -103,6 +106,20 @@ export const CreateProductButton = () => {
                       This is your product price
                       {fieldState.error && ` - ${fieldState.error.message}`}
                     </FormDescription>
+                  </FormItem>
+                )} />
+              <FormField
+                control={form.control}
+                name="categoryId"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Category</FormLabel>
+                    <FormControl>
+                      <SetProductCategoryDropdown
+                        product={null}
+                        setParent={(id) => field.onChange(id)}
+                      />
+                    </FormControl>
                   </FormItem>
                 )} />
               <FormField

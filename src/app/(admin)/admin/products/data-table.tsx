@@ -100,7 +100,7 @@ export const productsCols: ColumnDef<Omit<Product, "description">>[] = [
 export const CustomTreeLeaf: React.FC<TreeLeafProps> = ({ node }) => {
   const data = node.data as SlimProduct;
   return (
-    <div className="flex items-center justify-between hover:bg-accent p-4 border rounded-lg">
+    <div className="flex items-center justify-between hover:bg-accent p-4 mb-1 border rounded-lg">
       <div className="flex items-center gap-2">
         <span>{data.name}</span>
       </div>
@@ -150,8 +150,8 @@ export const ProductsDataList = () => {
       return [];
     }
     const tree: CategoryTree = productTree.data;
-    return convertToTreeData(tree);
-  }, [productTree.data])
+    return convertToTreeData(tree, filter);
+  }, [productTree.data, filter])
 
 
   return (
@@ -160,8 +160,19 @@ export const ProductsDataList = () => {
         <TabsTrigger value="list">List</TabsTrigger>
         <TabsTrigger value="table">Table</TabsTrigger>
       </TabsList>
-      <TabsContent value="list">
-        <h1 className="text-xl py-4">List</h1>
+      <TabsContent value="list" className="flex flex-col gap-2">
+        <div className="flex flex-row gap-4">
+          <CreateProductButton />
+          <CreateCategoryButton />
+          <Input
+            className="w-full md:w-1/3 mx-2"
+            type="text"
+            placeholder="Search"
+            startContent={<Search />}
+            value={filter}
+            onChange={(e) => setFilter(e.target.value)}
+          />
+        </div>
         <Tree
           data={treeData}
           renderLeaf={CustomTreeLeaf}

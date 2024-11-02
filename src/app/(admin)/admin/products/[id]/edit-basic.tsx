@@ -12,7 +12,7 @@ import { basicProductDataForm } from "@/trpc/schema/products";
 import { type Product } from "@/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import dynamic from "next/dynamic";
-import { Suspense, useTransition } from "react";
+import { Suspense, useEffect, useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
@@ -32,6 +32,17 @@ export const EditProductBasic = ({ product, className }: { product: Product; cla
     }
   });
 
+  useEffect(() => {
+    // catch tab close if dirty
+    const handler = (e: BeforeUnloadEvent) => {
+      if (form.formState.isDirty) {
+        e.preventDefault();
+      }
+    }
+    window.addEventListener('beforeunload', handler);
+    return () => window.removeEventListener('beforeunload', handler);
+  }, [form.formState.isDirty])
+
   const [isPending, startTransition] = useTransition();
   const modifyProduct = useModifyProduct();
 
@@ -41,6 +52,7 @@ export const EditProductBasic = ({ product, className }: { product: Product; cla
         id: product.id,
         data: values
       }).then(() => {
+        form.reset(form.getValues(), { keepValues: true });
         toast.success("Product Updated", {
           description: "Your product has been updated successfully!",
         });

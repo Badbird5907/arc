@@ -1,5 +1,6 @@
 "use client";
 
+import { EditCategory } from "@/app/(admin)/admin/category/[id]/edit";
 import { CustomTreeBranch, CustomTreeLeaf } from "@/app/(admin)/admin/products/data-table";
 import { ErrorPage } from "@/components/pages/error";
 import { Tree } from "@/components/tree";
@@ -34,7 +35,7 @@ export const CategoryPageClient = ({ id }: { id: string }) => {
         renderBranch={CustomTreeBranch}
         className="border rounded-lg p-4 shadow-sm"
       />
-      <pre>{JSON.stringify(tree, null, 2)}</pre>
+      <EditCategory category={category} />
     </div>
   )
 }

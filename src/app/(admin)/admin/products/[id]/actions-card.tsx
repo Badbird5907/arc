@@ -33,13 +33,14 @@ const ToggleVisibilityButton = ({ product }: { product: Product }) => {
           })
         })
       }}>
-      {product.hidden ? <><Eye/> Show Product</> : <><EyeClosed /> Hide Product</>}
+      {product.hidden ? <><Eye /> Show Product</> : <><EyeClosed /> Hide Product</>}
     </Button>
   )
 }
 
 export const ProductActionsCard = ({ product }: { product: ProductAndCategory }) => {
   const deleteProduct = api.products.deleteProduct.useMutation();
+  const modifyProduct = useModifyProduct();
 
   return (
     <Card className="h-fit">
@@ -72,7 +73,24 @@ export const ProductActionsCard = ({ product }: { product: ProductAndCategory })
         </Dialog>
         <ToggleVisibilityButton product={product} />
       </div>
-        <SetProductCategoryDropdown product={product} />
+      <div className="pb-4 px-4 w-full">
+        <SetProductCategoryDropdown product={product} setParent={(id) => {
+          return modifyProduct.mutateAsync({
+            id: product.id,
+            data: {
+              categoryId: id === "null" ? null : id,
+            }
+          }).then(() => {
+            toast.success("Product Updated", {
+              description: "Your product has been updated successfully!",
+            });
+          }).catch((e) => {
+            toast.error("Error", {
+              description: (e as { message?: string })?.message ?? "An unknown error occurred! Please try again later.",
+            });
+          });
+        }} />
+      </div>
     </Card>
   )
 }

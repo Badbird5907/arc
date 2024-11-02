@@ -1,2 +1,0 @@
-CREATE INDEX IF NOT EXISTS "name_search_index" ON "products" USING gin (to_tsvector('english', "name"));--> statement-breakpoint
-CREATE INDEX IF NOT EXISTS "description_search_index" ON "products" USING gin (to_tsvector('english', "description"));

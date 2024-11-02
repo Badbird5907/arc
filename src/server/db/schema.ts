@@ -1,12 +1,11 @@
 import { v4 as uuidv4 } from "uuid";
 
 import {
-  AnyPgColumn,
+  type AnyPgColumn,
   boolean,
   decimal,
   index,
   integer,
-  numeric,
   pgEnum,
   pgTableCreator,
   text,
@@ -15,7 +14,6 @@ import {
 } from "drizzle-orm/pg-core";
 import { rolesArr } from "@/lib/permissions";
 import { relations, sql } from "drizzle-orm";
-import { foreignKey } from "drizzle-orm/pg-core";
 
 /**
  * This is an example of how to use the multi-project schema feature of Drizzle ORM. Use the same
@@ -56,7 +54,10 @@ export const categories = createTable(
       .notNull()
       .$defaultFn(() => uuidv4()),
     name: text("name").notNull(),
-    parentCategoryId: uuid("parent_category_id").references((): AnyPgColumn => categories.id, { onDelete: "restrict" }),
+    parentCategoryId: uuid("parent_category_id")
+      .references((): AnyPgColumn => categories.id, { onDelete: "restrict" }),
+    hidden: boolean("hidden").default(false).notNull(),
+    slug: text("slug").notNull().unique(),
     createdAt: timestamp("created_at", { precision: 3, mode: "date" })
       .defaultNow()
       .notNull(),
