@@ -30,14 +30,16 @@ export const CreateCategoryButton = () => {
       slug: "",
       parentCategoryId: null,
       hidden: false,
+      featured: false,
+      sortPriority: 0,
     }
   });
   const utils = api.useUtils();
-  const createCategory = api.products.createCategory.useMutation({
+  const createCategory = api.categories.createCategory.useMutation({
     onSuccess: () => Promise.all([
-      utils.products.getCategories.invalidate(),
-      utils.products.getCategoryTree.invalidate(),
-      utils.products.getProductsAndCategoryTree.invalidate(),
+      utils.categories.getCategories.invalidate(),
+      utils.categories.getCategoryTree.invalidate(),
+      utils.categories.getProductsAndCategoryTree.invalidate(),
     ])
   });
 

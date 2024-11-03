@@ -1,4 +1,4 @@
-import { Breadcrumbs } from "@/app/(admin)/@breadcrumbs/[...catchAll]/breadcrumbs"
+import { Breadcrumbs } from "@/app/(admin)/admin/@breadcrumbs/[...catchAll]/breadcrumbs"
 
 type Props = {
   params: Promise<{

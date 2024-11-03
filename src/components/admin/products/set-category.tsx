@@ -7,18 +7,19 @@ import { type CategoryWithChildren, type ProductAndCategory } from "@/types";
 import { ChevronLeft, ChevronRight, ChevronsUpDown } from "lucide-react";
 import { useEffect, useMemo, useState, useTransition } from "react";
 
-export const SetProductCategoryDropdown = ({ product, setParent, allowMoreNested = true }: {
+export const SetProductCategoryDropdown = ({ product, defaultParentName, setParent, allowMoreNested = true }: {
   product: ProductAndCategory | null;
   setParent: (id: string | null) => Promise<unknown> | void;
+  defaultParentName?: string | null;
   allowMoreNested?: boolean;
 }) => {
-  const { data: categoriesData, isLoading } = api.products.getCategoryTree.useQuery({});
+  const { data: categoriesData, isLoading } = api.categories.getCategoryTree.useQuery({});
   const [isPending, startTransition] = useTransition();
   const [selectedCategoryTree, setSelectedCategoryTree] = useState<string[]>([]); // a list of ids
-  const [selectedName, setSelectedName] = useState<string | null>(product?.category?.name ?? null);
+  const [selectedName, setSelectedName] = useState<string | null>(defaultParentName ?? product?.category?.name ?? null);
   useEffect(() => {
-    setSelectedName(product?.category?.name ?? null);
-  }, [product?.category?.name]);
+    setSelectedName(defaultParentName ?? product?.category?.name ?? null);
+  }, [defaultParentName, product?.category?.name]);
   const categories = useMemo(() => {
     if (!categoriesData) return null;
     let categories = categoriesData as CategoryWithChildren[];
@@ -94,6 +95,10 @@ export const SetProductCategoryDropdown = ({ product, setParent, allowMoreNested
             </DropdownMenuItem>
           ))
         }
+        <DropdownMenuSeparator />
+        <DropdownMenuItem onClick={() => setCategory(null)} className="w-full p-2">
+          No Category
+        </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   )

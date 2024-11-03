@@ -57,7 +57,12 @@ export const categories = createTable(
     parentCategoryId: uuid("parent_category_id")
       .references((): AnyPgColumn => categories.id, { onDelete: "restrict" }),
     hidden: boolean("hidden").default(false).notNull(),
+    featured: boolean("featured").default(false).notNull(),
     slug: text("slug").notNull().unique(),
+    sortPriority: integer("sort_priority").default(0).notNull(),
+    bannerImage: text("banner_image"),
+    cardImage: text("card_image"),
+
     createdAt: timestamp("created_at", { precision: 3, mode: "date" })
       .defaultNow()
       .notNull(),

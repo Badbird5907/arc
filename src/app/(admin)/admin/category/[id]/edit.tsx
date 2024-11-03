@@ -2,7 +2,7 @@
 
 import { SetProductCategoryDropdown } from "@/components/admin/products/set-category";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
@@ -35,11 +35,11 @@ export const EditCategory = ({ category }: { category: Category }) => {
   }, [form.formState.isDirty]);
   const [isPending, startTransition] = useTransition();
   const utils = api.useUtils();
-  const modifyCategory = api.products.modifyCategory.useMutation({
+  const modifyCategory = api.categories.modifyCategory.useMutation({
     onSuccess: () => Promise.all([
-      utils.products.getCategory.invalidate(),
-      utils.products.getCategoryTree.invalidate(),
-      utils.products.getProductsAndCategoryTree.invalidate(),
+      utils.categories.getCategory.invalidate(),
+      utils.categories.getCategoryTree.invalidate(),
+      utils.categories.getProductsAndCategoryTree.invalidate(),
     ]).then(() => {
       form.reset(form.getValues(), { keepValues: true })
     })
@@ -61,7 +61,7 @@ export const EditCategory = ({ category }: { category: Category }) => {
     })
   }
   return (
-    <Card>
+    <Card className="w-full">
       <CardHeader>
         <CardTitle>Category Details</CardTitle>
       </CardHeader>
@@ -97,21 +97,44 @@ export const EditCategory = ({ category }: { category: Category }) => {
                 )}
               />
             </div>
-            <FormField
-              control={form.control}
-              name="parentCategoryId"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Category</FormLabel>
-                  <FormControl>
-                    <SetProductCategoryDropdown
-                      product={null}
-                      setParent={(id) => field.onChange(id)}
-                    />
-                  </FormControl>
-                </FormItem>
-              )} />
-            <FormField
+            <div className="flex flex-col md:flex-row gap-4 w-full">
+              <FormField
+                control={form.control}
+                name="parentCategoryId"
+                render={({ field }) => (
+                  <FormItem className="w-full">
+                    <FormLabel>Parent Category</FormLabel>
+                    <FormControl>
+                      <SetProductCategoryDropdown
+                        product={null}
+                        allowMoreNested={false}
+                        setParent={(id) => field.onChange(id)}
+                        defaultParentName={category.parentCategoryId}
+                      />
+                    </FormControl>
+                  </FormItem>
+                )} />
+              <FormField
+                control={form.control}
+                name="sortPriority"
+                render={({ field }) => (
+                  <FormItem className="w-full">
+                    <FormLabel>Sort Priority</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="number"
+                        step="1"
+                        {...field}
+                        onChange={(e) => field.onChange(e.target.value)}
+                      />
+                    </FormControl>
+                    <FormDescription>
+                      Higher priority shows first. May not be implemented in all views.
+                    </FormDescription>
+                  </FormItem>
+                )} />
+            </div>
+            {/*<FormField
               control={form.control}
               name="hidden"
               render={({ field }) => (
@@ -125,7 +148,25 @@ export const EditCategory = ({ category }: { category: Category }) => {
                     />
                   </FormControl>
                 </FormItem>
-              )} />
+              )} />*/}
+            {!category.parentCategoryId && (
+              <FormField
+                control={form.control}
+                name="featured"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Featured</FormLabel>
+                    <FormControl>
+                      <Switch
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                        className="ml-4"
+                      />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+            )}
             <Button type="submit" className="w-full" loading={isPending}>Save</Button>
           </form>
         </Form>

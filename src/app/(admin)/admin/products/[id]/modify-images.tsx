@@ -5,10 +5,12 @@ import { useModifyProduct } from "@/components/admin/hooks";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Spinner } from "@/components/ui/spinner";
 import { api } from "@/trpc/react";
 import { type Product } from "@/types";
 import { Plus, TrashIcon } from "lucide-react";
 import Image from "next/image";
+import { useTransition } from "react";
 import { Carousel } from "react-responsive-carousel";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 import { toast } from "sonner";
@@ -21,6 +23,7 @@ export const ModifyImagesCard = ({ product }: { product: Product }) => {
   const deleteImage = api.products.deleteImage.useMutation({
     onSuccess: async () => utils.products.getProduct.invalidate()
   })
+  const [isPending, startTransition] = useTransition();
   const uploadNewImage = () => {
     console.log("uploading new image");
     // get the image from the user
@@ -28,35 +31,37 @@ export const ModifyImagesCard = ({ product }: { product: Product }) => {
     fileInput.type = "file";
     fileInput.accept = "image/*";
     fileInput.onchange = async () => {
-      const file = fileInput.files?.[0];
-      if (!file) return;
-      const extension = file.name.split(".").pop();
-      const { id, ext, url } = await requestUploadUrl.mutateAsync({
-        productId: product.id,
-        extension: extension!,
-      });
-      const formData = new FormData();
-      formData.append("file", file);
-      await fetch(url, {
-        method: "PUT",
-        body: file,
-      });
-      // add the image to the product
-      await modifyProduct.mutateAsync({
-        id: product.id,
-        data: {
-          images: [...images, `${id}.${ext}`],
-        },
-      }).then(() => {
-        toast.success("Product Updated", {
-          description: "Successfully uploaded new image!",
+      startTransition(async () => {
+        const file = fileInput.files?.[0];
+        if (!file) return;
+        const extension = file.name.split(".").pop();
+        const { id, ext, url } = await requestUploadUrl.mutateAsync({
+          productId: product.id,
+          extension: extension!,
         });
-      }).catch((e) => {
-        toast.error("Error", {
-          description: (e as { message?: string })?.message ?? "An unknown error occurred! Please try again later.",
+        const formData = new FormData();
+        formData.append("file", file);
+        await fetch(url, {
+          method: "PUT",
+          body: file,
         });
-      }).finally(() => {
-        fileInput.remove();
+        // add the image to the product
+        await modifyProduct.mutateAsync({
+          id: product.id,
+          data: {
+            images: [...images, `${id}.${ext}`],
+          },
+        }).then(() => {
+          toast.success("Product Updated", {
+            description: "Successfully uploaded new image!",
+          });
+        }).catch((e) => {
+          toast.error("Error", {
+            description: (e as { message?: string })?.message ?? "An unknown error occurred! Please try again later.",
+          });
+        }).finally(() => {
+          fileInput.remove();
+        })
       })
     };
     fileInput.click();
@@ -99,7 +104,7 @@ export const ModifyImagesCard = ({ product }: { product: Product }) => {
             ))}
             <button className="border-dashed border-4 w-full h-full rounded-lg" onClick={uploadNewImage}>
               <div className="place-self-center py-24">
-                <Plus />
+                {isPending ? <Spinner /> : <Plus />}
               </div>
             </button>
           </Carousel>

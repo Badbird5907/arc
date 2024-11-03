@@ -1,4 +1,4 @@
-import { adminWrapper } from "@/app/(admin)/admin-panel";
+import { adminWrapper } from "@/app/(admin)/admin/admin-panel";
 import ProductPageClient from "@/app/(admin)/admin/products/[id]/client";
 import { api, HydrateClient } from "@/trpc/server";
 

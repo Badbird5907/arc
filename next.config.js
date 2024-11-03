@@ -13,6 +13,10 @@ const config = {
         source: "/assets/products/:path*",
         destination: `${process.env.NEXT_PUBLIC_SUPABASE_PROJECT_URL}/storage/v1/object/public/products/:path*`,
       },
+      {
+        source: "/assets/categories/:path*",
+        destination: `${process.env.NEXT_PUBLIC_SUPABASE_PROJECT_URL}/storage/v1/object/public/categories/:path*`,
+      }
     ];
   },
 };

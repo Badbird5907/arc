@@ -22,6 +22,27 @@
       "when": 1730488076284,
       "tag": "0002_normal_human_fly",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1730528835197,
+      "tag": "0003_lively_grandmaster",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1730529141616,
+      "tag": "0004_easy_betty_ross",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1730567381655,
+      "tag": "0005_lumpy_bucky",
+      "breakpoints": true
     }
   ]
 }

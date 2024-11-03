@@ -15,6 +15,7 @@ import Link from "next/link";
 import React, { useMemo, useState } from "react";
 import { Tree, type TreeBranchProps, type TreeLeafProps } from "@/components/tree";
 import { convertToTreeData } from "@/utils/helpers/products";
+import { Badge } from "@/components/ui/badge";
 
 export const productsCols: ColumnDef<Omit<Product, "description">>[] = [
   {
@@ -103,6 +104,7 @@ export const CustomTreeLeaf: React.FC<TreeLeafProps> = ({ node }) => {
     <div className="flex items-center justify-between hover:bg-accent p-4 mb-1 border rounded-lg">
       <div className="flex items-center gap-2">
         <span>{data.name}</span>
+        {data.hidden && <Badge variant={"destructive"}>Hidden</Badge>}
       </div>
       <Link href={`/admin/products/${data.id}`}>
         <Button><EditIcon /> Edit</Button>
@@ -142,7 +144,7 @@ export const CustomTreeBranch: React.FC<TreeBranchProps> = ({ node, isOpen, togg
 }
 export const ProductsDataList = () => {
   const products = api.products.getProducts.useQuery({});
-  const productTree = api.products.getProductsAndCategoryTree.useQuery({ mergeTree: true });
+  const productTree = api.categories.getProductsAndCategoryTree.useQuery({ mergeTree: true, showHidden: true });
   const [filter, setFilter] = useState("");
 
   const treeData = useMemo(() => {

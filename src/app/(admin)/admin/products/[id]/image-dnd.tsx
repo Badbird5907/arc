@@ -18,7 +18,6 @@ import {
 import { useEffect, useState, useTransition } from "react";
 import Image from "next/image";
 import { CSS } from '@dnd-kit/utilities';
-import { api } from "@/trpc/react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { useModifyProduct } from "@/components/admin/hooks";

@@ -43,4 +43,22 @@ export const categoryData = z.object({
           .trim().toLowerCase(),
   parentCategoryId: z.string().optional().nullable(),
   hidden: z.boolean().default(false),
+  featured: z.boolean().default(false),
+  sortPriority: z.coerce.number().default(0),
+  bannerImage: z.string().optional().nullable(),
+  cardImage: z.string().optional().nullable(),
 })
+
+export const optionalCategoryData = categoryData.merge(z.object({
+  name: z.string().optional(),
+  slug: z.string().optional(),
+  hidden: z.boolean().optional(),
+  featured: z.boolean().optional(),
+  sortPriority: z.coerce.number().optional(),
+}));
+
+
+export const categoryImageFields = {
+  bannerImage: "Banner",
+  cardImage: "Card",
+} as const

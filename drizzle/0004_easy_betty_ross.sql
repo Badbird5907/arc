@@ -1,0 +1,1 @@
+ALTER TABLE "categories" ADD COLUMN "sort_priority" integer DEFAULT 0 NOT NULL;
