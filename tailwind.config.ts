@@ -1,9 +1,11 @@
 import { type Config } from "tailwindcss";
 import { fontFamily } from "tailwindcss/defaultTheme";
 
+const noYMargin = { marginTop: '0', marginBottom: '0' };
+const noYMarginKeys = ["h1", "h2", "h3", "h4", "h5", "h6", "p", "ul", "ol", "li", "blockquote"];
 export default {
-    darkMode: ["class"],
-    content: ["./src/**/*.tsx"],
+	darkMode: ["class"],
+	content: ["./src/**/*.tsx"],
   theme: {
   	extend: {
   		fontFamily: {
@@ -65,7 +67,17 @@ export default {
   				border: 'hsl(var(--sidebar-border))',
   				ring: 'hsl(var(--sidebar-ring))'
   			}
-  		}
+  		},
+			typography: {
+				DEFAULT: {
+					css: {
+						...(noYMarginKeys.reduce((acc: Record<string, typeof noYMargin>, key) => {
+							acc[key] = noYMargin;
+							return acc;
+						}, {}))
+					}
+				}
+			}
   	}
   },
   plugins: [require("tailwindcss-animate"), require('@tailwindcss/typography'),	],

@@ -1,11 +1,12 @@
-import { MDXRemote } from "next-mdx-remote/rsc";
+
 import { ProductImages } from "@/app/(store)/store/category/[...slug]/images";
+import { ProductMarkdown } from "@/app/(store)/store/category/[...slug]/markdown";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { type Product } from "@/types";
 import { ShoppingCart } from "lucide-react";
-import "react-responsive-carousel/lib/styles/carousel.min.css";
 
+import "react-responsive-carousel/lib/styles/carousel.min.css";
 
 export const ProductCard = ({ product }: { product: Product }) => {
   return (
@@ -39,8 +40,14 @@ export const ProductCard = ({ product }: { product: Product }) => {
           <div className="group rounded-lg w-1/2">
             <ProductImages product={product} productCard={false} />
           </div>
-          <div className="flex flex-col gap-4 w-full">
-            <MDXRemote source={product.description ?? ""} />
+          <div className="flex flex-col w-full h-full prose dark:prose-invert justify-between">
+            <div>
+              <ProductMarkdown product={product} />
+            </div>
+            <Button className="w-full mt-4">
+              <ShoppingCart />
+              Add to Cart
+            </Button>
           </div>
         </div>
       </DialogContent>

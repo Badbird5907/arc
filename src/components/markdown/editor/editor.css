@@ -2,9 +2,3 @@
   --basePageBg: black;
   font-weight: 500;
 }
-.dark-editor > :is(h1, h2, h3, h4, h5, h6) {
-  color: white;
-}
-._bold_1tncs_10 {
-  color: white;
-}

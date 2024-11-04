@@ -8,6 +8,7 @@ import { z } from "zod";
 import { v4 as uuid } from "uuid";
 import { TRPCError } from "@trpc/server";
 import { type ProductAndCategory } from "@/types";
+import { del } from "@/server/redis";
 
 export const productRouter = createTRPCRouter({
   getProducts: procedure("products:read")
@@ -101,8 +102,12 @@ export const productRouter = createTRPCRouter({
     const newValues = Object.fromEntries(
       Object.entries(input.data).filter(([_, v]) => v !== undefined)
     )
-    return db.update(products)
-    .set(newValues).where(eq(products.id, input.id));
+    const all = await Promise.all([
+      db.update(products)
+      .set(newValues).where(eq(products.id, input.id)),
+      del(`product:${input.id}:mdx`),
+    ]);
+    return all[0]
   }),
   deleteProduct: procedure("products:delete")
   .input(z.object({ id: z.string() }))

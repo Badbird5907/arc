@@ -25,7 +25,7 @@ const MarkdownEditor: FC<EditorProps> = ({ markdown, editorRef, className, initi
       ref={editorRef}
       markdown={markdown}
       className={className}
-      contentEditableClassName="prose dark-editor"
+      contentEditableClassName="prose dark:prose-invert dark-editor"
       plugins={[
         listsPlugin(),
         quotePlugin(),
