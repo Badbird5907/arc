@@ -3,7 +3,7 @@
 import { useModifyProduct } from "@/components/admin/hooks";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Form, FormControl, FormField, FormItem, FormLabel } from "@/components/ui/form";
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Spinner } from "@/components/ui/spinner";
@@ -123,26 +123,47 @@ export const EditProductBasic = ({ product, className }: { product: Product; cla
                 />
               </div>
             </div>
-            <FormField
-              control={form.control}
-              name="type"
-              render={({ field }) => (
-                <FormItem className="">
-                  <FormLabel>Type</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+            <div className="flex flex-col md:flex-row gap-2 w-full">
+              <FormField
+                control={form.control}
+                name="type"
+                render={({ field }) => (
+                  <FormItem className="w-full">
+                    <FormLabel>Type</FormLabel>
+                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select Product Type" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="single">Single</SelectItem>
+                        <SelectItem value="subscription">Subscription</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="sortPriority"
+                render={({ field }) => (
+                  <FormItem className="w-full">
+                    <FormLabel>Sort Priority</FormLabel>
                     <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select Product Type" />
-                      </SelectTrigger>
+                      <Input
+                        type="number"
+                        step="1"
+                        {...field}
+                        onChange={(e) => field.onChange(e.target.value)}
+                      />
                     </FormControl>
-                    <SelectContent>
-                      <SelectItem value="single">Single</SelectItem>
-                      <SelectItem value="subscription">Subscription</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </FormItem>
-              )}
-            />
+                    <FormDescription>
+                      Higher priority shows first. May not be implemented in all views.
+                    </FormDescription>
+                  </FormItem>
+                )} />
+            </div>
             {form.watch("type") === "subscription" && (
               <Card>
                 <CardContent>
@@ -187,18 +208,18 @@ export const EditProductBasic = ({ product, className }: { product: Product; cla
                       )}
                     />
                   </div>
-                    <FormField
-                      control={form.control}
-                      name="subAllowSinglePurchase"
-                      render={({ field }) => (
-                        <FormItem className="w-full flex flex-col pt-4">
-                          <FormLabel>Allow Single Purchase</FormLabel>
-                          <FormControl>
-                            <Switch checked={field.value} onCheckedChange={field.onChange} />
-                          </FormControl>
-                        </FormItem>
-                      )}
-                    />
+                  <FormField
+                    control={form.control}
+                    name="subAllowSinglePurchase"
+                    render={({ field }) => (
+                      <FormItem className="w-full flex flex-col pt-4">
+                        <FormLabel>Allow Single Purchase</FormLabel>
+                        <FormControl>
+                          <Switch checked={field.value} onCheckedChange={field.onChange} />
+                        </FormControl>
+                      </FormItem>
+                    )}
+                  />
                 </CardContent>
               </Card>
             )}

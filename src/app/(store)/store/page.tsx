@@ -2,6 +2,7 @@ import { db } from "@/server/db"
 import { categories } from "@/server/db/schema"
 import { asc } from "drizzle-orm"
 import { CategoryCard } from "@/app/(store)/category-card"
+import { StoreBanner } from "@/app/(store)/store-banner"
 
 export default async function MainStorePage() {
   const data = await db.query.categories.findMany({
@@ -11,12 +12,15 @@ export default async function MainStorePage() {
   })
 
   return (
-    <div className="container mx-auto px-4">
-      <div className="grid grid-cols-1 gap-6 pt-8 md:grid-cols-2 lg:grid-cols-3 place-items-center">
-        {data.map((category) => (
-          <CategoryCard key={category.id} category={category} />
-        ))}
+    <>
+      <StoreBanner />
+      <div className="container mx-auto px-4">
+        <div className="grid grid-cols-1 gap-6 pt-8 md:grid-cols-2 lg:grid-cols-3 place-items-center">
+          {data.map((category) => (
+            <CategoryCard key={category.id} category={category} />
+          ))}
+        </div>
       </div>
-    </div>
+    </>
   )
 }

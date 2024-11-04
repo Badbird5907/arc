@@ -1,15 +1,15 @@
-import { Category } from "@/types";
+import { type Category } from "@/types";
 import { ArrowRight } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
-export const CategoryCard = ({ category }: { category: Category }) => {
+export const CategoryCard = ({ category, parent }: { category: Category; parent?: Category }) => {
   return (
     <div
       className="w-full max-w-[400px] overflow-hidden"
     >
       <Link
-        href={`/store/category/${category.slug}`}
+        href={parent ? `/store/category/${parent.slug}/${category.slug}` : `/store/category/${category.slug}`}
         className="group relative block aspect-square overflow-hidden rounded-lg"
       >
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent z-10" />

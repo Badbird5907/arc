@@ -3,8 +3,8 @@ import { type CategoryTreeNode, type CategoryAndSlimProducts, type CategoryTree,
 
 
 export const mergeCategoriesAndProducts = (categories: SlimCategory[], products: SlimProduct[]): CategoryTree => { // flat list of categories (incl children) | flat list of products
-  console.dir(categories, { depth: null });
-  console.dir(products, { depth: null }); 
+  // console.dir(categories, { depth: null });
+  // console.dir(products, { depth: null }); 
   // we want to put the products into the categories, and put the children into the parent categories
   const categoryMap = new Map<string, CategoryAndSlimProducts>(); // using map for quick O(1) lookups
   const productMap = new Map<string, SlimProduct>(); // WE ARE NOT USING THIS IN THE FINAL TREE, JUST FOR QUICK O(1) LOOKUPS

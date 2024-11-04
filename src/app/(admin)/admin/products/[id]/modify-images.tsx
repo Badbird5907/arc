@@ -78,7 +78,7 @@ export const ModifyImagesCard = ({ product }: { product: Product }) => {
                   src={`/assets/products/${product.id}/${image}`}
                   width={400}
                   height={400}
-                  alt={`Image ${i}`}
+                  alt={`Image ${i + 1}`}
                 />
                 <button
                   onClick={() => {

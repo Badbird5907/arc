@@ -97,6 +97,21 @@ export const EditCategory = ({ category }: { category: Category }) => {
                 )}
               />
             </div>
+            <FormField
+              control={form.control}
+              name="description"
+              render={({ field }) => (
+                <FormItem className="w-full">
+                  <FormLabel>Description</FormLabel>
+                  <FormControl>
+                    <Input className="w-full" placeholder="Name" {...field} value={field.value ?? ""} />
+                  </FormControl>
+                  <FormDescription>
+                    A short (1 sentence) description that will be shown below the category name.
+                  </FormDescription>
+                </FormItem>
+              )}
+            />
             <div className="flex flex-col md:flex-row gap-4 w-full">
               <FormField
                 control={form.control}
@@ -150,22 +165,40 @@ export const EditCategory = ({ category }: { category: Category }) => {
                 </FormItem>
               )} />*/}
             {!category.parentCategoryId && (
-              <FormField
-                control={form.control}
-                name="featured"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Featured</FormLabel>
-                    <FormControl>
-                      <Switch
-                        checked={field.value}
-                        onCheckedChange={field.onChange}
-                        className="ml-4"
-                      />
-                    </FormControl>
-                  </FormItem>
-                )}
-              />
+              <>
+                <FormField
+                  control={form.control}
+                  name="featured"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Featured</FormLabel>
+                      <FormControl>
+                        <Switch
+                          checked={field.value}
+                          onCheckedChange={field.onChange}
+                          className="ml-4"
+                        />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="showCategoryCards"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Show child categories as cards</FormLabel>
+                      <FormControl>
+                        <Switch
+                          checked={field.value}
+                          onCheckedChange={field.onChange}
+                          className="ml-4"
+                        />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+              </>
             )}
             <Button type="submit" className="w-full" loading={isPending}>Save</Button>
           </form>

@@ -5,23 +5,23 @@ import { cn } from "@/lib/utils";
 import { api } from "@/trpc/react";
 import Link from "next/link";
 import * as React from "react";
-import Image from "next/image";
 
 export function MainStoreNav() {
-  const { data: categoryTree } = api.categories.getCategoryTree.useQuery({ featuredOnly: true });
+  const { data: categoryTree } = api.categories.getCategoryTree.useQuery({});
 
   const sortedData = React.useMemo(() => {
     if (!Array.isArray(categoryTree)) return [];
     // check sortPriority first, then name. Higher sortPriority comes first
-    return categoryTree.sort((a, b) => {
-      console.log(`Sorting: ${a.name} vs ${b.name}`)
-      if (a.sortPriority === b.sortPriority) {
-        console.log(` -> locale: ${a.name.localeCompare(b.name)}`)
-        return a.name.localeCompare(b.name);
-      }
-      console.log(` -> sortPriority: ${a.sortPriority - b.sortPriority}`)
-      return (a.sortPriority - b.sortPriority);
-    }).reverse();
+    return categoryTree.filter((category) => category.featured)
+      .sort((a, b) => {
+        console.log(`Sorting: ${a.name} vs ${b.name}`)
+        if (a.sortPriority === b.sortPriority) {
+          console.log(` -> locale: ${a.name.localeCompare(b.name)}`)
+          return a.name.localeCompare(b.name);
+        }
+        console.log(` -> sortPriority: ${a.sortPriority - b.sortPriority}`)
+        return (a.sortPriority - b.sortPriority);
+      }).reverse();
   }, [categoryTree])
 
   return (
@@ -68,9 +68,11 @@ export function MainStoreNav() {
               }
               return (
                 <NavigationMenuItem key={category.id}>
-                  <NavigationMenuTrigger className="bg-inherit">
-                    {category.name}
-                  </NavigationMenuTrigger>
+                  <Link href={`/store/category/${category.slug}`} legacyBehavior passHref>
+                    <NavigationMenuTrigger className="bg-inherit">
+                      {category.name}
+                    </NavigationMenuTrigger>
+                  </Link>
                   <NavigationMenuContent>
                     <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] grid-cols-2 lg:w-[600px]">
                       {category.children.map((child) => (

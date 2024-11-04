@@ -32,7 +32,7 @@ export type Product = InferResultType<"products">;
 export type Category = InferResultType<"categories">;
 
 export type CategoryWithChildren = Category & {
-  children?: CategoryWithChildren[];
+  children?: Category[]; // children should never have their own children
 };
 
 export type ProductAndCategory = Product & {

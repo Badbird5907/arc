@@ -1,12 +1,11 @@
 import { SiteHeader } from "@/components/header";
 import { ErrorPage } from "@/components/pages/error";
 
-const Page = () => {
+export default function NotFound() {
   return (
     <>
       <SiteHeader />
       <ErrorPage code={"404"} />
     </>
-  );
+  )
 }
-export default Page;

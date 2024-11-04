@@ -58,10 +58,12 @@ export const categories = createTable(
       .references((): AnyPgColumn => categories.id, { onDelete: "restrict" }),
     hidden: boolean("hidden").default(false).notNull(),
     featured: boolean("featured").default(false).notNull(),
-    slug: text("slug").notNull().unique(),
+    slug: text("slug").notNull().$defaultFn(() => uuidv4()),
     sortPriority: integer("sort_priority").default(0).notNull(),
     bannerImage: text("banner_image"),
     cardImage: text("card_image"),
+    description: text("description"),
+    showCategoryCards: boolean("show_category_cards").default(true).notNull(),
 
     createdAt: timestamp("created_at", { precision: 3, mode: "date" })
       .defaultNow()
@@ -111,6 +113,7 @@ export const products = createTable(
     expiryPeriod: expiryPeriod("expiry_period").notNull().default("month"),
     expiryLength: integer("expiry_length").notNull().default(1),
     categoryId: uuid("category_id").references(() => categories.id, { onDelete: "restrict" }),
+    sortPriority: integer("sort_priority").default(0).notNull(),
     createdAt: timestamp("created_at", { precision: 3, mode: "date" })
       .defaultNow()
       .notNull(),

@@ -59,17 +59,23 @@ export const productRouter = createTRPCRouter({
         rankCd: sql`ts_rank_cd(${matchQuery})`
       }).from(products)
       .where(
-        filterHidden(
-          sql`(
-            setweight(to_tsvector('english', ${products.name}), 'A') ||
-            setweight(to_tsvector('english', ${products.description}), 'B')
-            ) @@ to_tsquery('english', ${input.search})`
-        ),
+        and(
+          filterHidden(
+            sql`(
+              setweight(to_tsvector('english', ${products.name}), 'A') ||
+              setweight(to_tsvector('english', ${products.description}), 'B')
+              ) @@ to_tsquery('english', ${input.search})`
+          ),
+          input.categoryId ? eq(products.categoryId, input.categoryId) : undefined
+        )
       ).orderBy(orderBy);
     }
 
     return db.select(rest).from(products)
-      .where(filterHidden(sql`true`))
+      .where(and(
+        filterHidden(sql`true`),
+        input.categoryId ? eq(products.categoryId, input.categoryId) : undefined
+      ))
       .orderBy(orderBy);
   }),
   getProduct: procedure("products:read")

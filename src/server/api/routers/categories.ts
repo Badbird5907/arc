@@ -11,6 +11,23 @@ import { TRPCError } from "@trpc/server";
 import { categoryData, categoryImageFields, optionalCategoryData } from "@/trpc/schema/products";
 import { createBareServerClient } from "@/utils/supabase/server";
 import { v4 as uuid } from "uuid";
+import { getCategoryTree } from "@/server/helpers/categories";
+
+const checkExistingSlug = async (slug: string, parentCategoryId: string | null, ignoreId?: string) => {
+  const existingSlug = await db.query.categories.findFirst({
+    where: (c, { eq, isNull, and, ne }) => and(
+      eq(c.slug, slug),
+      !!parentCategoryId ? eq(c.parentCategoryId, parentCategoryId) : isNull(c.parentCategoryId),
+      ignoreId ? ne(c.id, ignoreId) : undefined
+    ),
+  });
+  if (existingSlug) {
+    throw new TRPCError({
+      code: "BAD_REQUEST",
+      message: "Category with the same slug already exists!"
+    })
+  }
+}
 
 export const categoriesRouter = createTRPCRouter({
   getCategories: procedure("products:read")
@@ -27,28 +44,8 @@ export const categoriesRouter = createTRPCRouter({
   getCategoryTree: publicProcedure // does not sort!!
   .input(z.object({ id: z.string().optional(), featuredOnly: z.boolean().optional().default(false) }))
   .query(async ({ input }) => {
-    const { id } = input;
-    if (id) {
-      return db.query.categories.findFirst({
-        where: (c, { eq, and }) => and(
-          eq(c.id, id),
-          input.featuredOnly ? eq(c.featured, true) : undefined
-        ),
-        with: {
-          children: true,
-          parentCategory: true
-        }
-      });
-    }
-    return db.query.categories.findMany({
-      where: (c, { isNull, and, eq }) => and(
-        isNull(c.parentCategoryId),
-        input.featuredOnly ? eq(c.featured, true) : undefined
-      ),
-      with: {
-        children: true
-      }
-    });
+    const { id, featuredOnly } = input;
+    return getCategoryTree(id, featuredOnly);
   }),
   getProductsAndCategoryTree: publicProcedure
   .input(z.object({
@@ -154,6 +151,8 @@ export const categoriesRouter = createTRPCRouter({
   createCategory: procedure("products:create")
   .input(categoryData)
   .mutation(async ({ input: { name, parentCategoryId, slug } }) => {
+    // check if slug already exists with same parent
+    await checkExistingSlug(slug, parentCategoryId ?? null);
     return db.insert(categories).values({ name, parentCategoryId, slug }).returning(getTableColumns(categories));
   }),
   modifyCategory: procedure("products:modify")
@@ -175,6 +174,9 @@ export const categoriesRouter = createTRPCRouter({
         code: "NOT_FOUND",
         message: "Category not found!"
       })
+    }
+    if (typeof newValues.slug === "string") {
+      await checkExistingSlug(newValues.slug, category.parentCategoryId ??   null, input.id);
     }
     // check parent/child is valid (no circular references, no children)
     if (newValues.parentCategoryId) {

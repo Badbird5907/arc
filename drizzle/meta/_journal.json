@@ -43,6 +43,34 @@
       "when": 1730567381655,
       "tag": "0005_lumpy_bucky",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1730611830801,
+      "tag": "0006_sharp_black_panther",
+      "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1730674752063,
+      "tag": "0007_serious_eternals",
+      "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1730677078709,
+      "tag": "0008_greedy_the_spike",
+      "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1730678404907,
+      "tag": "0009_ambiguous_loners",
+      "breakpoints": true
     }
   ]
 }
