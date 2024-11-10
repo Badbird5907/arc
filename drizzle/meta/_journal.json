@@ -71,6 +71,20 @@
       "when": 1730678404907,
       "tag": "0009_ambiguous_loners",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1730728369357,
+      "tag": "0010_gorgeous_squadron_supreme",
+      "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1731203675672,
+      "tag": "0011_lush_bloodstrike",
+      "breakpoints": true
     }
   ]
 }

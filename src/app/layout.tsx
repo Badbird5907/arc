@@ -6,6 +6,8 @@ import { Poppins } from "next/font/google";
 import { TRPCReactProvider } from "@/trpc/react";
 import { appConfig } from "@/app/app-config";
 import { Toaster } from "@/components/ui/sonner";
+import { getPublicSettings } from "@/server/settings";
+import { PublicSettingsProvider } from "@/components/client-config";
 
 export const metadata: Metadata = {
   title: appConfig.title,
@@ -15,16 +17,19 @@ export const metadata: Metadata = {
 
 const poppins = Poppins({ subsets: ["latin"], weight: "700" });
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
+  const publicSettings = await getPublicSettings();
   return (
     <html lang="en" className={`${poppins.className}`}>
       <body className="dark">
-        <TRPCReactProvider>
-          {children}
-          <Toaster />
-        </TRPCReactProvider>
+        <PublicSettingsProvider settings={publicSettings}>
+          <TRPCReactProvider>
+            {children}
+            <Toaster />
+          </TRPCReactProvider>
+        </PublicSettingsProvider>
       </body>
     </html>
   );

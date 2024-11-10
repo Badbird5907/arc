@@ -22,6 +22,7 @@ export const basicProductDataForm = z.object({ // only the values that are contr
   price: z.coerce.number().min(0, { message: "Price must be positive" }).optional(),
   description: z.string().optional().nullable(),
   minQuantity: z.coerce.number().min(1).optional(),
+  maxQuantity: z.coerce.number().min(0).optional(),
   type: z.enum(["single", "subscription"]).optional(),
   subAllowSinglePurchase: z.boolean().optional(),
   expiryPeriod: z.enum(["day", "month", "year"]).optional(),

@@ -19,6 +19,15 @@ const config = {
       }
     ];
   },
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "starlightskins.lunareclipse.studio",
+        pathname: "/render/**"
+      }
+    ]
+  }
 };
 
 export default config;

@@ -1,6 +1,7 @@
 
 import { ProductImages } from "@/app/(store)/store/category/[...slug]/images";
 import { ProductMarkdown } from "@/app/(store)/store/category/[...slug]/markdown";
+import { AddToCartButton } from "@/components/cart/add";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { type Product } from "@/types";
@@ -30,24 +31,21 @@ export const ProductCard = ({ product }: { product: Product }) => {
           </div>
         </div>
       </DialogTrigger>
-      <DialogContent className="w-2/3 max-w-2/3">
+      <DialogContent className="w-[95vw] md:w-[60vw] max-w-full">
         <DialogHeader>
           <DialogTitle>
             {product.name}
           </DialogTitle>
         </DialogHeader>
-        <div className="flex flex-row gap-4 w-full">
-          <div className="group rounded-lg w-1/2">
+        <div className="flex flex-col md:flex-row gap-6 w-full">
+          <div className="group rounded-lg w-full md:w-1/2">
             <ProductImages product={product} productCard={false} />
           </div>
-          <div className="flex flex-col w-full h-full prose dark:prose-invert justify-between">
-            <div>
+          <div className="flex flex-col w-full h-full prose dark:prose-invert">
+            <div className="py-4 md:py-0">
               <ProductMarkdown product={product} />
             </div>
-            <Button className="w-full mt-4">
-              <ShoppingCart />
-              Add to Cart
-            </Button>
+            <AddToCartButton product={product} className="w-full mt-auto" />
           </div>
         </div>
       </DialogContent>

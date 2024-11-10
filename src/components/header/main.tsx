@@ -1,6 +1,10 @@
 "use client";
 
 import { appConfig } from "@/app/app-config";
+import { useCart } from "@/components/cart";
+import { StoreLoginDialog } from "@/components/header/store/login";
+import { PlayerSkinImage } from "@/components/player-skin";
+import { Button } from "@/components/ui/button";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
@@ -8,11 +12,13 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import * as React from "react";
 
-export function MainNav({ admin }: { admin?: boolean }) {
+export function MainNav({ admin, store }: { admin?: boolean; store?: boolean }) {
   const pathname = usePathname();
 
+  const player = useCart((state) => state.player);
+
   return (
-    <div className="mr-4 hidden md:flex">
+    <div className="mr-4 hidden md:flex w-full">
       {admin && (
         <SidebarTrigger />
       )}
@@ -39,6 +45,23 @@ export function MainNav({ admin }: { admin?: boolean }) {
           );
         })}
       </nav>
+      {store && (
+        <div className="flex flex-row ml-auto">
+          {!!player ? (
+            <Button size="xl" className="mr-4">
+              <PlayerSkinImage player={player}
+                renderConfig={{
+                  name: "ultimate",
+                  crop: "bust"
+                }}
+              />
+              {player.name}
+            </Button>
+          ) : (
+            <StoreLoginDialog />
+          )}
+        </div>
+      )}
     </div>
   );
 }

@@ -10,6 +10,7 @@ export const roles = {
   admin: {
     can: [
       "products:*",
+      "settings:*",
     ],
     inherits: ["user"]
   },

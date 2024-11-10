@@ -21,7 +21,8 @@ const EditorComp = dynamic(() => import('@/components/markdown/editor'), { ssr: 
 
 const basicProductData = basicProductDataForm.merge(z.object({
   name: z.string(),
-  minQuantity: z.coerce.number().min(1).default(1),
+  minQuantity: z.coerce.number().min(1).optional(),
+  maxQuantity: z.coerce.number().min(0).optional(),
 }));
 
 export const EditProductBasic = ({ product, className }: { product: Product; className: string }) => {
@@ -84,44 +85,67 @@ export const EditProductBasic = ({ product, className }: { product: Product; cla
                   </FormItem>
                 )}
               />
-              <div className="w-full flex flex-col md:flex-row gap-2">
-                <FormField
-                  control={form.control}
-                  name="price"
-                  render={({ field }) => (
-                    <FormItem className="w-full">
-                      <FormLabel>Price</FormLabel>
-                      <Input
-                        startContent="$"
-                        endContent="USD"
-                        type="number"
-                        step="0.01"
-                        className="w-full"
-                        min={0}
-                        {...field}
-                        onChange={(e) => field.onChange(e.target.value)}
-                      />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="minQuantity"
-                  render={({ field }) => (
-                    <FormItem className="mt-2 md:mt-0">
-                      <FormLabel>Minimum Quantity</FormLabel>
-                      <Input
-                        type="number"
-                        step="1"
-                        className="w-full"
-                        min={0}
-                        {...field}
-                        onChange={(e) => field.onChange(e.target.value)}
-                      />
-                    </FormItem>
-                  )}
-                />
-              </div>
+              <FormField
+                control={form.control}
+                name="price"
+                render={({ field }) => (
+                  <FormItem className="w-full">
+                    <FormLabel>Price</FormLabel>
+                    <Input
+                      startContent="$"
+                      endContent="USD"
+                      type="number"
+                      step="0.01"
+                      className="w-full"
+                      min={0}
+                      {...field}
+                      onChange={(e) => field.onChange(e.target.value)}
+                    />
+                  </FormItem>
+                )}
+              />
+            </div>
+            <div className="flex flex-col md:flex-row gap-2 w-full mt-2 md:mt-0">
+              <FormField
+                control={form.control}
+                name="minQuantity"
+                render={({ field }) => (
+                  <FormItem className="w-full">
+                    <FormLabel>Minimum Quantity</FormLabel>
+                    <Input
+                      type="number"
+                      step="1"
+                      className="w-full"
+                      min={0}
+                      {...field}
+                      onChange={(e) => field.onChange(e.target.value)}
+                    />
+                    <FormDescription>
+                      Minimum quantity that can be purchased.
+                    </FormDescription>
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="maxQuantity"
+                render={({ field }) => (
+                  <FormItem className="w-full">
+                    <FormLabel>Maximum Quantity</FormLabel>
+                    <Input
+                      type="number"
+                      step="1"
+                      className="w-full"
+                      min={0}
+                      {...field}
+                      onChange={(e) => field.onChange(e.target.value)}
+                    />
+                    <FormDescription>
+                      Maximum quantity that can be purchased. 0 for unlimited. Set to 1 for single purchase.
+                    </FormDescription>
+                  </FormItem>
+                )}
+              />
             </div>
             <div className="flex flex-col md:flex-row gap-2 w-full">
               <FormField

@@ -106,6 +106,7 @@ export const products = createTable(
     price: decimal("price", { precision: 10, scale: 2 }).$type<number>().notNull(),
     description: text("description"),
     minQuantity: integer("min_quantity").default(1).notNull(),
+    maxQuantity: integer("max_quantity").default(0).notNull(),
     hidden: boolean("hidden").default(false).notNull(),
     images: text("images").array().default([]).notNull(),
     type: productType("type").notNull().default("single"),
@@ -141,3 +142,15 @@ export const productRelations = relations(products, ({ one }) => ({
     relationName: "product_category_relation",
   })
 }))
+
+
+export const settings = createTable(
+  "settings",
+  {
+    key: text("key").primaryKey().notNull(),
+    value: text("value").notNull(),
+    lastModified: timestamp("last_modified", { precision: 3, mode: "date" })
+      .defaultNow()
+      .notNull(),
+  }
+)

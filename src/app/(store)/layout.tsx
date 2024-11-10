@@ -13,7 +13,7 @@ export default async function StoreLayout({
   ])
   return (
     <HydrateClient>
-      <SiteHeader />
+      <SiteHeader store />
       <main className="bg-background min-h-screen w-full relative">
         <StoreHeader />
         <div className="w-full">

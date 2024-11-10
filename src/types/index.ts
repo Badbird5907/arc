@@ -5,6 +5,7 @@ import type {
 } from "drizzle-orm";
 
 import type * as schema from "@/server/db/schema";
+import { z } from "zod";
 
 type Schema = typeof schema;
 type TSchema = ExtractTablesWithRelations<Schema>;
@@ -26,6 +27,24 @@ export type InferResultType<
     with: With;
   }
 >;
+
+/*
+function getDefaults<Schema extends z.AnyZodObject>(schema: Schema) {
+    return Object.fromEntries(
+        Object.entries(schema.shape).map(([key, value]) => {
+            if (value instanceof z.ZodDefault) return [key, value._def.defaultValue()]
+            return [key, undefined]
+        })
+    )
+}
+*/
+export const getDefaultValue = <ZodSchema extends z.AnyZodObject>(schema: ZodSchema, key: keyof ZodSchema["shape"]) => {
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+  const value = schema.shape[key] as z.ZodTypeAny;
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+  if (value instanceof z.ZodDefault) return value._def.defaultValue();
+  return undefined;
+}
 
 export type User = InferResultType<"users">;
 export type Product = InferResultType<"products">;

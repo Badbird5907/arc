@@ -1,0 +1,1 @@
+ALTER TABLE "products" ADD COLUMN "max_quantity" integer DEFAULT 0 NOT NULL;
