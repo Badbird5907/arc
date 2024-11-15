@@ -4,6 +4,7 @@ import {
   type AnyPgColumn,
   boolean,
   decimal,
+  doublePrecision,
   index,
   integer,
   pgEnum,
@@ -103,7 +104,7 @@ export const products = createTable(
       .notNull()
       .$defaultFn(() => uuidv4()),
     name: text("name").notNull(),
-    price: decimal("price", { precision: 10, scale: 2 }).$type<number>().notNull(),
+    price: doublePrecision("price").notNull(),
     description: text("description"),
     minQuantity: integer("min_quantity").default(1).notNull(),
     maxQuantity: integer("max_quantity").default(0).notNull(),

@@ -25,7 +25,7 @@ export const SettingsCard = ({ setting }: { setting: SettingWithValue<keyof Sett
       </CardHeader>
       <CardContent className="">
         {setting.description && (
-          <p className="text-sm text-gray-300 pb-2">
+          <p className="text-sm text-accent-foreground pb-2">
             {setting.description}
           </p>
         )}
@@ -50,7 +50,7 @@ export const SettingsCard = ({ setting }: { setting: SettingWithValue<keyof Sett
         {setting.type === "number" && (
           <Input value={value as number} onChange={(e) => setValue(Number(e.target.value))} type="number" />
         )}
-        <p className="text-xs text-gray-500">Default: {String(setting.defaultValue)}</p>
+        <p className="text-xs text-accent-foreground/50">Default: {String(setting.defaultValue)}</p>
       </CardContent>
       <CardFooter className="mt-auto">
         <Button onClick={() => {

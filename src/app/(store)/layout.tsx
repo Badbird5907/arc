@@ -8,7 +8,7 @@ export default async function StoreLayout({
   children: React.ReactNode
 }) {
   await Promise.all([
-    api.categories.getCategoryTree.prefetch({ }),
+    api.categories.getCategoryTree.prefetch({}),
     // api.categories.getProductsAndCategoryTree.prefetch({ mergeTree: true })
   ])
   return (
@@ -16,9 +16,7 @@ export default async function StoreLayout({
       <SiteHeader store />
       <main className="bg-background min-h-screen w-full relative">
         <StoreHeader />
-        <div className="w-full">
-          {children}
-        </div>
+        {children}
       </main>
     </HydrateClient>
   )

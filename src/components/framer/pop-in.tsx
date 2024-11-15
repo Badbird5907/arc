@@ -8,7 +8,7 @@ type PopInProps = {
   duration: number;
   once?: boolean;
   children: React.ReactNode;
-  delay?: number; // TODO: stagger children
+  delay?: number; 
   className?: string;
 };
 const PopIn = ({ once = true, ...props }: PopInProps) => {

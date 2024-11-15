@@ -1,4 +1,4 @@
-import { createTRPCRouter, procedure } from "@/server/api/trpc";
+import { createTRPCRouter, procedure, publicProcedure } from "@/server/api/trpc";
 import { db } from "@/server/db";
 import { products } from "@/server/db/schema";
 import { createProductInput, getProductsInput, modifyProductInput } from "@/trpc/schema/products";
@@ -7,7 +7,7 @@ import { and, type AnyColumn, asc, desc, eq, getTableColumns, type SQL, sql, typ
 import { z } from "zod";
 import { v4 as uuid } from "uuid";
 import { TRPCError } from "@trpc/server";
-import { type ProductAndCategory } from "@/types";
+import { Product, type ProductAndCategory } from "@/types";
 import { del } from "@/server/redis";
 
 export const productRouter = createTRPCRouter({
@@ -178,5 +178,18 @@ export const productRouter = createTRPCRouter({
       path: data.path,
     }
   }),
-
+    getProductsByIds: publicProcedure.input(z.object({ ids: z.array(z.string()), noDesc: z.boolean().default(true) }))
+    .query(async ({ input }) => {
+      const res = await db.query.products.findMany({
+        where: (p, { inArray, and, eq }) => and(inArray(p.id, input.ids), eq(products.hidden, false)),
+      });
+      const nullOut = input.noDesc ? { description: null } : {};
+      const ret = res.map((p) => {
+        return {
+          ...p,
+          ...nullOut
+        } as Product
+      });
+      return ret;
+    }),
 })

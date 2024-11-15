@@ -232,7 +232,7 @@ export const EditProductBasic = ({ product, className }: { product: Product; cla
                       )}
                     />
                   </div>
-                  <FormField
+                  {/* <FormField
                     control={form.control}
                     name="subAllowSinglePurchase"
                     render={({ field }) => (
@@ -243,7 +243,7 @@ export const EditProductBasic = ({ product, className }: { product: Product; cla
                         </FormControl>
                       </FormItem>
                     )}
-                  />
+                  /> */}
                 </CardContent>
               </Card>
             )}

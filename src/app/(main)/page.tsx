@@ -9,7 +9,6 @@ import { FaDiscord } from "react-icons/fa";
 import { FaMoneyBillWave, FaGift, FaBalanceScale, FaRedoAlt, FaHeart } from 'react-icons/fa';
 import { HoverConfetti } from "@/components/ui/hover-confetti";
 import React from "react";
-import { PlayerSkinImage } from "@/components/player-skin";
 
 const questions = [
   {

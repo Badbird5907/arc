@@ -14,7 +14,11 @@ export const SubCategorySelector = ({ base, current }: { base: CategoryWithChild
             const isBase = category.id === base.id;
             const href = isBase ? `/store/category/${category.slug}` : `/store/category/${base.slug}/${category.slug}`;
             return (
-              <Link key={category.id} href={href}>
+              <Link
+                key={category.id}
+                href={href} 
+                prefetch={false} // prefetch on hover
+              >
                 <Button
                   key={category.id}
                   variant="ghost"

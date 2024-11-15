@@ -1,7 +1,7 @@
 "use client";;
 import { use } from "react";
 
-import { ErrorCode, ErrorPage } from "@/components/pages/error";
+import { type ErrorCode, ErrorPage } from "@/components/pages/error";
 
 const Page = (props: { searchParams: Promise<{ code: ErrorCode }> }) => {
   const searchParams = use(props.searchParams);

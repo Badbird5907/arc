@@ -1,0 +1,135 @@
+"filename", "language", "TypeScript", "TypeScript JSX", "CSS", "JavaScript", "comment", "blank", "total"
+"d:\Development\cobalt\src\app\(admin)\admin\@breadcrumbs\[...catchAll]\breadcrumbs.tsx", "TypeScript JSX", 0, 52, 0, 0, 0, 6, 58
+"d:\Development\cobalt\src\app\(admin)\admin\@breadcrumbs\[...catchAll]\page.tsx", "TypeScript JSX", 0, 10, 0, 0, 0, 1, 11
+"d:\Development\cobalt\src\app\(admin)\admin\@breadcrumbs\default.tsx", "TypeScript JSX", 0, 3, 0, 0, 0, 0, 3
+"d:\Development\cobalt\src\app\(admin)\admin\admin-panel.tsx", "TypeScript JSX", 0, 30, 0, 0, 0, 0, 30
+"d:\Development\cobalt\src\app\(admin)\admin\category\[id]\client.tsx", "TypeScript JSX", 0, 40, 0, 0, 0, 5, 45
+"d:\Development\cobalt\src\app\(admin)\admin\category\[id]\edit.tsx", "TypeScript JSX", 0, 191, 0, 0, 15, 3, 209
+"d:\Development\cobalt\src\app\(admin)\admin\category\[id]\images.tsx", "TypeScript JSX", 0, 126, 0, 0, 1, 5, 132
+"d:\Development\cobalt\src\app\(admin)\admin\category\[id]\page.tsx", "TypeScript JSX", 0, 16, 0, 0, 0, 2, 18
+"d:\Development\cobalt\src\app\(admin)\admin\category\page.tsx", "TypeScript JSX", 0, 4, 0, 0, 0, 1, 5
+"d:\Development\cobalt\src\app\(admin)\admin\layout.tsx", "TypeScript JSX", 0, 32, 0, 0, 0, 3, 35
+"d:\Development\cobalt\src\app\(admin)\admin\page.tsx", "TypeScript JSX", 0, 11, 0, 0, 0, 1, 12
+"d:\Development\cobalt\src\app\(admin)\admin\products\[id]\actions-card.tsx", "TypeScript JSX", 0, 93, 0, 0, 0, 3, 96
+"d:\Development\cobalt\src\app\(admin)\admin\products\[id]\client.tsx", "TypeScript JSX", 0, 30, 0, 0, 0, 3, 33
+"d:\Development\cobalt\src\app\(admin)\admin\products\[id]\edit-basic.tsx", "TypeScript JSX", 0, 269, 0, 0, 1, 7, 277
+"d:\Development\cobalt\src\app\(admin)\admin\products\[id]\image-dnd.tsx", "TypeScript JSX", 0, 114, 0, 0, 0, 9, 123
+"d:\Development\cobalt\src\app\(admin)\admin\products\[id]\modify-images.tsx", "TypeScript JSX", 0, 122, 0, 0, 2, 2, 126
+"d:\Development\cobalt\src\app\(admin)\admin\products\[id]\page.tsx", "TypeScript JSX", 0, 13, 0, 0, 0, 2, 15
+"d:\Development\cobalt\src\app\(admin)\admin\products\create-category.tsx", "TypeScript JSX", 0, 142, 0, 0, 0, 2, 144
+"d:\Development\cobalt\src\app\(admin)\admin\products\create-product.tsx", "TypeScript JSX", 0, 148, 0, 0, 0, 1, 149
+"d:\Development\cobalt\src\app\(admin)\admin\products\data-table.tsx", "TypeScript JSX", 0, 205, 0, 0, 0, 5, 210
+"d:\Development\cobalt\src\app\(admin)\admin\products\page.tsx", "TypeScript JSX", 0, 17, 0, 0, 0, 1, 18
+"d:\Development\cobalt\src\app\(admin)\admin\settings\page.tsx", "TypeScript JSX", 0, 16, 0, 0, 0, 1, 17
+"d:\Development\cobalt\src\app\(admin)\admin\settings\settings-card.tsx", "TypeScript JSX", 0, 71, 0, 0, 0, 1, 72
+"d:\Development\cobalt\src\app\(auth)\auth\actions.ts", "TypeScript", 30, 0, 0, 0, 4, 13, 47
+"d:\Development\cobalt\src\app\(auth)\auth\callback\route.ts", "TypeScript", 23, 0, 0, 0, 4, 3, 30
+"d:\Development\cobalt\src\app\(auth)\auth\confirm\route.ts", "TypeScript", 21, 0, 0, 0, 2, 5, 28
+"d:\Development\cobalt\src\app\(auth)\auth\login\page.tsx", "TypeScript JSX", 0, 21, 0, 0, 0, 2, 23
+"d:\Development\cobalt\src\app\(auth)\auth\login\provider-btn.tsx", "TypeScript JSX", 0, 28, 0, 0, 0, 1, 29
+"d:\Development\cobalt\src\app\(auth)\layout.tsx", "TypeScript JSX", 0, 7, 0, 0, 0, 0, 7
+"d:\Development\cobalt\src\app\(main)\error\page.tsx", "TypeScript JSX", 0, 12, 0, 0, 0, 4, 16
+"d:\Development\cobalt\src\app\(main)\layout.tsx", "TypeScript JSX", 0, 16, 0, 0, 0, 1, 17
+"d:\Development\cobalt\src\app\(main)\page.tsx", "TypeScript JSX", 0, 91, 0, 0, 0, 4, 95
+"d:\Development\cobalt\src\app\(store)\category-card.tsx", "TypeScript JSX", 0, 32, 0, 0, 0, 1, 33
+"d:\Development\cobalt\src\app\(store)\layout.tsx", "TypeScript JSX", 0, 23, 0, 0, 1, 1, 25
+"d:\Development\cobalt\src\app\(store)\product-card.tsx", "TypeScript JSX", 0, 51, 0, 0, 0, 3, 54
+"d:\Development\cobalt\src\app\(store)\store-banner.tsx", "TypeScript JSX", 0, 13, 0, 0, 0, 0, 13
+"d:\Development\cobalt\src\app\(store)\store\category\[...slug]\images.tsx", "TypeScript JSX", 0, 62, 0, 0, 2, 1, 65
+"d:\Development\cobalt\src\app\(store)\store\category\[...slug]\markdown.tsx", "TypeScript JSX", 0, 26, 0, 0, 1, 3, 30
+"d:\Development\cobalt\src\app\(store)\store\category\[...slug]\page.tsx", "TypeScript JSX", 0, 59, 0, 0, 0, 1, 60
+"d:\Development\cobalt\src\app\(store)\store\category\[...slug]\selector.tsx", "TypeScript JSX", 0, 33, 0, 0, 0, 2, 35
+"d:\Development\cobalt\src\app\(store)\store\page.tsx", "TypeScript JSX", 0, 24, 0, 0, 0, 2, 26
+"d:\Development\cobalt\src\app\api\trpc\[trpc]\route.ts", "TypeScript", 26, 0, 0, 0, 4, 5, 35
+"d:\Development\cobalt\src\app\app-config.ts", "TypeScript", 33, 0, 0, 0, 0, 1, 34
+"d:\Development\cobalt\src\app\layout.tsx", "TypeScript JSX", 0, 31, 0, 0, 0, 6, 37
+"d:\Development\cobalt\src\app\not-found.tsx", "TypeScript JSX", 0, 10, 0, 0, 0, 1, 11
+"d:\Development\cobalt\src\app\whoami\route.ts", "TypeScript", 6, 0, 0, 0, 0, 1, 7
+"d:\Development\cobalt\src\components\admin\hooks.ts", "TypeScript", 7, 0, 0, 0, 0, 1, 8
+"d:\Development\cobalt\src\components\admin\products\set-category.tsx", "TypeScript JSX", 0, 102, 0, 0, 0, 3, 105
+"d:\Development\cobalt\src\components\admin\sidebar\index.tsx", "TypeScript JSX", 0, 79, 0, 0, 0, 4, 83
+"d:\Development\cobalt\src\components\admin\sidebar\logout.tsx", "TypeScript JSX", 0, 15, 0, 0, 0, 2, 17
+"d:\Development\cobalt\src\components\cart\add.tsx", "TypeScript JSX", 0, 33, 0, 0, 0, 2, 35
+"d:\Development\cobalt\src\components\cart\index.ts", "TypeScript", 31, 0, 0, 0, 0, 2, 33
+"d:\Development\cobalt\src\components\client-config.tsx", "TypeScript JSX", 0, 12, 0, 0, 0, 3, 15
+"d:\Development\cobalt\src\components\contexts\user.tsx", "TypeScript JSX", 0, 14, 0, 0, 0, 2, 16
+"d:\Development\cobalt\src\components\framer\animation-context.tsx", "TypeScript JSX", 0, 23, 0, 0, 0, 3, 26
+"d:\Development\cobalt\src\components\framer\pop-in.tsx", "TypeScript JSX", 0, 30, 0, 0, 0, 3, 33
+"d:\Development\cobalt\src\components\framer\slide-down.tsx", "TypeScript JSX", 0, 7, 0, 0, 0, 3, 10
+"d:\Development\cobalt\src\components\framer\slide-up.tsx", "TypeScript JSX", 0, 7, 0, 0, 0, 3, 10
+"d:\Development\cobalt\src\components\framer\slide.tsx", "TypeScript JSX", 0, 89, 0, 0, 2, 4, 95
+"d:\Development\cobalt\src\components\header\index.tsx", "TypeScript JSX", 0, 12, 0, 0, 0, 1, 13
+"d:\Development\cobalt\src\components\header\main.tsx", "TypeScript JSX", 0, 62, 0, 0, 0, 5, 67
+"d:\Development\cobalt\src\components\header\mobile.tsx", "TypeScript JSX", 0, 86, 0, 0, 31, 5, 122
+"d:\Development\cobalt\src\components\header\store\index.tsx", "TypeScript JSX", 0, 10, 0, 0, 0, 2, 12
+"d:\Development\cobalt\src\components\header\store\login\edition-select.tsx", "TypeScript JSX", 0, 48, 0, 0, 0, 3, 51
+"d:\Development\cobalt\src\components\header\store\login\index.tsx", "TypeScript JSX", 0, 27, 0, 0, 0, 1, 28
+"d:\Development\cobalt\src\components\header\store\main.tsx", "TypeScript JSX", 0, 106, 0, 0, 18, 4, 128
+"d:\Development\cobalt\src\components\header\store\mobile.tsx", "TypeScript JSX", 0, 86, 0, 0, 31, 5, 122
+"d:\Development\cobalt\src\components\markdown\editor\editor.css", "CSS", 0, 0, 4, 0, 0, 1, 5
+"d:\Development\cobalt\src\components\markdown\editor\index.tsx", "TypeScript JSX", 0, 58, 0, 0, 4, 5, 67
+"d:\Development\cobalt\src\components\pages\error\index.tsx", "TypeScript JSX", 0, 87, 0, 0, 0, 7, 94
+"d:\Development\cobalt\src\components\player-skin.tsx", "TypeScript JSX", 0, 18, 0, 0, 0, 2, 20
+"d:\Development\cobalt\src\components\tree\index.tsx", "TypeScript JSX", 0, 118, 0, 0, 0, 14, 132
+"d:\Development\cobalt\src\components\ui\badge.tsx", "TypeScript JSX", 0, 31, 0, 0, 0, 6, 37
+"d:\Development\cobalt\src\components\ui\breadcrumb.tsx", "TypeScript JSX", 0, 105, 0, 0, 0, 11, 116
+"d:\Development\cobalt\src\components\ui\button.tsx", "TypeScript JSX", 0, 131, 0, 0, 1, 8, 140
+"d:\Development\cobalt\src\components\ui\card.tsx", "TypeScript JSX", 0, 68, 0, 0, 0, 9, 77
+"d:\Development\cobalt\src\components\ui\checkbox.tsx", "TypeScript JSX", 0, 26, 0, 0, 0, 5, 31
+"d:\Development\cobalt\src\components\ui\confetti.tsx", "TypeScript JSX", 0, 105, 0, 0, 5, 20, 130
+"d:\Development\cobalt\src\components\ui\data-table.tsx", "TypeScript JSX", 0, 172, 0, 0, 9, 4, 185
+"d:\Development\cobalt\src\components\ui\dialog.tsx", "TypeScript JSX", 0, 109, 0, 0, 0, 14, 123
+"d:\Development\cobalt\src\components\ui\dropdown-menu.tsx", "TypeScript JSX", 0, 187, 0, 0, 0, 19, 206
+"d:\Development\cobalt\src\components\ui\form.tsx", "TypeScript JSX", 0, 153, 0, 0, 0, 26, 179
+"d:\Development\cobalt\src\components\ui\hidden.tsx", "TypeScript JSX", 0, 3, 0, 0, 0, 2, 5
+"d:\Development\cobalt\src\components\ui\hover-card.tsx", "TypeScript JSX", 0, 23, 0, 0, 0, 7, 30
+"d:\Development\cobalt\src\components\ui\hover-confetti.tsx", "TypeScript JSX", 0, 39, 0, 0, 0, 4, 43
+"d:\Development\cobalt\src\components\ui\input.tsx", "TypeScript JSX", 0, 72, 0, 0, 0, 7, 79
+"d:\Development\cobalt\src\components\ui\label.tsx", "TypeScript JSX", 0, 21, 0, 0, 0, 6, 27
+"d:\Development\cobalt\src\components\ui\navigation-menu.tsx", "TypeScript JSX", 0, 117, 0, 0, 0, 12, 129
+"d:\Development\cobalt\src\components\ui\scroll-area.tsx", "TypeScript JSX", 0, 43, 0, 0, 0, 6, 49
+"d:\Development\cobalt\src\components\ui\select.tsx", "TypeScript JSX", 0, 151, 0, 0, 0, 14, 165
+"d:\Development\cobalt\src\components\ui\separator.tsx", "TypeScript JSX", 0, 27, 0, 0, 0, 5, 32
+"d:\Development\cobalt\src\components\ui\sheet.tsx", "TypeScript JSX", 0, 125, 0, 0, 0, 16, 141
+"d:\Development\cobalt\src\components\ui\sidebar.tsx", "TypeScript JSX", 0, 697, 0, 0, 12, 56, 765
+"d:\Development\cobalt\src\components\ui\skeleton.tsx", "TypeScript JSX", 0, 13, 0, 0, 0, 3, 16
+"d:\Development\cobalt\src\components\ui\sonner.tsx", "TypeScript JSX", 0, 26, 0, 0, 0, 6, 32
+"d:\Development\cobalt\src\components\ui\spinner.tsx", "TypeScript JSX", 0, 5, 0, 0, 0, 2, 7
+"d:\Development\cobalt\src\components\ui\switch.tsx", "TypeScript JSX", 0, 25, 0, 0, 0, 5, 30
+"d:\Development\cobalt\src\components\ui\table.tsx", "TypeScript JSX", 0, 110, 0, 0, 0, 11, 121
+"d:\Development\cobalt\src\components\ui\tabs.tsx", "TypeScript JSX", 0, 48, 0, 0, 0, 8, 56
+"d:\Development\cobalt\src\components\ui\tooltip.tsx", "TypeScript JSX", 0, 25, 0, 0, 0, 8, 33
+"d:\Development\cobalt\src\env.js", "JavaScript", 0, 0, 0, 34, 22, 5, 61
+"d:\Development\cobalt\src\hooks\use-mobile.tsx", "TypeScript JSX", 0, 15, 0, 0, 0, 5, 20
+"d:\Development\cobalt\src\lib\permissions.ts", "TypeScript", 24, 0, 0, 0, 1, 3, 28
+"d:\Development\cobalt\src\lib\utils.ts", "TypeScript", 5, 0, 0, 0, 0, 2, 7
+"d:\Development\cobalt\src\middleware.ts", "TypeScript", 10, 0, 0, 0, 7, 2, 19
+"d:\Development\cobalt\src\server\actions\auth.ts", "TypeScript", 42, 0, 0, 0, 0, 6, 48
+"d:\Development\cobalt\src\server\actions\markdown.ts", "TypeScript", 26, 0, 0, 0, 0, 2, 28
+"d:\Development\cobalt\src\server\api\root.ts", "TypeScript", 11, 0, 0, 0, 13, 5, 29
+"d:\Development\cobalt\src\server\api\routers\categories.ts", "TypeScript", 266, 0, 0, 0, 6, 3, 275
+"d:\Development\cobalt\src\server\api\routers\products.ts", "TypeScript", 160, 0, 0, 0, 15, 7, 182
+"d:\Development\cobalt\src\server\api\routers\settings.ts", "TypeScript", 21, 0, 0, 0, 0, 1, 22
+"d:\Development\cobalt\src\server\api\trpc.ts", "TypeScript", 88, 0, 0, 0, 67, 19, 174
+"d:\Development\cobalt\src\server\db\index.ts", "TypeScript", 10, 0, 0, 0, 4, 5, 19
+"d:\Development\cobalt\src\server\db\schema.ts", "TypeScript", 138, 0, 0, 0, 7, 11, 156
+"d:\Development\cobalt\src\server\helpers\categories.ts", "TypeScript", 24, 0, 0, 0, 0, 2, 26
+"d:\Development\cobalt\src\server\helpers\products.ts", "TypeScript", 7, 0, 0, 0, 0, 2, 9
+"d:\Development\cobalt\src\server\redis\index.ts", "TypeScript", 42, 0, 0, 0, 0, 6, 48
+"d:\Development\cobalt\src\server\settings.ts", "TypeScript", 93, 0, 0, 0, 3, 6, 102
+"d:\Development\cobalt\src\styles\globals.css", "CSS", 0, 0, 82, 0, 0, 4, 86
+"d:\Development\cobalt\src\test.ts", "TypeScript", 194, 0, 0, 0, 0, 3, 197
+"d:\Development\cobalt\src\trpc\query-client.ts", "TypeScript", 22, 0, 0, 0, 2, 2, 26
+"d:\Development\cobalt\src\trpc\react.tsx", "TypeScript JSX", 0, 54, 0, 0, 12, 11, 77
+"d:\Development\cobalt\src\trpc\schema\products.ts", "TypeScript", 62, 0, 0, 0, 0, 8, 70
+"d:\Development\cobalt\src\trpc\server.ts", "TypeScript", 20, 0, 0, 0, 4, 7, 31
+"d:\Development\cobalt\src\types\index.ts", "TypeScript", 47, 0, 0, 0, 12, 14, 73
+"d:\Development\cobalt\src\types\settings.ts", "TypeScript", 58, 0, 0, 0, 0, 9, 67
+"d:\Development\cobalt\src\types\skins.ts", "TypeScript", 39, 0, 0, 0, 0, 2, 41
+"d:\Development\cobalt\src\utils\helpers\products.ts", "TypeScript", 143, 0, 0, 0, 8, 10, 161
+"d:\Development\cobalt\src\utils\markdown.tsx", "TypeScript JSX", 0, 21, 0, 0, 0, 1, 22
+"d:\Development\cobalt\src\utils\server\helpers.ts", "TypeScript", 8, 0, 0, 0, 0, 3, 11
+"d:\Development\cobalt\src\utils\supabase\client.ts", "TypeScript", 8, 0, 0, 0, 0, 1, 9
+"d:\Development\cobalt\src\utils\supabase\middleware.ts", "TypeScript", 32, 0, 0, 0, 24, 7, 63
+"d:\Development\cobalt\src\utils\supabase\server.ts", "TypeScript", 33, 0, 0, 0, 4, 3, 40
+"Total", "-", 1810, 6170, 86, 34, 361, 692, 9153

@@ -4,24 +4,25 @@ import Image from "next/image";
 
 
 
-const editions = [
-  {
+const editions = {
+  java: {
     name: "Java Edition",
     image: "/img/grass_block.webp",
   },
-  {
+  bedrock: {
     name: "Bedrock Edition",
     image: "/img/bedrock_block.webp",
     hover: "(Bugrock Edition)"
   }
-]
-export const EditionSelect = () => {
+} as const;
+export const EditionSelect = ({ onSelect }: { onSelect: (edition: keyof typeof editions) => void }) => {
   return (
     <div className="flex flex-col md:flex-row items-center gap-4">
-      {editions.map((edition) => {
+      {Object.entries(editions).map(([key, edition]) => {
         const comp = (
-          <Card className="w-full" key={edition.name} onClick={() => {
+          <Card className="w-full h-full" key={key} onClick={() => {
             console.log(edition);
+            onSelect(key as "java" | "bedrock");
           }}>
             <CardHeader className="hidden">
               <CardTitle className="hidden">{edition.name}</CardTitle>
@@ -32,9 +33,9 @@ export const EditionSelect = () => {
             </CardContent>
           </Card>
         );
-        if (edition.hover) {
+        if ("hover" in edition && edition.hover) {
           return (
-            <HoverCard key={edition.name}>
+            <HoverCard key={key}>
               <HoverCardTrigger className="w-full">
                 {comp}
               </HoverCardTrigger>

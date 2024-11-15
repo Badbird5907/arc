@@ -26,6 +26,7 @@ const buttonVariants = cva(
       },
       size: {
         default: "h-9 px-4 py-2",
+        xs: "h-5 rounded-sm px-2.5 text-xs",
         sm: "h-8 rounded-md px-3 text-xs",
         lg: "h-10 rounded-md px-8",
         xl: "h-12 rounded-lg px-10 text-lg",
@@ -85,9 +86,9 @@ const Button = React.memo(
       const Comp = (element ??
         (asChild ? Slot : asDiv ? "div" : "button")) as React.ElementType;
       const disabled = props.disabled ?? loadingState;
-      const children = loadingState ? ( // TODO: fix the width changing
+      const children = loadingState ? (
         <div className={"flex flex-row items-center gap-1"}>
-          <Spinner /> {!disableLoadingText && <span>{loadingText}</span>}
+          <Spinner className="text-white" size={16} /> {!disableLoadingText && <span>{loadingText}</span>}
         </div>
       ) : (
         props.children

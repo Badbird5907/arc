@@ -16,6 +16,10 @@ const config = {
       {
         source: "/assets/categories/:path*",
         destination: `${process.env.NEXT_PUBLIC_SUPABASE_PROJECT_URL}/storage/v1/object/public/categories/:path*`,
+      },
+      {
+        source: "/api/lookup/:path*",
+        destination: "https://api.geysermc.org/v2/utils/uuid/bedrock_or_java/:path*",
       }
     ];
   },

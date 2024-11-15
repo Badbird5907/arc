@@ -51,6 +51,9 @@ importers:
       '@radix-ui/react-navigation-menu':
         specifier: ^1.2.1
         version: 1.2.1(react-dom@19.0.0-rc-65a56d0e-20241020(react@19.0.0-rc-65a56d0e-20241020))(react@19.0.0-rc-65a56d0e-20241020)(types-react-dom@19.0.0-rc.1)(types-react@19.0.0-rc.1)
+      '@radix-ui/react-popover':
+        specifier: ^1.1.2
+        version: 1.1.2(react-dom@19.0.0-rc-65a56d0e-20241020(react@19.0.0-rc-65a56d0e-20241020))(react@19.0.0-rc-65a56d0e-20241020)(types-react-dom@19.0.0-rc.1)(types-react@19.0.0-rc.1)
       '@radix-ui/react-scroll-area':
         specifier: ^1.2.0
         version: 1.2.0(react-dom@19.0.0-rc-65a56d0e-20241020(react@19.0.0-rc-65a56d0e-20241020))(react@19.0.0-rc-65a56d0e-20241020)(types-react-dom@19.0.0-rc.1)(types-react@19.0.0-rc.1)
@@ -93,9 +96,6 @@ importers:
       '@tanstack/react-table':
         specifier: ^8.20.5
         version: 8.20.5(react-dom@19.0.0-rc-65a56d0e-20241020(react@19.0.0-rc-65a56d0e-20241020))(react@19.0.0-rc-65a56d0e-20241020)
-      '@tebexio/tebex.js':
-        specifier: ^1.4.0
-        version: 1.4.0
       '@trpc/client':
         specifier: ^11.0.0-rc.446
         version: 11.0.0-rc.592(@trpc/server@11.0.0-rc.592)
@@ -135,6 +135,12 @@ importers:
       geist:
         specifier: ^1.3.0
         version: 1.3.1(next@15.0.3(react-dom@19.0.0-rc-65a56d0e-20241020(react@19.0.0-rc-65a56d0e-20241020))(react@19.0.0-rc-65a56d0e-20241020))
+      immer:
+        specifier: ^10.1.1
+        version: 10.1.1
+      lodash.debounce:
+        specifier: ^4.0.8
+        version: 4.0.8
       lucide-react:
         specifier: ^0.453.0
         version: 0.453.0(react@19.0.0-rc-65a56d0e-20241020)
@@ -146,7 +152,7 @@ importers:
         version: 0.3.0(react-dom@19.0.0-rc-65a56d0e-20241020(react@19.0.0-rc-65a56d0e-20241020))(react@19.0.0-rc-65a56d0e-20241020)
       persist-and-sync:
         specifier: ^1.2.1
-        version: 1.2.1(zustand@5.0.0(react@19.0.0-rc-65a56d0e-20241020)(types-react@19.0.0-rc.1)(use-sync-external-store@1.2.2(react@19.0.0-rc-65a56d0e-20241020)))
+        version: 1.2.1(zustand@5.0.0(immer@10.1.1)(react@19.0.0-rc-65a56d0e-20241020)(types-react@19.0.0-rc.1)(use-sync-external-store@1.2.2(react@19.0.0-rc-65a56d0e-20241020)))
       plaiceholder:
         specifier: ^3.0.0
         version: 3.0.0(sharp@0.33.5)
@@ -171,6 +177,9 @@ importers:
       react-responsive-carousel:
         specifier: ^3.2.23
         version: 3.2.23
+      react-turnstile:
+        specifier: ^1.1.4
+        version: 1.1.4(react-dom@19.0.0-rc-65a56d0e-20241020(react@19.0.0-rc-65a56d0e-20241020))(react@19.0.0-rc-65a56d0e-20241020)
       server-only:
         specifier: ^0.0.1
         version: 0.0.1
@@ -197,11 +206,14 @@ importers:
         version: 3.23.8
       zustand:
         specifier: ^5.0.0
-        version: 5.0.0(react@19.0.0-rc-65a56d0e-20241020)(types-react@19.0.0-rc.1)(use-sync-external-store@1.2.2(react@19.0.0-rc-65a56d0e-20241020))
+        version: 5.0.0(immer@10.1.1)(react@19.0.0-rc-65a56d0e-20241020)(types-react@19.0.0-rc.1)(use-sync-external-store@1.2.2(react@19.0.0-rc-65a56d0e-20241020))
     devDependencies:
       '@types/eslint':
         specifier: ^8.56.10
         version: 8.56.12
+      '@types/lodash.debounce':
+        specifier: ^4.0.9
+        version: 4.0.9
       '@types/node':
         specifier: ^20.14.10
         version: 20.16.13
@@ -1806,9 +1818,6 @@ packages:
     resolution: {integrity: sha512-P9dF7XbibHph2PFRz8gfBKEXEY/HJPOhym8CHmjF8y3q5mWpKx9xtZapXQUWCgkqvsK0R46Azuz+VaxD4Xl+Tg==}
     engines: {node: '>=12'}
 
-  '@tebexio/tebex.js@1.4.0':
-    resolution: {integrity: sha512-OuyBJdNAv0VIqYOl6gQVD8CP34mQi0S5aKwr/b1qCRKjnVIO/fHgxLNZ4/LZUKLckwukGuxFTA75RosUOlt3Ig==}
-
   '@trpc/client@11.0.0-rc.592':
     resolution: {integrity: sha512-TLahwmzfl7mt0a4UiTwB1liAtF7cFtXxSzMPi05GgFaCB5ixR1mFq+PvFCr/YhuQwupH5q1Tr0ZzJ/Xbc2BePg==}
     peerDependencies:
@@ -1852,6 +1861,12 @@ packages:
 
   '@types/json5@0.0.29':
     resolution: {integrity: sha512-dRLjCWHYg4oaA77cxO64oO+7JwCwnIzkZPdrrC71jQmQtlhM556pwKo5bUzqvZndkVbeFLIIi+9TC40JNF5hNQ==}
+
+  '@types/lodash.debounce@4.0.9':
+    resolution: {integrity: sha512-Ma5JcgTREwpLRwMM+XwBR7DaWe96nC38uCBDFKZWbNKD+osjVzdpnUSwBcqCptrp16sSOLBAUb50Car5I0TCsQ==}
+
+  '@types/lodash@4.17.13':
+    resolution: {integrity: sha512-lfx+dftrEZcdBPczf9d0Qv0x+j/rfNCMuC6OcfXmO8gkfeNAY88PgKUbvG56whcN23gc27yenwF6oJZXGFpYxg==}
 
   '@types/mdast@4.0.4':
     resolution: {integrity: sha512-kGaNbPh1k7AFzgpud/gMdvIm5xuECykRR+JnWKQno9TAXVa6WIVCGTPvYGekIDL4uwCZQSYbUxNBSb1aUo79oA==}
@@ -2064,9 +2079,6 @@ packages:
   base64-js@1.5.1:
     resolution: {integrity: sha512-AKpaYlHn8t4SVbOHCy+b5+KKgvR4vrsD8vbvrbiQJps7fKDTkjkDry6ji0rUJjC0kzbNePLwzxq8iypo41qeWA==}
 
-  belter@1.0.190:
-    resolution: {integrity: sha512-jz05FHrO+bwitdI6JxV5ESyRdVhTcwMWQ7L4o+q/R4LNJFQrG58sp9EiwsSjhbihhiyYFcmmCMRRagxte6igtw==}
-
   binary-extensions@2.3.0:
     resolution: {integrity: sha512-Ceh+7ox5qe7LJuLHoY0feh3pHuUDHAcRUeyL2VYghZwfpkNIy/+8Ocg0a3UuSoYzavmylwuLWQOf3hl0jjMMIw==}
     engines: {node: '>=8'}
@@ -2203,12 +2215,6 @@ packages:
 
   crelt@1.0.6:
     resolution: {integrity: sha512-VQ2MBenTq1fWZUH9DJNGti7kKv6EeAuYr3cLwxUWhIu1baTaXh4Ib5W2CqHVqib4/MqbYGJqiL3Zb8GJZr3l4g==}
-
-  cross-domain-safe-weakmap@1.0.29:
-    resolution: {integrity: sha512-VLoUgf2SXnf3+na8NfeUFV59TRZkIJqCIATaMdbhccgtnTlSnHXkyTRwokngEGYdQXx8JbHT9GDYitgR2sdjuA==}
-
-  cross-domain-utils@2.0.38:
-    resolution: {integrity: sha512-zZfi3+2EIR9l4chrEiXI2xFleyacsJf8YMLR1eJ0Veb5FTMXeJ3DpxDjZkto2FhL/g717WSELqbptNSo85UJDw==}
 
   cross-spawn@7.0.3:
     resolution: {integrity: sha512-iRDPJKUPVEND7dHPO8rkbOnPpyDygcDFtWjpeWNCgy8WP2rXcxXL8TskReQl6OrB2G7+UJrags1q15Fudc7G6w==}
@@ -2843,6 +2849,9 @@ packages:
     resolution: {integrity: sha512-hsBTNUqQTDwkWtcdYI2i06Y/nUBEsNEDJKjWdigLvegy8kDuJAS8uRlpkkcQpyEXL0Z/pjDy5HBmMjRCJ2gq+g==}
     engines: {node: '>= 4'}
 
+  immer@10.1.1:
+    resolution: {integrity: sha512-s2MPrmjovJcoMaHtx6K11Ra7oD05NT97w1IC5zpMkT6Atjr7H8LjaDd81iIxUYpMKSRRNMJE703M1Fhr/TctHw==}
+
   import-fresh@3.3.0:
     resolution: {integrity: sha512-veYYhQa+D1QBKznvhUHxb8faxlrwUnxseDAbAp457E0wLNio2bOSKnjYDhMj+YiAq61xrMGhQk9iXVk5FzgQMw==}
     engines: {node: '>=6'}
@@ -3097,6 +3106,9 @@ packages:
   lodash.castarray@4.4.0:
     resolution: {integrity: sha512-aVx8ztPv7/2ULbArGJ2Y42bG1mEQ5mGjpdvrbJcJFU3TbYybe+QlLS4pst9zV52ymy2in1KpFPiZnAOATxD4+Q==}
 
+  lodash.debounce@4.0.8:
+    resolution: {integrity: sha512-FT1yDzDYEoYWhnSGnpE/4Kj1fLZkDFyqRb7fNt6FdYOSxlUWAtp42Eh6Wb0rGIv/m9Bgo7x4GhQbm5Ys4SG5ow==}
+
   lodash.isplainobject@4.0.6:
     resolution: {integrity: sha512-oSXzaWypCMHkPC3NvBEaPHf0KsA5mvPrOPgQWDsbg8n7orZ290M0BmC/jgRZ4vcJ6DTAhjrsSYgdsW/F+MFOBA==}
 
@@ -3302,10 +3314,6 @@ packages:
   mz@2.7.0:
     resolution: {integrity: sha512-z81GNO7nnYMEhrGh9LeymoE4+Yr0Wn5McHIZMK5cfQCl+NDX08sCZgUc9/6MHni9IWuFLm1Z3HTCXu2z9fN62Q==}
 
-  nanoevents@8.0.0:
-    resolution: {integrity: sha512-bYYwNCdNc5ea6/Lwh1uioU1/7aaKa3EPmNQ2weTm8PWSpbWrsaWHePe0Zq4SF+D3F3JX3cn+QdktOPCf1meOqw==}
-    engines: {node: ^16.0.0 || ^18.0.0 || >=20.0.0}
-
   nanoid@3.3.7:
     resolution: {integrity: sha512-eSRppjcPIatRIMC1U6UngP8XFcz8MQWGQdt1MTBQ7NaAmvXDfvNxbvWV3x2y6CdEUciCSsDHDQZbhYaB8QEo2g==}
     engines: {node: ^10 || ^12 || ^13.7 || ^14 || >=15.0.1}
@@ -3463,9 +3471,6 @@ packages:
   possible-typed-array-names@1.0.0:
     resolution: {integrity: sha512-d7Uw+eZoloe0EHDIYoe+bQ5WXnGMOpmiZFTuMWCwpjzzkL2nTjcKiAk4hh8TjnGye2TwWOk3UXucZ+3rbmBa8Q==}
     engines: {node: '>= 0.4'}
-
-  post-robot@10.0.46:
-    resolution: {integrity: sha512-EgVJiuvI4iRWDZvzObWes0X/n8olWBEJWxlSw79zmhpgkigX8UsVL4VOBhVtoJKwf0Y9qP9g2zOONw1rv80QbA==}
 
   postcss-import@15.1.0:
     resolution: {integrity: sha512-hpr+J05B2FVYUAXHeK1YyI267J/dDDhMU6B6civm8hSY1jYJnBXxzKDKDswzJmtLHryrjhnDjqqp/49t8FALew==}
@@ -3671,6 +3676,12 @@ packages:
     peerDependenciesMeta:
       '@types/react':
         optional: true
+
+  react-turnstile@1.1.4:
+    resolution: {integrity: sha512-oluyRWADdsufCt5eMqacW4gfw8/csr6Tk+fmuaMx0PWMKP1SX1iCviLvD2D5w92eAzIYDHi/krUWGHhlfzxTpQ==}
+    peerDependencies:
+      react: '>= 16.13.1'
+      react-dom: '>= 16.13.1'
 
   react@19.0.0-rc-65a56d0e-20241020:
     resolution: {integrity: sha512-rZqpfd9PP/A97j9L1MR6fvWSMgs3khgIyLd0E+gYoCcLrxXndj+ySPRVlDPDC3+f7rm8efHNL4B6HeapqU6gzw==}
@@ -4053,9 +4064,6 @@ packages:
   unist-util-visit@5.0.0:
     resolution: {integrity: sha512-MR04uvD+07cwl/yhVuVWAtw+3GOR/knlL55Nd/wAdblk27GCVt3lqpTivy/tkJcZoNPzTwS1Y+KMojlLDhoTzg==}
 
-  universal-serialize@1.0.10:
-    resolution: {integrity: sha512-FdouA4xSFa0fudk1+z5vLWtxZCoC0Q9lKYV3uUdFl7DttNfolmiw2ASr5ddY+/Yz6Isr68u3IqC9XMSwMP+Pow==}
-
   uri-js@4.4.1:
     resolution: {integrity: sha512-7rKUyy33Q1yc98pQ1DAmLtwX109F7TIfWlW1Ydo8Wl1ii1SeHieeh0HHfPeL2fMXK6z0s8ecKs9frCuLJvndBg==}
 
@@ -4166,14 +4174,8 @@ packages:
     resolution: {integrity: sha512-rVksvsnNCdJ/ohGc6xgPwyN8eheCxsiLM8mxuE/t/mOVqJewPuO1miLpTHQiRgTKCLexL4MeAFVagts7HmNZ2Q==}
     engines: {node: '>=10'}
 
-  zalgo-promise@1.0.48:
-    resolution: {integrity: sha512-LLHANmdm53+MucY9aOFIggzYtUdkSBFxUsy4glTTQYNyK6B3uCPWTbfiGvSrEvLojw0mSzyFJ1/RRLv+QMNdzQ==}
-
   zod@3.23.8:
     resolution: {integrity: sha512-XBx9AXhXktjUqnepgTiE5flcKIYWi/rme0Eaj+5Y0lftuGBq+jyRu/md4WnuxqgP1ubdpNCsYEYPxrzVHD8d6g==}
-
-  zoid@9.0.86:
-    resolution: {integrity: sha512-hWcLj0s4cHKErUUn0Nz2bvuCStA9/y3sz/0gFxvAhompu9v54i+Pik0Kx39pWPB8qbiEN7MRyHohv1ZERlHeSg==}
 
   zustand@5.0.0:
     resolution: {integrity: sha512-LE+VcmbartOPM+auOjCCLQOsQ05zUTp8RkgwRzefUk+2jISdMMFnxvyTjA4YNWr5ZGXYbVsEMZosttuxUBkojQ==}
@@ -5926,11 +5928,6 @@ snapshots:
 
   '@tanstack/table-core@8.20.5': {}
 
-  '@tebexio/tebex.js@1.4.0':
-    dependencies:
-      nanoevents: 8.0.0
-      zoid: 9.0.86
-
   '@trpc/client@11.0.0-rc.592(@trpc/server@11.0.0-rc.592)':
     dependencies:
       '@trpc/server': 11.0.0-rc.592
@@ -5973,6 +5970,12 @@ snapshots:
   '@types/json-schema@7.0.15': {}
 
   '@types/json5@0.0.29': {}
+
+  '@types/lodash.debounce@4.0.9':
+    dependencies:
+      '@types/lodash': 4.17.13
+
+  '@types/lodash@4.17.13': {}
 
   '@types/mdast@4.0.4':
     dependencies:
@@ -6214,12 +6217,6 @@ snapshots:
 
   base64-js@1.5.1: {}
 
-  belter@1.0.190:
-    dependencies:
-      cross-domain-safe-weakmap: 1.0.29
-      cross-domain-utils: 2.0.38
-      zalgo-promise: 1.0.48
-
   binary-extensions@2.3.0: {}
 
   brace-expansion@1.1.11:
@@ -6355,14 +6352,6 @@ snapshots:
       is-what: 4.1.16
 
   crelt@1.0.6: {}
-
-  cross-domain-safe-weakmap@1.0.29:
-    dependencies:
-      cross-domain-utils: 2.0.38
-
-  cross-domain-utils@2.0.38:
-    dependencies:
-      zalgo-promise: 1.0.48
 
   cross-spawn@7.0.3:
     dependencies:
@@ -7223,6 +7212,8 @@ snapshots:
 
   ignore@5.3.2: {}
 
+  immer@10.1.1: {}
+
   import-fresh@3.3.0:
     dependencies:
       parent-module: 1.0.1
@@ -7454,6 +7445,8 @@ snapshots:
       p-locate: 5.0.0
 
   lodash.castarray@4.4.0: {}
+
+  lodash.debounce@4.0.8: {}
 
   lodash.isplainobject@4.0.6: {}
 
@@ -7905,8 +7898,6 @@ snapshots:
       object-assign: 4.1.1
       thenify-all: 1.6.0
 
-  nanoevents@8.0.0: {}
-
   nanoid@3.3.7: {}
 
   natural-compare@1.4.0: {}
@@ -8043,9 +8034,9 @@ snapshots:
       lru-cache: 10.4.3
       minipass: 7.1.2
 
-  persist-and-sync@1.2.1(zustand@5.0.0(react@19.0.0-rc-65a56d0e-20241020)(types-react@19.0.0-rc.1)(use-sync-external-store@1.2.2(react@19.0.0-rc-65a56d0e-20241020))):
+  persist-and-sync@1.2.1(zustand@5.0.0(immer@10.1.1)(react@19.0.0-rc-65a56d0e-20241020)(types-react@19.0.0-rc.1)(use-sync-external-store@1.2.2(react@19.0.0-rc-65a56d0e-20241020))):
     dependencies:
-      zustand: 5.0.0(react@19.0.0-rc-65a56d0e-20241020)(types-react@19.0.0-rc.1)(use-sync-external-store@1.2.2(react@19.0.0-rc-65a56d0e-20241020))
+      zustand: 5.0.0(immer@10.1.1)(react@19.0.0-rc-65a56d0e-20241020)(types-react@19.0.0-rc.1)(use-sync-external-store@1.2.2(react@19.0.0-rc-65a56d0e-20241020))
 
   picocolors@1.1.1: {}
 
@@ -8060,14 +8051,6 @@ snapshots:
       sharp: 0.33.5
 
   possible-typed-array-names@1.0.0: {}
-
-  post-robot@10.0.46:
-    dependencies:
-      belter: 1.0.190
-      cross-domain-safe-weakmap: 1.0.29
-      cross-domain-utils: 2.0.38
-      universal-serialize: 1.0.10
-      zalgo-promise: 1.0.48
 
   postcss-import@15.1.0(postcss@8.4.47):
     dependencies:
@@ -8206,6 +8189,11 @@ snapshots:
       tslib: 2.8.0
     optionalDependencies:
       '@types/react': types-react@19.0.0-rc.1
+
+  react-turnstile@1.1.4(react-dom@19.0.0-rc-65a56d0e-20241020(react@19.0.0-rc-65a56d0e-20241020))(react@19.0.0-rc-65a56d0e-20241020):
+    dependencies:
+      react: 19.0.0-rc-65a56d0e-20241020
+      react-dom: 19.0.0-rc-65a56d0e-20241020(react@19.0.0-rc-65a56d0e-20241020)
 
   react@19.0.0-rc-65a56d0e-20241020: {}
 
@@ -8725,8 +8713,6 @@ snapshots:
       unist-util-is: 6.0.0
       unist-util-visit-parents: 6.0.1
 
-  universal-serialize@1.0.10: {}
-
   uri-js@4.4.1:
     dependencies:
       punycode: 2.3.1
@@ -8842,20 +8828,12 @@ snapshots:
 
   yocto-queue@0.1.0: {}
 
-  zalgo-promise@1.0.48: {}
-
   zod@3.23.8: {}
 
-  zoid@9.0.86:
-    dependencies:
-      belter: 1.0.190
-      cross-domain-utils: 2.0.38
-      post-robot: 10.0.46
-      zalgo-promise: 1.0.48
-
-  zustand@5.0.0(react@19.0.0-rc-65a56d0e-20241020)(types-react@19.0.0-rc.1)(use-sync-external-store@1.2.2(react@19.0.0-rc-65a56d0e-20241020)):
+  zustand@5.0.0(immer@10.1.1)(react@19.0.0-rc-65a56d0e-20241020)(types-react@19.0.0-rc.1)(use-sync-external-store@1.2.2(react@19.0.0-rc-65a56d0e-20241020)):
     optionalDependencies:
       '@types/react': types-react@19.0.0-rc.1
+      immer: 10.1.1
       react: 19.0.0-rc-65a56d0e-20241020
       use-sync-external-store: 1.2.2(react@19.0.0-rc-65a56d0e-20241020)
 

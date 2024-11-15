@@ -1,8 +1,7 @@
 "use client";
 import { cn } from "@/lib/utils";
-import { Product } from "@/types";
+import { type Product } from "@/types";
 import Image from "next/image";
-import { Suspense } from "react";
 import { Carousel } from "react-responsive-carousel";
 
 export const ProductImages = (({ product, productCard }: { product: Product; productCard: boolean }) => {

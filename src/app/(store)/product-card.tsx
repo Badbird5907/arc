@@ -45,9 +45,15 @@ export const ProductCard = ({ product }: { product: Product }) => {
             <div className="py-4 md:py-0">
               <ProductMarkdown product={product} />
             </div>
-            <AddToCartButton product={product} className="w-full mt-auto" />
+            <div className="mt-auto flex flex-row items-end">
+              <p className="text-primary font-bold text-xl">${product.price}</p>
+              {product.type === "subscription" && (
+                <p className="text-accent-foreground/40 font-bold text-sm self-end ml-1">/{product.expiryPeriod}</p>
+              )}
+            </div>
           </div>
         </div>
+        <AddToCartButton product={product} className="w-full mt-auto" />
       </DialogContent>
     </Dialog>
   )

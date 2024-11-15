@@ -2,11 +2,13 @@
 
 import { appConfig } from "@/app/app-config";
 import { useCart } from "@/components/cart";
+import { CartPopoverContent } from "@/components/header/cart/popover";
 import { StoreLoginDialog } from "@/components/header/store/login";
 import { PlayerSkinImage } from "@/components/player-skin";
-import { Button } from "@/components/ui/button";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { cn } from "@/lib/utils";
+import { ShoppingCart } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -48,15 +50,32 @@ export function MainNav({ admin, store }: { admin?: boolean; store?: boolean }) 
       {store && (
         <div className="flex flex-row ml-auto">
           {!!player ? (
-            <Button size="xl" className="mr-4">
-              <PlayerSkinImage player={player}
-                renderConfig={{
-                  name: "ultimate",
-                  crop: "bust"
-                }}
-              />
-              {player.name}
-            </Button>
+            <Popover>
+              <PopoverTrigger asChild>
+                <button className="flex flex-row items-center gap-2">
+                  <PlayerSkinImage
+                    name={player.name}
+                    renderConfig={{
+                      name: "pixel",
+                      crop: "face"
+                    }}
+                    height={40}
+                    width={40}
+                    className="rounded-md"
+                  />
+                  <div className="flex flex-col">
+                    <p>{player.name}</p>
+                    <p className="text-xs flex items-center gap-1">
+                      <ShoppingCart size={16} />
+                      Cart
+                    </p>
+                  </div>
+                </button>
+              </PopoverTrigger>
+              <PopoverContent>
+                <CartPopoverContent />
+              </PopoverContent>
+            </Popover>
           ) : (
             <StoreLoginDialog />
           )}

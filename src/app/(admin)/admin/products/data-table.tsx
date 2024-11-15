@@ -55,7 +55,7 @@ export const productsCols: ColumnDef<Omit<Product, "description">>[] = [
       return (
         <Button
           variant="ghost"
-          className="translate-x-[-20px]" // TODO: fix
+          className="translate-x-[-20px]"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
           Price
