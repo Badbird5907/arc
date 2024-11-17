@@ -7,6 +7,7 @@ import {
   doublePrecision,
   index,
   integer,
+  jsonb,
   pgEnum,
   pgTableCreator,
   text,
@@ -144,6 +145,42 @@ export const productRelations = relations(products, ({ one }) => ({
   })
 }))
 
+export const paymentProviders = pgEnum("payment_provider", ["tebex"])
+export const orderStatus = pgEnum("order_status", ["pending", "completed", "canceled"])
+export const disputeState = pgEnum("dispute_state", ["open", "won", "lost", "closed"])
+
+export const orders = createTable(
+  "orders",
+  {
+    id: uuid("id")
+      .primaryKey()
+      .notNull()
+      .$defaultFn(() => uuidv4()),
+    items: jsonb("items")
+      .notNull()
+      .default([])
+      .$type<Array<{productId: string, quantity: number}>>(),
+    playerUuid: text("player_uuid").notNull(),
+    provider: paymentProviders("provider").notNull(),
+    providerOrderId: text("provider_order_id"),
+    ipAddress: text("ip_address").notNull(),
+    firstName: text("first_name").notNull(),
+    lastName: text("last_name").notNull(),
+    email: text("email").notNull(),
+    status: orderStatus("status").notNull().default("pending"),
+    subtotal: doublePrecision("subtotal").notNull(),
+    disputed: boolean("disputed").default(false).notNull(),
+    disputeState: disputeState("dispute_state"),
+    metadata: jsonb("metadata")
+      .notNull()
+      .default({})
+      .$type<Record<string, unknown>>(),
+
+    createdAt: timestamp("created_at", { precision: 3, mode: "date" })
+      .defaultNow()
+      .notNull(),
+  }
+)
 
 export const settings = createTable(
   "settings",

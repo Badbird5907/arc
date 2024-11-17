@@ -9,7 +9,6 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Spinner } from "@/components/ui/spinner";
 import { Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { env } from "@/env";
 import { api } from "@/trpc/react";
 import { type Product } from "@/types";
 import { ArrowRight, XCircle } from "lucide-react";
@@ -101,7 +100,7 @@ export default function Cart() {
                 <TableFooter>
                   <TableRow className="text-2xl">
                     <TableCell colSpan={4}>
-                      Total
+                      Subtotal
                       </TableCell>
                       <TableCell className="text-right">
                         ${total}

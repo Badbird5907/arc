@@ -1,9 +1,22 @@
+"use client";
 import AnimatedCheckMark from "@/components/animated-checkmark";
 import { Button } from "@/components/ui/button";
+import { useConfetti } from "@/components/ui/hover-confetti";
+import confetti from "canvas-confetti";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
+import { useEffect } from "react";
 
 const Page = ({ params }: { params: { provider: string } }) => {
+  useEffect(() => {
+    void confetti({
+      particleCount: 300,
+      spread: 360,
+      origin: {
+        y: 0.5
+      }
+    });
+  }, []);
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-background text-foreground overflow-y-hidden">
       <div className="container flex max-w-md flex-col items-center text-center">

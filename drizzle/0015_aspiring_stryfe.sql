@@ -1,0 +1,1 @@
+ALTER TABLE "orders" ALTER COLUMN "provider_order_id" DROP NOT NULL;

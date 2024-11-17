@@ -154,18 +154,13 @@ export const createCheckoutSession = async (basket: TebexBasket, packages: Tebex
         }
       ))
     ],
-    sale
+    sale,
   };
-  console.dir(body, {
-    depth: null,
-  });  
   const response = await fetch(url, {
     method: "POST",
     headers: buildHeaders(),
     body: JSON.stringify(body),
   });
-  const text = await response.text();
-  console.log("text", text);
-  // return await response.json() as TebexCheckoutSession;
-  return JSON.parse(text) as TebexCheckoutSession;
+  const json = await response.json() as TebexCheckoutSession;
+  return json;
 }

@@ -28,6 +28,8 @@ export const env = createEnv({
     TURNSTILE_SECRET_KEY: z.string().optional(),
     TEBEX_PRIVATE_KEY: z.string().optional(),
     TEBEX_PROJECT_ID: z.string().optional(),
+    TEBEX_WEBHOOK_SECRET: z.string().optional(),
+    IP_ADDRESS_RESOLVE_HEADER: z.string().default("x-forwarded-for"), // Like x-forwarded-for
   },
 
   /**
@@ -58,7 +60,9 @@ export const env = createEnv({
     TEBEX_PUBLIC_TOKEN: process.env.NEXT_PUBLIC_TEBEX_PUBLIC_TOKEN,
     TEBEX_PRIVATE_KEY: process.env.TEBEX_PRIVATE_KEY,
     TEBEX_PROJECT_ID: process.env.TEBEX_PROJECT_ID,
+    TEBEX_WEBHOOK_SECRET: process.env.TEBEX_WEBHOOK_SECRET,
     BASE_URL: process.env.NEXT_PUBLIC_BASE_URL,
+    IP_ADDRESS_RESOLVE_HEADER: process.env.IP_ADDRESS_RESOLVE_HEADER,
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially

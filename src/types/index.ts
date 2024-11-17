@@ -49,6 +49,9 @@ export const getDefaultValue = <ZodSchema extends z.AnyZodObject>(schema: ZodSch
 export type User = InferResultType<"users">;
 export type Product = InferResultType<"products">;
 export type Category = InferResultType<"categories">;
+export type Order = InferResultType<"orders">;
+
+export type PaymentProvider = "tebex"; // | "coinbase" etc...
 
 export type CategoryWithChildren = Category & {
   children?: Category[]; // children should never have their own children

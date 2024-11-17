@@ -9,6 +9,7 @@ export const LoginProviderButton = ({ provider, providerName, icon }: { provider
       const supabase = createClient();
       const origin = window.location.origin;
       const redirectTo = `${origin}/auth/callback`;
+      console.log(redirectTo);
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: provider,
         options: {

@@ -9,6 +9,7 @@ import SuperJSON from "superjson";
 
 import { type AppRouter } from "@/server/api/root";
 import { createQueryClient } from "./query-client";
+import { env } from "@/env";
 
 let clientQueryClientSingleton: QueryClient | undefined = undefined;
 const getQueryClient = () => {
@@ -72,5 +73,6 @@ export function TRPCReactProvider(props: { children: React.ReactNode }) {
 function getBaseUrl() {
   if (typeof window !== "undefined") return window.location.origin;
   if (process.env.VERCEL_URL) return `https://${process.env.VERCEL_URL}`;
+  if (env.BASE_URL) return env.BASE_URL;
   return `http://localhost:${process.env.PORT ?? 3000}`;
 }
