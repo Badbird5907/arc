@@ -51,6 +51,21 @@ export type Product = InferResultType<"products">;
 export type Category = InferResultType<"categories">;
 export type Order = InferResultType<"orders">;
 
+export type QueuedCommand = InferResultType<"queuedCommands">;
+
+export type SensitiveServer = InferResultType<"servers">;
+export type Server = Omit<SensitiveServer, "secretKey">;
+
+export const zodDelivery = z.object({
+  type: z.literal("command"),
+  value: z.string(),
+  scope: z.string(),
+  when: z.enum(["purchase", "expire", "purchase_expire", "renew", "chargeback"]).default("purchase"),
+  requireOnline: z.boolean().default(false),
+  delay: z.number().default(0),
+})
+export type Delivery = z.infer<typeof zodDelivery>;
+
 export type PaymentProvider = "tebex"; // | "coinbase" etc...
 
 export type CategoryWithChildren = Category & {

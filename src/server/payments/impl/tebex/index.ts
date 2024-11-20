@@ -23,7 +23,6 @@ export class TebexPaymentProvider implements PaymentProvider {
     const packages: TebexPackage[] = products.map((product) => {
       if (!product.product) return null;
       const p = product.product;
-      console.log(typeof p.price, p.price);
       return {
         name: p.name,
         price: typeof p.price === "string" ? Number(p.price) : p.price,

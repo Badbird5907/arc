@@ -16,6 +16,7 @@ import {
 } from "drizzle-orm/pg-core";
 import { rolesArr } from "@/lib/permissions";
 import { relations, sql } from "drizzle-orm";
+import { Delivery } from "@/types";
 
 /**
  * This is an example of how to use the multi-project schema feature of Drizzle ORM. Use the same
@@ -64,7 +65,7 @@ export const categories = createTable(
     sortPriority: integer("sort_priority").default(0).notNull(),
     bannerImage: text("banner_image"),
     cardImage: text("card_image"),
-    description: text("description"),
+    description: text("description").default(""),
     showCategoryCards: boolean("show_category_cards").default(true).notNull(),
 
     createdAt: timestamp("created_at", { precision: 3, mode: "date" })
@@ -117,6 +118,10 @@ export const products = createTable(
     expiryLength: integer("expiry_length").notNull().default(1),
     categoryId: uuid("category_id").references(() => categories.id, { onDelete: "restrict" }),
     sortPriority: integer("sort_priority").default(0).notNull(),
+
+    // game server command, or other stuff
+    delivery: jsonb("delivery").$type<Delivery[]>(),
+
     createdAt: timestamp("created_at", { precision: 3, mode: "date" })
       .defaultNow()
       .notNull(),
@@ -189,6 +194,46 @@ export const settings = createTable(
     value: text("value").notNull(),
     lastModified: timestamp("last_modified", { precision: 3, mode: "date" })
       .defaultNow()
+      .notNull(),
+  }
+)
+
+export const queuedCommands = createTable(
+  "queued_commands",
+  {
+    id: uuid("id")
+      .primaryKey()
+      .notNull()
+      .$defaultFn(() => uuidv4()),
+    orderId: uuid("order_id").references(() => orders.id, { onDelete: "restrict" }),
+    minecraftUuid: uuid("minecraft_uuid").notNull(),
+    requireOnline: boolean("require_online").notNull().default(false),
+    delay: integer("delay").notNull().default(0),
+    payload: text("payload").notNull(),
+    createdAt: timestamp("created_at", { precision: 3, mode: "date" })
+      .defaultNow()
+      .notNull(),
+  }
+)
+
+export const serverType = pgEnum("server_type", ["minecraft", "other"])
+export const servers = createTable(
+  "servers",
+  {
+    id: uuid("id")
+      .primaryKey()
+      .notNull()
+      .$defaultFn(() => uuidv4()),
+    name: text("name").notNull().unique(),
+    secretKey: text("secret_key").notNull(),
+    type: serverType("type").notNull().default("minecraft"),
+    notes: text("notes").default(""),
+    createdAt: timestamp("created_at", { precision: 3, mode: "date" })
+      .defaultNow()
+      .notNull(),
+    lastModified: timestamp("last_modified", { precision: 3, mode: "date" })
+      .defaultNow()
+      .$onUpdate(() => new Date())
       .notNull(),
   }
 )

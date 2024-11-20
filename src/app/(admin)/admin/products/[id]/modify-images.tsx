@@ -12,8 +12,9 @@ import { Plus, TrashIcon } from "lucide-react";
 import Image from "next/image";
 import { useTransition } from "react";
 import { Carousel } from "react-responsive-carousel";
-import "react-responsive-carousel/lib/styles/carousel.min.css";
 import { toast } from "sonner";
+
+import "react-responsive-carousel/lib/styles/carousel.min.css";
 
 export const ModifyImagesCard = ({ product }: { product: Product }) => {
   const { images } = product;

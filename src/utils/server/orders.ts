@@ -1,13 +1,38 @@
 import { db } from "@/server/db";
-import { orders } from "@/server/db/schema";
-import { type Order } from "@/types";
+import { orders, queuedCommands } from "@/server/db/schema";
+import { type Product, type QueuedCommand, type Order } from "@/types";
 import { eq } from "drizzle-orm";
+import { v4 as uuidv4 } from "uuid";
 
 export const completeOrder = async (order: Order) => {
   await db.update(orders).set({
     status: "completed"
   }).where(eq(orders.id, order.id));
   // TODO: emails, webhooks, trigger on game server
+  
+  const productIds = order.items.map((item) => item.productId);
+  const products = await db.query.products.findMany({
+    where: (p, { inArray }) => inArray(p.id, productIds)
+  });
+  const queuedCommandsArr: QueuedCommand[] = [];
+  products.forEach((product: Product) => {
+    order.items.forEach((item) => {
+      if (item.productId === product.id) {
+        product.delivery?.forEach((delivery) => {
+          queuedCommandsArr.push({
+            id: uuidv4(),
+            createdAt: new Date(),
+            orderId: order.id,
+            minecraftUuid: order.playerUuid,
+            requireOnline: delivery.requireOnline,
+            delay: delivery.delay,
+            payload: delivery.value
+          })
+        })
+      }
+    })
+  })
+  await db.insert(queuedCommands).values(queuedCommandsArr);
 }
 
 export const declineOrder = async (order: Order, reason: string) => {

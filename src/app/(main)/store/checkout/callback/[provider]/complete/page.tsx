@@ -1,7 +1,6 @@
 "use client";
 import AnimatedCheckMark from "@/components/animated-checkmark";
 import { Button } from "@/components/ui/button";
-import { useConfetti } from "@/components/ui/hover-confetti";
 import confetti from "canvas-confetti";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";

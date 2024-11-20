@@ -1,4 +1,4 @@
-import { pgEnum } from "drizzle-orm/pg-core";
+import { env } from "@/env";
 import rbac from "rbac-ts";
 
 // WHEN MODIFYING, ADD TO 
@@ -11,6 +11,7 @@ export const roles = {
     can: [
       "products:*",
       "settings:*",
+      "servers:*"
     ],
     inherits: ["user"]
   },
@@ -18,10 +19,11 @@ export const roles = {
     can: [
       "products:*",
       "users:*",
+      "servers:*",
       "admin:*"
     ],
     inherits: ["admin"]
   }
 }
 
-export const RBAC = rbac({ enableLogger: typeof window === "undefined" })(roles); // enable on server
+export const RBAC = rbac({ enableLogger: typeof window === "undefined" && env.APP_ENV === "development" })(roles); // enable on server

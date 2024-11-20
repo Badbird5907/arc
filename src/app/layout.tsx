@@ -13,6 +13,9 @@ export const metadata: Metadata = {
   title: appConfig.title,
   description: appConfig.shortDescription,
   icons: [{ rel: "icon", url: "/favicon.ico" }],
+  other: {
+    "darkreader-lock": "f"
+  }
 };
 
 const poppins = Poppins({ subsets: ["latin"], weight: "700" });

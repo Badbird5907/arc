@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle } from "@/components/ui/card"
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { api } from "@/trpc/react";
-import { ProductAndCategory, type Product } from "@/types";
+import { type ProductAndCategory, type Product } from "@/types";
 import { Eye, EyeClosed, Trash } from "lucide-react";
 import { useTransition } from "react";
 import { toast } from "sonner";

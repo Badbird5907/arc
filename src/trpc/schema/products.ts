@@ -1,3 +1,4 @@
+import { zodDelivery } from "@/types";
 import { z } from "zod";
 
 export const createProductInput = z.object({
@@ -28,6 +29,7 @@ export const basicProductDataForm = z.object({ // only the values that are contr
   expiryPeriod: z.enum(["day", "month", "year"]).optional(),
   expiryLength: z.coerce.number().min(1).optional(),
   sortPriority: z.coerce.number().optional(),
+  delivery: z.array(zodDelivery).optional(),
 })
 
 export const optionalProductData = basicProductDataForm.merge(z.object({

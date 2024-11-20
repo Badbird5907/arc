@@ -1,6 +1,7 @@
 "use client";
 import { ProductActionsCard } from "@/app/(admin)/admin/products/[id]/actions-card";
 import { EditProductBasic } from "@/app/(admin)/admin/products/[id]/edit-basic";
+import { EditDeliveryCard } from "@/app/(admin)/admin/products/[id]/edit-delivery";
 import { ModifyImagesCard } from "@/app/(admin)/admin/products/[id]/modify-images";
 import { ErrorPage } from "@/components/pages/error";
 import { Badge } from "@/components/ui/badge";
@@ -25,8 +26,8 @@ const ProductPageClient = ({ id }: { id: string }) => {
           <ProductActionsCard product={product} />
           <ModifyImagesCard product={product} />
         </div>
-        
       </div>
+      <EditDeliveryCard product={product} />
     </div>
   );
 }

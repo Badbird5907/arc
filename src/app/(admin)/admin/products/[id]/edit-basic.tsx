@@ -7,7 +7,6 @@ import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel } fr
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Spinner } from "@/components/ui/spinner";
-import { Switch } from "@/components/ui/switch";
 import { basicProductDataForm } from "@/trpc/schema/products";
 import { type Product } from "@/types";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -71,7 +70,7 @@ export const EditProductBasic = ({ product, className }: { product: Product; cla
       </CardHeader>
       <CardContent>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-4">
+          <form onSubmit={form.handleSubmit((data) => onSubmit(data as z.infer<typeof basicProductData>))} className="flex flex-col gap-4">
             <div className="flex flex-col md:flex-row gap-2 w-full">
               <FormField
                 control={form.control}

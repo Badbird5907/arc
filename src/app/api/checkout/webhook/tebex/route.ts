@@ -125,7 +125,6 @@ export const POST = async (req: Request) => {
   if (finalHash !== sig) {
     return new Response("Invalid hash", { status: 400 });
   }
-  console.log("data", data);
 
   const splitType = data.type.split(".");
   const baseType = splitType[0];

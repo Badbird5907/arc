@@ -127,6 +127,55 @@
       "when": 1731808521715,
       "tag": "0017_numerous_millenium_guard",
       "breakpoints": true
+    },
+    {
+      "idx": 18,
+      "version": "7",
+      "when": 1731818914848,
+      "tag": "0018_cold_scourge",
+      "breakpoints": true
+    },
+    {
+      "idx": 19,
+      "version": "7",
+      "when": 1731994678321,
+      "tag": "0019_keen_hemingway",
+      "breakpoints": true
+    },
+    {
+      "idx": 20,
+      "version": "7",
+      "when": 1731994706019,
+      "tag": "0020_ambiguous_shadowcat",
+      "breakpoints": true
+    },
+    {
+      "idx": 21,
+      "version": "7",
+      "when": 1732025595787,
+      "tag": "0021_flowery_malcolm_colcord",
+      "breakpoints": true
+    },
+    {
+      "idx": 22,
+      "version": "7",
+      "when": 1732026130164,
+      "tag": "0022_familiar_wind_dancer",
+      "breakpoints": true
+    },
+    {
+      "idx": 23,
+      "version": "7",
+      "when": 1732027025228,
+      "tag": "0023_aspiring_triton",
+      "breakpoints": true
+    },
+    {
+      "idx": 24,
+      "version": "7",
+      "when": 1732046401045,
+      "tag": "0024_dear_invisible_woman",
+      "breakpoints": true
     }
   ]
 }

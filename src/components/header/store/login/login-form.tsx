@@ -15,7 +15,7 @@ export const LoginForm = ({ editionState, close }: { editionState: [string | nul
 
   const setPlayer = useCart((state) => state.setPlayer)
   const { data: player, isLoading } = api.utils.fetchPlayer.useQuery({ name: username, bedrock: editionState[0] === "bedrock" });
-  const valid = (!isLoading && player && !player.notFound && 'data' in player && 'name' in player.data);
+  const valid = (!isLoading && player && 'data' in player && 'name' in player.data);
   return (
     <div className="flex flex-col md:flex-row items-start gap-6 p-2">
       <div className="w-40 h-35 flex items-start justify-center overflow-hidden place-self-center bg-accent/80 rounded-lg pt-1">
@@ -45,16 +45,16 @@ export const LoginForm = ({ editionState, close }: { editionState: [string | nul
           placeholder="Enter your Minecraft username"
         />
         <Button
-          className="w-full bg-orange-500 hover:bg-orange-600 text-white"
-          disabled={!username || isLoading || player?.notFound}
+          className="w-full text-white"
+          disabled={!valid}
           loading={isLoading}
           onClick={() => {
-            if (!player || player.notFound || !('data' in player)) return;
+            if (!player || !('data' in player)) return;
             setPlayer(player.data);
             close();
           }}
         >
-          {player?.notFound && username ? "Could not find your account!" : "Continue"}
+          {!valid ? "Could not find your account!" : "Continue"}
         </Button>
       </div>
     </div>

@@ -38,9 +38,11 @@ export const ProductCard = ({ product }: { product: Product }) => {
           </DialogTitle>
         </DialogHeader>
         <div className="flex flex-col md:flex-row gap-6 w-full">
-          <div className="group rounded-lg w-full md:w-1/2">
+          {product.images && product.images.length > 0 && (
+            <div className="group rounded-lg w-full md:w-1/2">
             <ProductImages product={product} productCard={false} />
           </div>
+          )}
           <div className="flex flex-col w-full h-full prose dark:prose-invert">
             <div className="py-4 md:py-0">
               <ProductMarkdown product={product} />
