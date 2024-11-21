@@ -1,1 +1,0 @@
-ALTER TABLE "products" ADD COLUMN "sort_priority" integer DEFAULT 0 NOT NULL;

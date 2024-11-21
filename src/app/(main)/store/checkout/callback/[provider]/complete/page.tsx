@@ -1,5 +1,6 @@
 "use client";
 import AnimatedCheckMark from "@/components/animated-checkmark";
+import { useCart } from "@/components/cart";
 import { Button } from "@/components/ui/button";
 import confetti from "canvas-confetti";
 import { ArrowLeft } from "lucide-react";
@@ -7,6 +8,10 @@ import Link from "next/link";
 import { useEffect } from "react";
 
 const Page = ({ params }: { params: { provider: string } }) => {
+  const cart = useCart();
+  useEffect(() => {
+    cart.clear();
+  }, []);
   useEffect(() => {
     void confetti({
       particleCount: 300,

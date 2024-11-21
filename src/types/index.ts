@@ -60,9 +60,9 @@ export const zodDelivery = z.object({
   type: z.literal("command"),
   value: z.string(),
   scope: z.string(),
-  when: z.enum(["purchase", "expire", "purchase_expire", "renew", "chargeback"]).default("purchase"),
+  when: z.enum(["purchase", "expire", "purchase_expire", "renew", "chargeback", "refund"]).default("purchase"),
   requireOnline: z.boolean().default(false),
-  delay: z.number().default(0),
+  delay: z.coerce.number().default(0),
 })
 export type Delivery = z.infer<typeof zodDelivery>;
 

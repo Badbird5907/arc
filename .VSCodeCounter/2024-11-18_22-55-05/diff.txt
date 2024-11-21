@@ -1,0 +1,139 @@
+Date : 2024-11-18 22:55:05
+Directory : d:\Development\cobalt\src
+Total : 54 files,  1732 codes, 25 comments, 108 blanks, all 1865 lines
+
+Languages
++----------------+------------+------------+------------+------------+------------+
+| language       | files      | code       | comment    | blank      | total      |
++----------------+------------+------------+------------+------------+------------+
+| TypeScript JSX |         30 |        971 |         15 |         43 |      1,029 |
+| TypeScript     |         23 |        744 |         10 |         65 |        819 |
+| JavaScript     |          1 |         17 |          0 |          0 |         17 |
++----------------+------------+------------+------------+------------+------------+
+
+Directories
++-------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| path                                                                                      | files      | code       | comment    | blank      | total      |
++-------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| .                                                                                         |         54 |      1,732 |         25 |        108 |      1,865 |
+| . (Files)                                                                                 |          1 |         17 |          0 |          0 |         17 |
+| app                                                                                       |         18 |        685 |         18 |         29 |        732 |
+| app (Files)                                                                               |          1 |          3 |          0 |          0 |          3 |
+| app\(admin)                                                                               |          4 |        175 |         12 |          5 |        192 |
+| app\(admin)\admin                                                                         |          4 |        175 |         12 |          5 |        192 |
+| app\(admin)\admin\products                                                                |          4 |        175 |         12 |          5 |        192 |
+| app\(admin)\admin\products (Files)                                                        |          1 |          0 |          0 |          1 |          1 |
+| app\(admin)\admin\products\[id]                                                           |          3 |        175 |         12 |          4 |        191 |
+| app\(auth)                                                                                |          2 |         -2 |          4 |          0 |          2 |
+| app\(auth)\auth                                                                           |          2 |         -2 |          4 |          0 |          2 |
+| app\(auth)\auth\callback                                                                  |          1 |         -3 |          4 |          0 |          1 |
+| app\(auth)\auth\login                                                                     |          1 |          1 |          0 |          0 |          1 |
+| app\(main)                                                                                |          3 |         71 |          0 |          4 |         75 |
+| app\(main) (Files)                                                                        |          1 |         -1 |          0 |          0 |         -1 |
+| app\(main)\store                                                                          |          2 |         72 |          0 |          4 |         76 |
+| app\(main)\store\checkout                                                                 |          2 |         72 |          0 |          4 |         76 |
+| app\(main)\store\checkout\callback                                                        |          2 |         72 |          0 |          4 |         76 |
+| app\(main)\store\checkout\callback\[provider]                                             |          2 |         72 |          0 |          4 |         76 |
+| app\(main)\store\checkout\callback\[provider]\complete                                    |          1 |         43 |          0 |          2 |         45 |
+| app\(main)\store\checkout\callback\[provider]\return                                      |          1 |         29 |          0 |          2 |         31 |
+| app\(store)                                                                               |          7 |        284 |          1 |         12 |        297 |
+| app\(store) (Files)                                                                       |          2 |          4 |          0 |          1 |          5 |
+| app\(store)\store                                                                         |          5 |        280 |          1 |         11 |        292 |
+| app\(store)\store\cart                                                                    |          3 |        277 |          1 |         11 |        289 |
+| app\(store)\store\category                                                                |          2 |          3 |          0 |          0 |          3 |
+| app\(store)\store\category\[...slug]                                                      |          2 |          3 |          0 |          0 |          3 |
+| app\api                                                                                   |          1 |        154 |          1 |          8 |        163 |
+| app\api\checkout                                                                          |          1 |        154 |          1 |          8 |        163 |
+| app\api\checkout\webhook                                                                  |          1 |        154 |          1 |          8 |        163 |
+| app\api\checkout\webhook\tebex                                                            |          1 |        154 |          1 |          8 |        163 |
+| components                                                                                |         14 |        462 |          2 |         25 |        489 |
+| components (Files)                                                                        |          4 |        149 |          1 |          9 |        159 |
+| components\cart                                                                           |          2 |         56 |          1 |          3 |         60 |
+| components\header                                                                         |          5 |        184 |          0 |          5 |        189 |
+| components\header (Files)                                                                 |          1 |         19 |          0 |          0 |         19 |
+| components\header\cart                                                                    |          1 |         92 |          0 |          2 |         94 |
+| components\header\store                                                                   |          3 |         73 |          0 |          3 |         76 |
+| components\header\store\login                                                             |          3 |         73 |          0 |          3 |         76 |
+| components\ui                                                                             |          3 |         73 |          0 |          8 |         81 |
+| lib                                                                                       |          4 |         32 |          1 |          7 |         40 |
+| lib (Files)                                                                               |          1 |         -5 |          0 |         -2 |         -7 |
+| lib\utils                                                                                 |          3 |         37 |          1 |          9 |         47 |
+| server                                                                                    |         10 |        424 |          2 |         32 |        458 |
+| server\api                                                                                |          4 |         67 |          0 |          2 |         69 |
+| server\api (Files)                                                                        |          1 |          4 |          0 |          0 |          4 |
+| server\api\routers                                                                        |          3 |         63 |          0 |          2 |         65 |
+| server\db                                                                                 |          1 |         38 |          1 |          4 |         43 |
+| server\helpers                                                                            |          1 |         19 |          0 |          1 |         20 |
+| server\payments                                                                           |          4 |        300 |          1 |         25 |        326 |
+| server\payments (Files)                                                                   |          2 |         93 |          1 |         11 |        105 |
+| server\payments\impl                                                                      |          2 |        207 |          0 |         14 |        221 |
+| server\payments\impl\tebex                                                                |          2 |        207 |          0 |         14 |        221 |
+| trpc                                                                                      |          2 |          4 |          0 |          0 |          4 |
+| trpc (Files)                                                                              |          1 |          2 |          0 |          0 |          2 |
+| trpc\schema                                                                               |          1 |          2 |          0 |          0 |          2 |
+| types                                                                                     |          2 |         24 |          0 |          4 |         28 |
+| utils                                                                                     |          3 |         84 |          2 |         11 |         97 |
+| utils\helpers                                                                             |          1 |          4 |          0 |          3 |          7 |
+| utils\server                                                                              |          2 |         80 |          2 |          8 |         90 |
++-------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+
+Files
++-------------------------------------------------------------------------------------------+----------------+------------+------------+------------+------------+
+| filename                                                                                  | language       | code       | comment    | blank      | total      |
++-------------------------------------------------------------------------------------------+----------------+------------+------------+------------+------------+
+| d:\Development\cobalt\src\app\(admin)\admin\products\[id]\client.tsx                      | TypeScript JSX |          2 |          0 |         -1 |          1 |
+| d:\Development\cobalt\src\app\(admin)\admin\products\[id]\edit-basic.tsx                  | TypeScript JSX |        -12 |         12 |          0 |          0 |
+| d:\Development\cobalt\src\app\(admin)\admin\products\[id]\edit-delivery.tsx               | TypeScript JSX |        185 |          0 |          5 |        190 |
+| d:\Development\cobalt\src\app\(admin)\admin\products\data-table.tsx                       | TypeScript JSX |          0 |          0 |          1 |          1 |
+| d:\Development\cobalt\src\app\(auth)\auth\callback\route.ts                               | TypeScript     |         -3 |          4 |          0 |          1 |
+| d:\Development\cobalt\src\app\(auth)\auth\login\provider-btn.tsx                          | TypeScript JSX |          1 |          0 |          0 |          1 |
+| d:\Development\cobalt\src\app\(main)\page.tsx                                             | TypeScript JSX |         -1 |          0 |          0 |         -1 |
+| d:\Development\cobalt\src\app\(main)\store\checkout\callback\[provider]\complete\page.tsx | TypeScript JSX |         43 |          0 |          2 |         45 |
+| d:\Development\cobalt\src\app\(main)\store\checkout\callback\[provider]\return\page.tsx   | TypeScript JSX |         29 |          0 |          2 |         31 |
+| d:\Development\cobalt\src\app\(store)\layout.tsx                                          | TypeScript JSX |         -2 |          0 |          0 |         -2 |
+| d:\Development\cobalt\src\app\(store)\product-card.tsx                                    | TypeScript JSX |          6 |          0 |          1 |          7 |
+| d:\Development\cobalt\src\app\(store)\store\cart\checkout-card.tsx                        | TypeScript JSX |        130 |          1 |          5 |        136 |
+| d:\Development\cobalt\src\app\(store)\store\cart\checkout-dialog.tsx                      | TypeScript JSX |         21 |          0 |          1 |         22 |
+| d:\Development\cobalt\src\app\(store)\store\cart\page.tsx                                 | TypeScript JSX |        126 |          0 |          5 |        131 |
+| d:\Development\cobalt\src\app\(store)\store\category\[...slug]\images.tsx                 | TypeScript JSX |         -1 |          0 |          0 |         -1 |
+| d:\Development\cobalt\src\app\(store)\store\category\[...slug]\selector.tsx               | TypeScript JSX |          4 |          0 |          0 |          4 |
+| d:\Development\cobalt\src\app\api\checkout\webhook\tebex\route.ts                         | TypeScript     |        154 |          1 |          8 |        163 |
+| d:\Development\cobalt\src\app\layout.tsx                                                  | TypeScript JSX |          3 |          0 |          0 |          3 |
+| d:\Development\cobalt\src\components\animated-cancel.tsx                                  | TypeScript JSX |         53 |          0 |          4 |         57 |
+| d:\Development\cobalt\src\components\animated-checkmark.tsx                               | TypeScript JSX |         54 |          0 |          4 |         58 |
+| d:\Development\cobalt\src\components\cart\add.tsx                                         | TypeScript JSX |         29 |          1 |          0 |         30 |
+| d:\Development\cobalt\src\components\cart\index.ts                                        | TypeScript     |         27 |          0 |          3 |         30 |
+| d:\Development\cobalt\src\components\debounced-input.tsx                                  | TypeScript JSX |         25 |          0 |          1 |         26 |
+| d:\Development\cobalt\src\components\header\cart\popover.tsx                              | TypeScript JSX |         92 |          0 |          2 |         94 |
+| d:\Development\cobalt\src\components\header\main.tsx                                      | TypeScript JSX |         19 |          0 |          0 |         19 |
+| d:\Development\cobalt\src\components\header\store\login\edition-select.tsx                | TypeScript JSX |          1 |          0 |          0 |          1 |
+| d:\Development\cobalt\src\components\header\store\login\index.tsx                         | TypeScript JSX |         13 |          0 |          0 |         13 |
+| d:\Development\cobalt\src\components\header\store\login\login-form.tsx                    | TypeScript JSX |         59 |          0 |          3 |         62 |
+| d:\Development\cobalt\src\components\player-skin.tsx                                      | TypeScript JSX |         17 |          1 |          0 |         18 |
+| d:\Development\cobalt\src\components\ui\button.tsx                                        | TypeScript JSX |          1 |          0 |          0 |          1 |
+| d:\Development\cobalt\src\components\ui\popover.tsx                                       | TypeScript JSX |         26 |          0 |          8 |         34 |
+| d:\Development\cobalt\src\components\ui\spinner.tsx                                       | TypeScript JSX |         46 |          0 |          0 |         46 |
+| d:\Development\cobalt\src\env.js                                                          | JavaScript     |         17 |          0 |          0 |         17 |
+| d:\Development\cobalt\src\lib\utils.ts                                                    | TypeScript     |         -5 |          0 |         -2 |         -7 |
+| d:\Development\cobalt\src\lib\utils\cart.ts                                               | TypeScript     |          9 |          0 |          1 |         10 |
+| d:\Development\cobalt\src\lib\utils\index.ts                                              | TypeScript     |          8 |          0 |          3 |         11 |
+| d:\Development\cobalt\src\lib\utils\persist.ts                                            | TypeScript     |         20 |          1 |          5 |         26 |
+| d:\Development\cobalt\src\server\api\root.ts                                              | TypeScript     |          4 |          0 |          0 |          4 |
+| d:\Development\cobalt\src\server\api\routers\checkout.ts                                  | TypeScript     |         33 |          0 |          2 |         35 |
+| d:\Development\cobalt\src\server\api\routers\products.ts                                  | TypeScript     |         14 |          0 |         -1 |         13 |
+| d:\Development\cobalt\src\server\api\routers\utils.ts                                     | TypeScript     |         16 |          0 |          1 |         17 |
+| d:\Development\cobalt\src\server\db\schema.ts                                             | TypeScript     |         38 |          1 |          4 |         43 |
+| d:\Development\cobalt\src\server\helpers\captcha.ts                                       | TypeScript     |         19 |          0 |          1 |         20 |
+| d:\Development\cobalt\src\server\payments\impl\tebex\api-client.ts                        | TypeScript     |        157 |          0 |         10 |        167 |
+| d:\Development\cobalt\src\server\payments\impl\tebex\index.ts                             | TypeScript     |         50 |          0 |          4 |         54 |
+| d:\Development\cobalt\src\server\payments\index.ts                                        | TypeScript     |         82 |          1 |          9 |         92 |
+| d:\Development\cobalt\src\server\payments\providers.ts                                    | TypeScript     |         11 |          0 |          2 |         13 |
+| d:\Development\cobalt\src\trpc\react.tsx                                                  | TypeScript JSX |          2 |          0 |          0 |          2 |
+| d:\Development\cobalt\src\trpc\schema\products.ts                                         | TypeScript     |          2 |          0 |          0 |          2 |
+| d:\Development\cobalt\src\types\checkout.ts                                               | TypeScript     |         15 |          0 |          2 |         17 |
+| d:\Development\cobalt\src\types\index.ts                                                  | TypeScript     |          9 |          0 |          2 |         11 |
+| d:\Development\cobalt\src\utils\helpers\checkout.ts                                       | TypeScript     |          4 |          0 |          3 |          7 |
+| d:\Development\cobalt\src\utils\server\helpers.ts                                         | TypeScript     |         49 |          0 |          1 |         50 |
+| d:\Development\cobalt\src\utils\server\orders.ts                                          | TypeScript     |         31 |          2 |          7 |         40 |
+| Total                                                                                     |                |      1,732 |         25 |        108 |      1,865 |
++-------------------------------------------------------------------------------------------+----------------+------------+------------+------------+------------+

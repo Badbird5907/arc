@@ -1,0 +1,56 @@
+"filename", "language", "TypeScript JSX", "TypeScript", "JavaScript", "comment", "blank", "total"
+"d:\Development\cobalt\src\app\(admin)\admin\products\[id]\client.tsx", "TypeScript JSX", 2, 0, 0, 0, -1, 1
+"d:\Development\cobalt\src\app\(admin)\admin\products\[id]\edit-basic.tsx", "TypeScript JSX", -12, 0, 0, 12, 0, 0
+"d:\Development\cobalt\src\app\(admin)\admin\products\[id]\edit-delivery.tsx", "TypeScript JSX", 185, 0, 0, 0, 5, 190
+"d:\Development\cobalt\src\app\(admin)\admin\products\data-table.tsx", "TypeScript JSX", 0, 0, 0, 0, 1, 1
+"d:\Development\cobalt\src\app\(auth)\auth\callback\route.ts", "TypeScript", 0, -3, 0, 4, 0, 1
+"d:\Development\cobalt\src\app\(auth)\auth\login\provider-btn.tsx", "TypeScript JSX", 1, 0, 0, 0, 0, 1
+"d:\Development\cobalt\src\app\(main)\page.tsx", "TypeScript JSX", -1, 0, 0, 0, 0, -1
+"d:\Development\cobalt\src\app\(main)\store\checkout\callback\[provider]\complete\page.tsx", "TypeScript JSX", 43, 0, 0, 0, 2, 45
+"d:\Development\cobalt\src\app\(main)\store\checkout\callback\[provider]\return\page.tsx", "TypeScript JSX", 29, 0, 0, 0, 2, 31
+"d:\Development\cobalt\src\app\(store)\layout.tsx", "TypeScript JSX", -2, 0, 0, 0, 0, -2
+"d:\Development\cobalt\src\app\(store)\product-card.tsx", "TypeScript JSX", 6, 0, 0, 0, 1, 7
+"d:\Development\cobalt\src\app\(store)\store\cart\checkout-card.tsx", "TypeScript JSX", 130, 0, 0, 1, 5, 136
+"d:\Development\cobalt\src\app\(store)\store\cart\checkout-dialog.tsx", "TypeScript JSX", 21, 0, 0, 0, 1, 22
+"d:\Development\cobalt\src\app\(store)\store\cart\page.tsx", "TypeScript JSX", 126, 0, 0, 0, 5, 131
+"d:\Development\cobalt\src\app\(store)\store\category\[...slug]\images.tsx", "TypeScript JSX", -1, 0, 0, 0, 0, -1
+"d:\Development\cobalt\src\app\(store)\store\category\[...slug]\selector.tsx", "TypeScript JSX", 4, 0, 0, 0, 0, 4
+"d:\Development\cobalt\src\app\api\checkout\webhook\tebex\route.ts", "TypeScript", 0, 154, 0, 1, 8, 163
+"d:\Development\cobalt\src\app\layout.tsx", "TypeScript JSX", 3, 0, 0, 0, 0, 3
+"d:\Development\cobalt\src\components\animated-cancel.tsx", "TypeScript JSX", 53, 0, 0, 0, 4, 57
+"d:\Development\cobalt\src\components\animated-checkmark.tsx", "TypeScript JSX", 54, 0, 0, 0, 4, 58
+"d:\Development\cobalt\src\components\cart\add.tsx", "TypeScript JSX", 29, 0, 0, 1, 0, 30
+"d:\Development\cobalt\src\components\cart\index.ts", "TypeScript", 0, 27, 0, 0, 3, 30
+"d:\Development\cobalt\src\components\debounced-input.tsx", "TypeScript JSX", 25, 0, 0, 0, 1, 26
+"d:\Development\cobalt\src\components\header\cart\popover.tsx", "TypeScript JSX", 92, 0, 0, 0, 2, 94
+"d:\Development\cobalt\src\components\header\main.tsx", "TypeScript JSX", 19, 0, 0, 0, 0, 19
+"d:\Development\cobalt\src\components\header\store\login\edition-select.tsx", "TypeScript JSX", 1, 0, 0, 0, 0, 1
+"d:\Development\cobalt\src\components\header\store\login\index.tsx", "TypeScript JSX", 13, 0, 0, 0, 0, 13
+"d:\Development\cobalt\src\components\header\store\login\login-form.tsx", "TypeScript JSX", 59, 0, 0, 0, 3, 62
+"d:\Development\cobalt\src\components\player-skin.tsx", "TypeScript JSX", 17, 0, 0, 1, 0, 18
+"d:\Development\cobalt\src\components\ui\button.tsx", "TypeScript JSX", 1, 0, 0, 0, 0, 1
+"d:\Development\cobalt\src\components\ui\popover.tsx", "TypeScript JSX", 26, 0, 0, 0, 8, 34
+"d:\Development\cobalt\src\components\ui\spinner.tsx", "TypeScript JSX", 46, 0, 0, 0, 0, 46
+"d:\Development\cobalt\src\env.js", "JavaScript", 0, 0, 17, 0, 0, 17
+"d:\Development\cobalt\src\lib\utils.ts", "TypeScript", 0, -5, 0, 0, -2, -7
+"d:\Development\cobalt\src\lib\utils\cart.ts", "TypeScript", 0, 9, 0, 0, 1, 10
+"d:\Development\cobalt\src\lib\utils\index.ts", "TypeScript", 0, 8, 0, 0, 3, 11
+"d:\Development\cobalt\src\lib\utils\persist.ts", "TypeScript", 0, 20, 0, 1, 5, 26
+"d:\Development\cobalt\src\server\api\root.ts", "TypeScript", 0, 4, 0, 0, 0, 4
+"d:\Development\cobalt\src\server\api\routers\checkout.ts", "TypeScript", 0, 33, 0, 0, 2, 35
+"d:\Development\cobalt\src\server\api\routers\products.ts", "TypeScript", 0, 14, 0, 0, -1, 13
+"d:\Development\cobalt\src\server\api\routers\utils.ts", "TypeScript", 0, 16, 0, 0, 1, 17
+"d:\Development\cobalt\src\server\db\schema.ts", "TypeScript", 0, 38, 0, 1, 4, 43
+"d:\Development\cobalt\src\server\helpers\captcha.ts", "TypeScript", 0, 19, 0, 0, 1, 20
+"d:\Development\cobalt\src\server\payments\impl\tebex\api-client.ts", "TypeScript", 0, 157, 0, 0, 10, 167
+"d:\Development\cobalt\src\server\payments\impl\tebex\index.ts", "TypeScript", 0, 50, 0, 0, 4, 54
+"d:\Development\cobalt\src\server\payments\index.ts", "TypeScript", 0, 82, 0, 1, 9, 92
+"d:\Development\cobalt\src\server\payments\providers.ts", "TypeScript", 0, 11, 0, 0, 2, 13
+"d:\Development\cobalt\src\trpc\react.tsx", "TypeScript JSX", 2, 0, 0, 0, 0, 2
+"d:\Development\cobalt\src\trpc\schema\products.ts", "TypeScript", 0, 2, 0, 0, 0, 2
+"d:\Development\cobalt\src\types\checkout.ts", "TypeScript", 0, 15, 0, 0, 2, 17
+"d:\Development\cobalt\src\types\index.ts", "TypeScript", 0, 9, 0, 0, 2, 11
+"d:\Development\cobalt\src\utils\helpers\checkout.ts", "TypeScript", 0, 4, 0, 0, 3, 7
+"d:\Development\cobalt\src\utils\server\helpers.ts", "TypeScript", 0, 49, 0, 0, 1, 50
+"d:\Development\cobalt\src\utils\server\orders.ts", "TypeScript", 0, 31, 0, 2, 7, 40
+"Total", "-", 971, 744, 17, 25, 108, 1865

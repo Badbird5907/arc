@@ -151,7 +151,7 @@ export const productRelations = relations(products, ({ one }) => ({
 }))
 
 export const paymentProviders = pgEnum("payment_provider", ["tebex"])
-export const orderStatus = pgEnum("order_status", ["pending", "completed", "canceled"])
+export const orderStatus = pgEnum("order_status", ["pending", "completed", "canceled", "refunded"])
 export const disputeState = pgEnum("dispute_state", ["open", "won", "lost", "closed"])
 
 export const orders = createTable(
@@ -205,16 +205,35 @@ export const queuedCommands = createTable(
       .primaryKey()
       .notNull()
       .$defaultFn(() => uuidv4()),
-    orderId: uuid("order_id").references(() => orders.id, { onDelete: "restrict" }),
+    orderId: uuid("order_id").notNull().references(() => orders.id, { onDelete: "cascade" }),
     minecraftUuid: uuid("minecraft_uuid").notNull(),
     requireOnline: boolean("require_online").notNull().default(false),
     delay: integer("delay").notNull().default(0),
     payload: text("payload").notNull(),
+    server: uuid("server").notNull(),
+    executed: boolean("executed").notNull().default(false),
     createdAt: timestamp("created_at", { precision: 3, mode: "date" })
       .defaultNow()
       .notNull(),
-  }
+  },
+  (table) => ({
+    queuedCommandOrderIndex: index("queued_command_order_index").on(table.orderId),
+    queuedCommandPlayerUuidIndex: index("queued_command_player_uuid_index").on(table.minecraftUuid),
+  })
 )
+
+export const queuedCommandRelations = relations(queuedCommands, ({ one }) => ({
+  order: one(orders, {
+    fields: [queuedCommands.orderId],
+    references: [orders.id],
+    relationName: "queued_command_order_relation",
+  }),
+  server: one(servers, {
+    fields: [queuedCommands.server],
+    references: [servers.id],
+    relationName: "queued_command_server_relation",
+  })
+}))
 
 export const serverType = pgEnum("server_type", ["minecraft", "other"])
 export const servers = createTable(

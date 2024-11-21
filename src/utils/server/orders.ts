@@ -1,8 +1,77 @@
 import { db } from "@/server/db";
 import { orders, queuedCommands } from "@/server/db/schema";
 import { type Product, type QueuedCommand, type Order } from "@/types";
+import { variables } from "@/utils/helpers/delivery-variables";
 import { eq } from "drizzle-orm";
 import { v4 as uuidv4 } from "uuid";
+
+const resolveProducts = async (order: Order) => {
+  const productIds = order.items.map((item) => item.productId);
+  const products = await db.query.products.findMany({
+    where: (p, { inArray }) => inArray(p.id, productIds)
+  });
+  return products;
+}
+
+const queueCommandsWhere = async (when: string, order: Order) => {
+  const products = await resolveProducts(order);
+  const queuedCommandsArr: QueuedCommand[] = [];
+  
+  await Promise.all(products.map(async (product: Product) => {
+    await Promise.all(order.items.map(async (item) => {
+      if (item.productId === product.id && product.delivery) {
+        await Promise.all(
+          product.delivery.map(async (delivery) => {
+            if (delivery.when === when) {
+              console.log(delivery.value);
+              // find a list of variables in the payload
+              const vars = delivery.value.match(/\{([^}]+)\}/g);
+              let payload = delivery.value;
+              
+              if (vars) {
+                // fetch values
+                const varsWithValues = await Promise.all(
+                  vars.map(async (v) => {
+                    const varName = v.replace(/[{}]/g, "");
+                    const variable = variables.find((var_) => var_.name === varName);
+                    const value = await variable?.replace(varName, order, product);
+                    return {
+                      name: varName,
+                      value
+                    };
+                  })
+                );
+
+                // Replace variables in payload
+                varsWithValues.forEach(({name, value}) => {
+                  payload = payload.replace(`{${name}}`, String(value));
+                });
+              }
+
+              queuedCommandsArr.push({
+                id: uuidv4(),
+                createdAt: new Date(),
+                orderId: order.id,
+                minecraftUuid: order.playerUuid,
+                requireOnline: delivery.requireOnline,
+                delay: delivery.delay,
+                payload,
+                server: delivery.scope,
+                executed: false
+              });
+            }
+          })
+        );
+      }
+    }));
+  }));
+  
+  if (queuedCommandsArr.length > 0) {
+    await db.insert(queuedCommands).values(queuedCommandsArr);
+  }
+  
+  return queuedCommandsArr;
+};
 
 export const completeOrder = async (order: Order) => {
   await db.update(orders).set({
@@ -10,29 +79,7 @@ export const completeOrder = async (order: Order) => {
   }).where(eq(orders.id, order.id));
   // TODO: emails, webhooks, trigger on game server
   
-  const productIds = order.items.map((item) => item.productId);
-  const products = await db.query.products.findMany({
-    where: (p, { inArray }) => inArray(p.id, productIds)
-  });
-  const queuedCommandsArr: QueuedCommand[] = [];
-  products.forEach((product: Product) => {
-    order.items.forEach((item) => {
-      if (item.productId === product.id) {
-        product.delivery?.forEach((delivery) => {
-          queuedCommandsArr.push({
-            id: uuidv4(),
-            createdAt: new Date(),
-            orderId: order.id,
-            minecraftUuid: order.playerUuid,
-            requireOnline: delivery.requireOnline,
-            delay: delivery.delay,
-            payload: delivery.value
-          })
-        })
-      }
-    })
-  })
-  await db.insert(queuedCommands).values(queuedCommandsArr);
+  await queueCommandsWhere("purchase", order);
 }
 
 export const declineOrder = async (order: Order, reason: string) => {
@@ -54,5 +101,17 @@ export const disputeUpdate = async (order: Order, state: "open" | "won" | "lost"
     disputeState: state
   }).where(eq(orders.id, order.id));
   // TODO: webhook, ban player
+  if (state === "open") { // fire on chargeback
+    await queueCommandsWhere("chargeback", order);
+  }
+}
+
+export const refundOrder = async (order: Order) => {
+  await Promise.all([
+    db.update(orders).set({
+      status: "refunded"
+    }).where(eq(orders.id, order.id)),
+    queueCommandsWhere("refund", order)
+  ]);
 }
 

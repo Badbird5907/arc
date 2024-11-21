@@ -21,6 +21,7 @@ export type CartStore = {
   removeItem: (id: string) => void;
   setQuantity: (id: string, quantity: number) => void;
   setPlayer: (player: PlayerInfo | null) => void;
+  clear: () => void;
 }
 export const useCart = create<CartStore>()(
   persist(
@@ -46,7 +47,8 @@ export const useCart = create<CartStore>()(
         }
         return obj;
       }),
-      setQuantity: (id, quantity) => set((state: CartStore) => ({ items: { ...state.items, [id]: quantity } }))
+      setQuantity: (id, quantity) => set((state: CartStore) => ({ items: { ...state.items, [id]: quantity } })),
+      clear: () => set({ items: {}, player: null, subscriptionItem: null })
     })),
     {
 			name: "cobalt-cart",

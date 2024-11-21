@@ -29,7 +29,6 @@ export const getPlayer = async (username: string): Promise<{data: PlayerInfo} | 
   const enableBedrock = await getSetting("enableBedrock");
   if (!enableBedrock && bedrock) return { notFound: true };
   const cached = await get<PlayerInfo | { notFound: true }>(`player:${username}`);
-  console.log("cached", cached, typeof cached);
   if (cached) {
     if ("notFound" in cached && cached.notFound) return { notFound: true };
     return { data: cached as PlayerInfo };
@@ -42,6 +41,7 @@ export const getPlayer = async (username: string): Promise<{data: PlayerInfo} | 
     return { notFound: true };
   }
   if (!response.ok) {
+    console.error("got response", response.status);
     throw new TRPCError({
       code: "BAD_REQUEST",
       message: `Error: ${response.status}`
@@ -58,4 +58,56 @@ export const getPlayer = async (username: string): Promise<{data: PlayerInfo} | 
   };
   waitUntil(set(`player:${username}`, data));
   return { data };
+}
+
+const uuidToXuid = (uuid: string) => {
+  // replace all - with nothing
+  const one = uuid.replace(/-/g, "");
+  // grab the last 13 chars, and parse them as a base 16 number
+  const two = one.slice(-13);
+  return parseInt(two, 16);
+}
+export const getPlayerFromUuid = async (uuid: string): Promise<{data: PlayerInfo} | { notFound: true }> => {
+  const cached = await get<PlayerInfo | { notFound: true }>(`player:${uuid}`);
+  if (cached) {
+    if ("notFound" in cached && cached.notFound) return { notFound: true };
+    return { data: cached as PlayerInfo };
+  }
+  const fixed = fixUUID(uuid);
+  const bedrock = fixed.startsWith("00000000");
+  if (bedrock) {
+    // parse the xuid from the uuid
+    const xuid = uuidToXuid(fixed);
+    const gamertag = await fetch(`https://api.geysermc.org/v2/xbox/gamertag/${xuid}`);
+    const result = await gamertag.json() as {
+      gamertag?: string;
+      message?: string;
+    };
+    if (!result.gamertag) {
+      return { notFound: true };
+    }
+    const data = {
+      uuid: fixed,
+      name: result.gamertag!,
+      bedrock
+    };
+    waitUntil(set(`player:${uuid}`, data));
+    return { data };
+  }
+  const profile = await fetch(`https://sessionserver.mojang.com/session/minecraft/profile/${fixed}`);
+  if (profile.status === 404 || profile.status === 204) {
+    return { notFound: true };
+  }
+  const result = await profile.json() as {
+    id: string;
+    name: string;
+  };
+  const data = {
+    uuid: fixed,
+    name: result.name,
+    bedrock
+  };
+  waitUntil(set(`player:${uuid}`, data));
+  return { data };
+
 }

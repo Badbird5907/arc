@@ -1,1 +1,0 @@
-ALTER TABLE "categories" ADD COLUMN "show_category_cards" boolean DEFAULT true NOT NULL;
