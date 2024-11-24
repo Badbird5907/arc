@@ -49,7 +49,7 @@ export const SetProductCategoryDropdown = ({ product, defaultParentName, setPare
               {selectedName}
             </div>
           ) : "No Category"}
-          {isPending && <Spinner className="ml-auto" />}
+          {isPending && <Spinner className="ml-auto" size={24} />}
           <ChevronsUpDown className="h-4 w-4" />
         </div>
       </DropdownMenuTrigger>

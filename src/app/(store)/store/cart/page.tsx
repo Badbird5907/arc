@@ -11,6 +11,7 @@ import { Spinner } from "@/components/ui/spinner";
 import { Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { api } from "@/trpc/react";
 import { type Product } from "@/types";
+import { formatExpiryPeriod } from "@/utils";
 import { ArrowRight, XCircle } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -85,7 +86,14 @@ export default function Cart() {
                             {product.name}
                           </p>
                         </TableHead>
-                        <TableHead className="text-inherit">${product.price}</TableHead>
+                        <TableHead className="text-inherit">
+                          ${product.price}
+                          {product.type === "subscription" ? (
+                            <span className="text-sm text-gray-500">
+                              /{formatExpiryPeriod(product.expiryPeriod, product.expiryLength)}
+                            </span>
+                          ) : ""}
+                        </TableHead>
                         <TableHead className="text-inherit">{cart.items[product.id]}</TableHead>
                         <TableHead className="text-inherit">${(cart.items[product.id] ?? 0) * product.price}</TableHead>
                         <TableHead>

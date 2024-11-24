@@ -12,8 +12,8 @@ export const GET = async (req: Request, { params }: { params: { uuid: string } }
   if (!isValidUuid(uuid)) {
     return new Response("Invalid UUID", { status: 400 });
   }
-  const command = await db.query.queuedCommands.findFirst({
+  const commands = await db.query.queuedCommands.findMany({
     where: (q, { eq, and }) => and(eq(q.server, server.id), eq(q.minecraftUuid, uuid), eq(q.executed, false))
   });
-  return NextResponse.json(command);
+  return NextResponse.json(commands);
 }

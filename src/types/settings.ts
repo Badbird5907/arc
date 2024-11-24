@@ -27,6 +27,13 @@ export const allSettings = [
     type: "boolean",
   },
   {
+    key: "discordWebhook",
+    name: "Discord Webhook",
+    description: "The Discord webhook to send notifications to",
+    defaultValue: "",
+    type: "string",
+  },
+  {
     key: "dummyString",
     name: "Dummy String",
     description: "A dummy string setting",

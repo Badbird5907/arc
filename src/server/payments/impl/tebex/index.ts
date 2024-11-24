@@ -1,5 +1,5 @@
 import { env } from "@/env";
-import { createCheckoutSession, type TebexSale, type TebexBasket, type TebexPackage } from "@/server/payments/impl/tebex/api-client";
+import { createCheckoutSession, type TebexBasket, type TebexPackage } from "@/server/payments/impl/tebex/api-client";
 import { type PaymentProvider } from "@/server/payments/providers";
 import { type Order, type Product } from "@/types";
 import { type Checkout } from "@/types/checkout";
@@ -35,12 +35,7 @@ export class TebexPaymentProvider implements PaymentProvider {
         }
       }
     }).filter(item => !!item) as TebexPackage[];
-    const sale: TebexSale = {
-      name: "Sale",
-      discount_type: "percentage",
-      amount: 10,
-    }
-    const session = await createCheckoutSession(basket, packages, sale);
+    const session = await createCheckoutSession(basket, packages);
     return {
       metadata: session,
       updateOrder: {

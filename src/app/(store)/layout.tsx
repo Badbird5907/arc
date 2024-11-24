@@ -1,3 +1,4 @@
+import { Footer } from "@/components/footer"
 import { SiteHeader } from "@/components/header"
 import { StoreHeader } from "@/components/header/store"
 import { api, HydrateClient } from "@/trpc/server"
@@ -18,6 +19,7 @@ export default async function StoreLayout({
         <StoreHeader />
         {children}
       </main>
+      <Footer />
     </HydrateClient>
   )
 }

@@ -15,6 +15,41 @@
       "when": 1732114330251,
       "tag": "0001_pretty_archangel",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1732216369603,
+      "tag": "0002_greedy_miek",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1732293286191,
+      "tag": "0003_nifty_chamber",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1732293531888,
+      "tag": "0004_tense_rick_jones",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1732306158471,
+      "tag": "0005_freezing_genesis",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1732306184674,
+      "tag": "0006_elite_grim_reaper",
+      "breakpoints": true
     }
   ]
 }

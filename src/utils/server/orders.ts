@@ -22,6 +22,7 @@ const queueCommandsWhere = async (when: string, order: Order) => {
       if (item.productId === product.id && product.delivery) {
         await Promise.all(
           product.delivery.map(async (delivery) => {
+            if (!delivery.scope) return; // skip if no scope
             if (delivery.when === when) {
               console.log(delivery.value);
               // find a list of variables in the payload
@@ -67,6 +68,7 @@ const queueCommandsWhere = async (when: string, order: Order) => {
   }));
   
   if (queuedCommandsArr.length > 0) {
+    console.log("Inserting:", queuedCommandsArr)
     await db.insert(queuedCommands).values(queuedCommandsArr);
   }
   
@@ -115,3 +117,19 @@ export const refundOrder = async (order: Order) => {
   ]);
 }
 
+export const renewOrder = async (order: Order) => {
+  await Promise.all([
+    db.update(orders).set({
+      subscriptionStatus: "active",
+      lastRenewedAt: new Date()
+    }).where(eq(orders.id, order.id)),
+    queueCommandsWhere("renew", order)
+  ]);
+}
+
+export const expireOrder = async (order: Order) => {
+  await db.update(orders).set({
+    subscriptionStatus: "expired"
+  }).where(eq(orders.id, order.id));
+  await queueCommandsWhere("expire", order);
+}

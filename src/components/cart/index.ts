@@ -53,7 +53,7 @@ export const useCart = create<CartStore>()(
     {
 			name: "cobalt-cart",
 			storage: createJSONStorage(() => localStorage),
-      partialize: (state: CartStore) => ({ items: state.items, player: state.player }),
+      partialize: (state: CartStore) => ({ items: state.items, player: state.player, subscriptionItem: state.subscriptionItem }),
       onRehydrateStorage: (state) => {
         return () => state.setHasHydrated(true);
       }

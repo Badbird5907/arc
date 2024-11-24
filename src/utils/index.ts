@@ -8,3 +8,9 @@ export const expiryPeriodToDays = (period: TebexPackage["expiry_period"], length
   }
   return 0;
 }
+export const formatExpiryPeriod = (period: TebexPackage["expiry_period"], length: number) => {
+  if (length === 1) {
+    return period;
+  }
+  return `${length} ${period}s`;
+}

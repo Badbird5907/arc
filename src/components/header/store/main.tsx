@@ -97,12 +97,19 @@ const ListItem = React.forwardRef<
     imageUrl: string | null;
   }
 >(({ className, title, children, imageUrl, ...props }, ref) => {
-  if (imageUrl) {
-    console.log(`Image URL: ${imageUrl}`)
-  }
+  const [isImageLoaded, setIsImageLoaded] = React.useState(false);
+
+  React.useEffect(() => {
+    if (imageUrl) {
+      const img = new Image();
+      img.src = imageUrl;
+      img.onload = () => setIsImageLoaded(true);
+    }
+  }, [imageUrl]);
+
   return (
     <li className="rounded-lg bg-cover bg-center bg-no-repeat" style={{
-      backgroundImage: `url(${imageUrl})`
+      backgroundImage: isImageLoaded ? `url(${imageUrl})` : 'none'
     }}>
       <NavigationMenuLink asChild style={{
         backdropFilter: "blur(5px)",

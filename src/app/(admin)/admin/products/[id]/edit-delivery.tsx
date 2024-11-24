@@ -46,9 +46,9 @@ export const EditDeliveryCard = ({ product }: { product: Product }) => {
 
   const [variables, setVariables] = useState<{ name: string; description: string; }[]>([]);
   useEffect(() => {
-    getVariableListAction().then(setVariables);
+    void getVariableListAction().then(setVariables);
   }, []);
-  
+
   return (
     <Card>
       <CardHeader>
@@ -125,7 +125,11 @@ export const EditDeliveryCard = ({ product }: { product: Product }) => {
                           <SelectValue placeholder="When" />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="purchase">On Purchase</SelectItem>
+                          <SelectItem value="purchase">
+                            On 
+                            {product.type === "subscription" ? " (first) " : " "}
+                            Purchase
+                          </SelectItem>
                           {product.type === "subscription" && (
                             <>
                               <SelectItem value="expire">On Expire</SelectItem>

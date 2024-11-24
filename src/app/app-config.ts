@@ -1,5 +1,6 @@
 import { type Metadata } from "next";
-
+import type React from "react";
+import { FaDiscord, FaYoutube, FaTwitter } from "react-icons/fa";
 export type SiteConfig = {
   title: string;
   description: string;
@@ -10,6 +11,12 @@ export type SiteConfig = {
     checkExact?: boolean;
     className?: string | ((isActive?: boolean) => string);
   }[];
+  footer: {
+    icons: {
+      icon: React.ElementType;
+      link: string;
+    }[];
+  }
 } & Metadata;
 export const discord = "https://discord.gg/cSEV8EAByx";
 export const appConfig: SiteConfig = {
@@ -31,4 +38,20 @@ export const appConfig: SiteConfig = {
       link: discord,
     },
   ],
+  footer: {
+    icons: [
+      {
+        icon: FaYoutube,
+        link: "https://www.youtube.com/channel/UC7oMVLCvDrQOJh8b7tmN8cg",
+      },
+      {
+        icon: FaDiscord,
+        link: discord,
+      },
+      {
+        icon: FaTwitter,
+        link: "https://x.com/RDufji",
+      }
+    ]
+  }
 };

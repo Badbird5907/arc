@@ -153,6 +153,7 @@ export const productRelations = relations(products, ({ one }) => ({
 export const paymentProviders = pgEnum("payment_provider", ["tebex"])
 export const orderStatus = pgEnum("order_status", ["pending", "completed", "canceled", "refunded"])
 export const disputeState = pgEnum("dispute_state", ["open", "won", "lost", "closed"])
+export const subscriptionStatus = pgEnum("subscription_status", ["active", "expired", "canceled"])
 
 export const orders = createTable(
   "orders",
@@ -165,7 +166,7 @@ export const orders = createTable(
       .notNull()
       .default([])
       .$type<Array<{productId: string, quantity: number}>>(),
-    playerUuid: text("player_uuid").notNull(),
+    playerUuid: uuid("player_uuid").notNull(),
     provider: paymentProviders("provider").notNull(),
     providerOrderId: text("provider_order_id"),
     ipAddress: text("ip_address").notNull(),
@@ -173,6 +174,7 @@ export const orders = createTable(
     lastName: text("last_name").notNull(),
     email: text("email").notNull(),
     status: orderStatus("status").notNull().default("pending"),
+    subscriptionStatus: subscriptionStatus("subscription_status").default("active"),
     subtotal: doublePrecision("subtotal").notNull(),
     disputed: boolean("disputed").default(false).notNull(),
     disputeState: disputeState("dispute_state"),
@@ -180,7 +182,8 @@ export const orders = createTable(
       .notNull()
       .default({})
       .$type<Record<string, unknown>>(),
-
+    lastRenewedAt: timestamp("last_renewed_at", { precision: 3, mode: "date" }),
+    recurringTransactionIds: text("recurring_transaction_ids").array().default([]),
     createdAt: timestamp("created_at", { precision: 3, mode: "date" })
       .defaultNow()
       .notNull(),

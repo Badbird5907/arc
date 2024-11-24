@@ -24,7 +24,7 @@ export const StoreLoginDialog = () => {
           Login
         </Button>
       </DialogTrigger>
-      <DialogContent className="w-[95vw] md:w-[25vw] max-w-full">
+      <DialogContent className="w-[95vw] md:w-[30vw] max-w-full">
         <DialogHeader>
           <DialogTitle>
             {stage == "edition" ? "Select Edition" : "Login"}

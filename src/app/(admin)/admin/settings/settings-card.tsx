@@ -50,7 +50,9 @@ export const SettingsCard = ({ setting }: { setting: SettingWithValue<keyof Sett
         {setting.type === "number" && (
           <Input value={value as number} onChange={(e) => setValue(Number(e.target.value))} type="number" />
         )}
-        <p className="text-xs text-accent-foreground/50">Default: {String(setting.defaultValue)}</p>
+        {setting.defaultValue !== "" && (
+          <p className="text-xs text-accent-foreground/50">Default: {String(setting.defaultValue)}</p>
+        )}
       </CardContent>
       <CardFooter className="mt-auto">
         <Button onClick={() => {

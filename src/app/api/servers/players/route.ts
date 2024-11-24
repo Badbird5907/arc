@@ -11,7 +11,7 @@ export const GET = async (req: Request) => {
   }
   const players = await db
     .selectDistinct({
-      uuid: queuedCommands.minecraftUuid
+      uuid: queuedCommands.minecraftUuid,
     })
     .from(queuedCommands)
     .where(
@@ -20,6 +20,5 @@ export const GET = async (req: Request) => {
         eq(queuedCommands.executed, false)
       )
     )
-    .orderBy(asc(queuedCommands.createdAt));
   return NextResponse.json(players);
 }
