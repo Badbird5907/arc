@@ -1,0 +1,1 @@
+ALTER TABLE "orders" ADD COLUMN "recurring_transaction_ids" text[] DEFAULT '{}';

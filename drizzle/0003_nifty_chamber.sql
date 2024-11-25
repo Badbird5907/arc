@@ -1,0 +1,1 @@
+ALTER TABLE "orders" ADD COLUMN "last_renewed_at" timestamp (3);
