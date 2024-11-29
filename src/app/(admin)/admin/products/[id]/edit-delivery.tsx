@@ -12,7 +12,7 @@ import { getVariableListAction } from "@/server/actions/variables";
 import { api } from "@/trpc/react";
 import { type Delivery, type Product, zodDelivery } from "@/types";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { DotsHorizontalIcon } from "@radix-ui/react-icons";
+import { DotsHorizontalIcon, QuestionMarkCircledIcon } from "@radix-ui/react-icons";
 import { InfoIcon, PlusIcon, TrashIcon } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
@@ -54,59 +54,79 @@ export const EditDeliveryCard = ({ product }: { product: Product }) => {
       <CardHeader>
         <CardTitle className="w-full flex flex-col justify-between gap-2">
           <span className="block md:hidden">Delivery</span>
-          <div className="flex flex-row gap-2">
+          <div className="flex flex-row gap-2 justify-between">
             <span className="hidden md:block content-center">Delivery</span>
-            <Dialog>
-              <DialogTrigger asChild className="ml-0 md:ml-auto">
-                <Button variant="outline" className="">
-                  <InfoIcon className="w-4 h-4" />
-                  Variables
-                </Button>
-              </DialogTrigger>
-              <DialogContent>
-                <DialogHeader>
-                  <DialogTitle>
-                    Variables
-                  </DialogTitle>
-                </DialogHeader>
-                <DialogDescription>
-                  <span>A list of variables that can be used in the delivery commands.</span>
-                  <span className="flex flex-row gap-2 items-center pt-2">
+            <div className="flex flex-col md:flex-row gap-2 w-full justify-end">
+              {product.type === "subscription" && (
+                <Dialog>
+                  <DialogTrigger asChild className="w-full md:w-fit">
+                    <Button variant="outline" className="">
+                      <QuestionMarkCircledIcon className="w-4 h-4" />
+                      Subscriptions
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent>
+                    <DialogHeader>
+                      <DialogTitle>
+                        Subscriptions
+                      </DialogTitle>
+                    </DialogHeader>
+                    <span>Use the <code className="bg-zinc-800 px-1.5 py-0.5 rounded text-sm">On Renew</code> trigger to queue commands when a subscription is renewed. It will also trigger on the initial purchase.</span>
+                  </DialogContent>
+                </Dialog>
+              )}
+              <Dialog>
+                <DialogTrigger asChild className="w-full md:w-fit">
+                  <Button variant="outline" className="">
                     <InfoIcon className="w-4 h-4" />
-                    Click on a variable to copy it to the clipboard.
-                  </span>
-                </DialogDescription>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Variable</TableHead>
-                      <TableHead>Description</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {variables?.map((variable) => (
-                      <TableRow key={variable.name}>
-                        <TableCell>
-                          <button className="text-left w-full" onClick={() => {
-                            void navigator.clipboard.writeText(`{${variable.name}}`);
-                            toast.success("Copied to clipboard!");
-                          }}>
-                            {"{" + variable.name + "}"}
-                          </button>
-                        </TableCell>
-                        <TableCell>{variable.description}</TableCell>
+                    Variables
+                  </Button>
+                </DialogTrigger>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>
+                      Variables
+                    </DialogTitle>
+                  </DialogHeader>
+                  <DialogDescription>
+                    <span>A list of variables that can be used in the delivery commands.</span>
+                    <span className="flex flex-row gap-2 items-center pt-2">
+                      <InfoIcon className="w-4 h-4" />
+                      Click on a variable to copy it to the clipboard.
+                    </span>
+                  </DialogDescription>
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Variable</TableHead>
+                        <TableHead>Description</TableHead>
                       </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </DialogContent>
-            </Dialog>
-            <CopyDelivery setDelivery={(delivery) => {
-              form.setValue("delivery", delivery);
-            }} />
-            <Button type="button" onClick={() => append({ type: "command", value: "", scope: "", when: "purchase", requireOnline: false, delay: 0 })} className="w-fit">
-              <PlusIcon className="w-4 h-4" />
-            </Button>
+                    </TableHeader>
+                    <TableBody>
+                      {variables?.map((variable) => (
+                        <TableRow key={variable.name}>
+                          <TableCell>
+                            <button className="text-left w-full" onClick={() => {
+                              void navigator.clipboard.writeText(`{${variable.name}}`);
+                              toast.success("Copied to clipboard!");
+                            }}>
+                              {"{" + variable.name + "}"}
+                            </button>
+                          </TableCell>
+                          <TableCell>{variable.description}</TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </DialogContent>
+              </Dialog>
+              <CopyDelivery setDelivery={(delivery) => {
+                form.setValue("delivery", delivery);
+              }} />
+              <Button type="button" onClick={() => append({ type: "command", value: "", scope: "", when: "purchase", requireOnline: false, delay: 0 })} className="w-full md:w-fit">
+                <PlusIcon className="w-4 h-4" />
+              </Button>
+            </div>
           </div>
         </CardTitle>
       </CardHeader>
@@ -126,15 +146,14 @@ export const EditDeliveryCard = ({ product }: { product: Product }) => {
                         </SelectTrigger>
                         <SelectContent>
                           <SelectItem value="purchase">
-                            On 
+                            On
                             {product.type === "subscription" ? " (first) " : " "}
                             Purchase
                           </SelectItem>
                           {product.type === "subscription" && (
                             <>
-                              <SelectItem value="expire">On Expire</SelectItem>
-                              <SelectItem value="purchase_expire">On Purchase & Expire</SelectItem>
                               <SelectItem value="renew">On Renew</SelectItem>
+                              <SelectItem value="expire">On Expire</SelectItem>
                             </>
                           )}
                           <SelectItem value="chargeback">On Chargeback</SelectItem>

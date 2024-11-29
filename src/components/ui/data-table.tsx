@@ -1,9 +1,9 @@
 import { Button } from "@/components/ui/button"
 import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Cell, type ColumnDef, type ColumnFiltersState, flexRender, getCoreRowModel, getFilteredRowModel, getPaginationRowModel, getSortedRowModel, type SortingState, useReactTable, type VisibilityState } from "@tanstack/react-table"
+import { Cell, type ColumnDef, type ColumnFiltersState, flexRender, getCoreRowModel, getFilteredRowModel, getPaginationRowModel, getSortedRowModel, PaginationState, type SortingState, Updater, useReactTable, type VisibilityState } from "@tanstack/react-table"
 import { ChevronDown } from "lucide-react"
-import React, { useEffect, type JSX } from "react"
+import React, { Dispatch, SetStateAction, useEffect, type JSX } from "react"
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
@@ -13,22 +13,28 @@ interface DataTableProps<TData, TValue> {
 export function DataTable<TData, TValue>({
   columns,
   data,
-  hideIdDefault = true,
   actionsBar,
   globalFilter,
+  paginationData = undefined,
+  defaultHiddenColumns = ["id"],
 }: DataTableProps<TData, TValue> & {
   hideIdDefault?: boolean;
   actionsBar?: JSX.Element | JSX.Element[];
   globalFilter?: string;
+  paginationData?: {
+    rowCount: number;
+    state: [PaginationState, Dispatch<SetStateAction<PaginationState>>]
+  }
+  defaultHiddenColumns?: string[]
 }) {
   const [sorting, setSorting] = React.useState<SortingState>([])
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
   )
   const [columnVisibility, setColumnVisibility] =
-    React.useState<VisibilityState>({
-      ...(hideIdDefault ? { id: false } : {}),
-    })
+    React.useState<VisibilityState>(
+      defaultHiddenColumns.reduce((acc, col) => ({ ...acc, [col]: false }), {})
+    )
   const [rowSelection, setRowSelection] = React.useState({})
   const table = useReactTable({
     data,
@@ -50,12 +56,17 @@ export function DataTable<TData, TValue>({
       });
       return filtered;
     },
+    ...(paginationData ? {
+      onPaginationChange: paginationData.state?.[1],
+      manualPagination: true,
+    } : {}),
     state: {
       sorting,
       columnFilters,
       columnVisibility,
       rowSelection,
-      globalFilter
+      globalFilter,
+      ...(paginationData ? { pagination: paginationData.state?.[0] } : {}),
     },
   });
 

@@ -28,11 +28,11 @@ export async function Footer() {
             <div className="hidden md:block mx-4 h-4 w-px bg-border" aria-hidden="true" />
             <div className="md:hidden w-full h-px bg-border my-2" aria-hidden="true" />
             <Link
-              href="https://badbird.dev?ref=arc"
+              href="https://arc.badbird.dev/"
               target="_blank"
               className="text-sm text-muted-foreground hover:text-foreground transition-colors"
             >
-              Designed & Developed by Evan Yu
+              Powered by Arc
             </Link>
           </div>
         </div>
@@ -40,6 +40,11 @@ export async function Footer() {
       <div className="absolute bottom-2 left-2 text-xs text-muted-foreground/40">
         <Link href={url} target="_blank" className="hover:text-foreground/40 transition-colors">
           {version}
+        </Link>
+      </div>
+      <div className="absolute bottom-2 right-2 text-xs text-muted-foreground/40">
+        <Link href="https://badbird.dev?ref=arc" target="_blank" className="hover:text-foreground/40 transition-colors">
+          Designed & Developed by Evan Yu
         </Link>
       </div>
     </footer>

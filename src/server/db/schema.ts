@@ -9,6 +9,7 @@ import {
   integer,
   jsonb,
   pgEnum,
+  pgTable,
   pgTableCreator,
   text,
   timestamp,
@@ -29,7 +30,7 @@ export const createTable = pgTableCreator((name) => name);
 export const rolesPgEnum = pgEnum("roles", rolesArr);
 
 // When modifying this table, make sure to modify the database function in db_functions/signup.sql
-export const users = createTable(
+export const users = pgTable(
   "users",
   {
     id: uuid("id")
@@ -76,14 +77,13 @@ export const categories = createTable(
       .$onUpdate(() => new Date())
       .notNull(),
   },
-  (table) => ({
-    searchIndex: index("categories_search_index").using(
+  (table) => ([index("categories_search_index").using(
       "gin",
       sql`(
         setweight(to_tsvector('english', ${table.name}), 'A')
       )`
     ),
-  })
+  ])
 )
 export const categoryRelations = relations(categories, ({ one, many }) => ({
   parentCategory: one(categories, {
@@ -130,15 +130,15 @@ export const products = createTable(
       .$onUpdate(() => new Date())
       .notNull(),
   },
-  (table) => ({
-    searchIndex: index("products_search_index").using(
+  (table) => ([
+    index("products_search_index").using(
       "gin",
       sql`(
         setweight(to_tsvector('english', ${table.name}), 'A') ||
         setweight(to_tsvector('english', ${table.description}), 'B')
       )`
     ),
-  })
+  ])
 )
 
 
@@ -151,7 +151,8 @@ export const productRelations = relations(products, ({ one }) => ({
 }))
 
 export const paymentProviders = pgEnum("payment_provider", ["tebex"])
-export const orderStatus = pgEnum("order_status", ["pending", "completed", "canceled", "refunded"])
+export const orderStatus = ["pending", "completed", "canceled", "refunded"] as const;
+export const pgOrderStatus = pgEnum("order_status", orderStatus)
 export const disputeState = pgEnum("dispute_state", ["open", "won", "lost", "closed"])
 export const subscriptionStatus = pgEnum("subscription_status", ["active", "expired", "canceled"])
 
@@ -173,7 +174,7 @@ export const orders = createTable(
     firstName: text("first_name").notNull(),
     lastName: text("last_name").notNull(),
     email: text("email").notNull(),
-    status: orderStatus("status").notNull().default("pending"),
+    status: pgOrderStatus("status").notNull().default("pending"),
     subscriptionStatus: subscriptionStatus("subscription_status").default("active"),
     subtotal: doublePrecision("subtotal").notNull(),
     disputed: boolean("disputed").default(false).notNull(),
@@ -187,7 +188,18 @@ export const orders = createTable(
     createdAt: timestamp("created_at", { precision: 3, mode: "date" })
       .defaultNow()
       .notNull(),
-  }
+  },
+  (table) => ([
+    index("orders_search_index").using(
+      "gin",
+      sql`(
+        setweight(to_tsvector('english'::regconfig, coalesce(${table.ipAddress}, '')), 'A') ||
+        setweight(to_tsvector('english'::regconfig, coalesce(${table.firstName}, '')), 'B') ||
+        setweight(to_tsvector('english'::regconfig, coalesce(${table.lastName}, '')), 'C') ||
+        setweight(to_tsvector('english'::regconfig, coalesce(${table.email}, '')), 'D')
+      )`
+    ),
+  ])
 )
 
 export const settings = createTable(
@@ -219,10 +231,10 @@ export const queuedCommands = createTable(
       .defaultNow()
       .notNull(),
   },
-  (table) => ({
-    queuedCommandOrderIndex: index("queued_command_order_index").on(table.orderId),
-    queuedCommandPlayerUuidIndex: index("queued_command_player_uuid_index").on(table.minecraftUuid),
-  })
+  (table) => ([
+    index("queued_command_order_index").on(table.orderId),
+    index("queued_command_player_uuid_index").on(table.minecraftUuid),
+  ])
 )
 
 export const queuedCommandRelations = relations(queuedCommands, ({ one }) => ({

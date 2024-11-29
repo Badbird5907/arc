@@ -6,6 +6,7 @@ import type {
 
 import type * as schema from "@/server/db/schema";
 import { z } from "zod";
+import { PlayerInfo } from "@/components/cart";
 
 type Schema = typeof schema;
 type TSchema = ExtractTablesWithRelations<Schema>;
@@ -51,16 +52,22 @@ export type Product = InferResultType<"products">;
 export type Category = InferResultType<"categories">;
 export type Order = InferResultType<"orders">;
 
+export type OrderWithPlayer = Order & {
+  player: PlayerInfo | null;
+}
+
 export type QueuedCommand = InferResultType<"queuedCommands">;
 
 export type SensitiveServer = InferResultType<"servers">;
 export type Server = Omit<SensitiveServer, "secretKey">;
 
+export const subscriptionDeliveryWhen = ["expire", "renew"] as const;
+export const deliveryWhen = ["purchase", ...subscriptionDeliveryWhen, "chargeback", "refund"] as const;
 export const zodDelivery = z.object({
   type: z.literal("command"),
   value: z.string(),
   scope: z.string(),
-  when: z.enum(["purchase", "expire", "purchase_expire", "renew", "chargeback", "refund"]).default("purchase"),
+  when: z.enum(deliveryWhen).default("purchase"),
   requireOnline: z.boolean().default(false),
   delay: z.coerce.number().default(0),
 })

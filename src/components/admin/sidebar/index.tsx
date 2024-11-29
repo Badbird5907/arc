@@ -13,7 +13,8 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
 import { type User } from "@/types"
-import { Boxes, Home, Settings, ChevronUp, Server } from "lucide-react"
+import { Boxes, Home, Settings, ChevronUp, Server, Package } from "lucide-react"
+import Link from "next/link"
 
 export const adminSidebarItems = [
   {
@@ -28,16 +29,16 @@ export const adminSidebarItems = [
     permission: "admin:products:view",
   },
   {
+    title: "Orders",
+    url: "/orders",
+    icon: Package,
+    permission: "admin:orders:view",
+  },
+  {
     title: "Servers",
     url: "/servers",
     icon: Server,
     permission: "admin:servers:view",
-  },
-  {
-    title: "Orders",
-    url: "/orders",
-    icon: Server,
-    permission: "admin:orders:view",
   },
   {
     title: "Settings",
@@ -52,16 +53,16 @@ export function AdminSidebar({ user }: { user: User }) {
     <Sidebar>
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel>{appConfig.title}</SidebarGroupLabel>
+          <SidebarGroupLabel>Arc - Admin</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {adminSidebarItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild>
-                    <a href={`/admin/${item.url}`}>
+                    <Link href={`/admin${item.url}`} prefetch={false}>
                       <item.icon />
                       <span>{item.title}</span>
-                    </a>
+                    </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}

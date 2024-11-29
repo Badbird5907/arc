@@ -1,7 +1,7 @@
 import { env } from "@/env";
 import { db } from "@/server/db";
 import { orders, queuedCommands } from "@/server/db/schema";
-import { type Product, type QueuedCommand, type Order } from "@/types";
+import { type Product, type QueuedCommand, type Order, deliveryWhen } from "@/types";
 import { variables } from "@/utils/helpers/delivery-variables";
 import { embedColors, getOrderWebhook, sendOrderWebhook } from "@/utils/helpers/discord";
 import { Embed } from "@vermaysha/discord-webhook";
@@ -16,7 +16,7 @@ const resolveProducts = async (order: Order) => {
   return products;
 }
 
-const queueCommandsWhere = async (when: string, order: Order) => {
+export const queueCommandsWhere = async (when: (typeof deliveryWhen)[number], order: Order) => {
   const products = await resolveProducts(order);
   const queuedCommandsArr: QueuedCommand[] = [];
   
