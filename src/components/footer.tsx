@@ -28,7 +28,7 @@ export async function Footer() {
             <div className="hidden md:block mx-4 h-4 w-px bg-border" aria-hidden="true" />
             <div className="md:hidden w-full h-px bg-border my-2" aria-hidden="true" />
             <Link
-              href="https://badbird.dev?ref=cobalt"
+              href="https://badbird.dev?ref=arc"
               target="_blank"
               className="text-sm text-muted-foreground hover:text-foreground transition-colors"
             >

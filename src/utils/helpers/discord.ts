@@ -23,7 +23,7 @@ export const sendOrderWebhook = async (embed: Embed, defaultFooter = true) => {
   }
   if (defaultFooter) {   
     await webhook.addEmbed(embed.setFooter({
-      text: "Powered by Cobalt"
+      text: "Powered by Arc"
     })).send();
   } else {
     await webhook.addEmbed(embed).send();

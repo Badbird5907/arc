@@ -1,7 +1,7 @@
 import { db } from "@/server/db";
 
 export const getServer = async (req: Request) => {
-  const header = req.headers.get("x-cobalt-secret");
+  const header = req.headers.get("x-arc-secret");
   if (!header) {
     return false;
   }
