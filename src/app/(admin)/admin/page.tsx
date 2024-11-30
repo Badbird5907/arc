@@ -1,5 +1,4 @@
 import { adminWrapper } from "@/app/(admin)/admin/admin-panel";
-import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList } from "@/components/ui/breadcrumb";
 
 const Page = adminWrapper(async ({ user }) => {
   return (

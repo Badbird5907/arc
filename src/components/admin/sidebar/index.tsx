@@ -1,6 +1,6 @@
 import { appConfig } from "@/app/app-config"
 import { AdminSidebarLogout } from "@/components/admin/sidebar/logout"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import {
   Sidebar,
   SidebarContent,
@@ -32,6 +32,12 @@ export const adminSidebarItems = [
     url: "/servers",
     icon: Server,
     permission: "admin:servers:view",
+  },
+  {
+    title: "Orders",
+    url: "/orders",
+    icon: Server,
+    permission: "admin:orders:view",
   },
   {
     title: "Settings",

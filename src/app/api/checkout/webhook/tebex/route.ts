@@ -1,7 +1,7 @@
 import { env } from "@/env";
 import { db } from "@/server/db";
 import { orders } from "@/server/db/schema";
-import { completeOrder, declineOrder, disputeUpdate, refundOrder, renewOrder } from "@/utils/server/orders";
+import { completeOrder, declineOrder, disputeUpdate, expireOrder, refundOrder, renewOrder } from "@/utils/server/orders";
 import crypto from "crypto";
 import { eq } from "drizzle-orm";
 
@@ -182,6 +182,8 @@ export const POST = async (req: Request) => {
     }
     if (rest === "started" || rest === "renewed") {
       await renewOrder(order);
+    } else if (rest === "ended") {
+      await expireOrder(order);
     }
   }
   

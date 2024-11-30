@@ -1,7 +1,10 @@
+import { env } from "@/env";
 import { db } from "@/server/db";
 import { orders, queuedCommands } from "@/server/db/schema";
 import { type Product, type QueuedCommand, type Order } from "@/types";
 import { variables } from "@/utils/helpers/delivery-variables";
+import { embedColors, getOrderWebhook, sendOrderWebhook } from "@/utils/helpers/discord";
+import { Embed } from "@vermaysha/discord-webhook";
 import { eq } from "drizzle-orm";
 import { v4 as uuidv4 } from "uuid";
 
@@ -76,12 +79,32 @@ const queueCommandsWhere = async (when: string, order: Order) => {
 };
 
 export const completeOrder = async (order: Order) => {
-  await db.update(orders).set({
-    status: "completed"
-  }).where(eq(orders.id, order.id));
-  // TODO: emails, webhooks, trigger on game server
-  
-  await queueCommandsWhere("purchase", order);
+  await Promise.all([
+    db.update(orders).set({
+      status: "completed"
+    }).where(eq(orders.id, order.id)),
+    queueCommandsWhere("purchase", order),
+    sendOrderWebhook(
+      new Embed()
+        .setTitle("Order Completed")
+        .setDescription(`Order for ${order.playerUuid} has been completed.`)
+        .setUrl(`${env.BASE_URL}/admin/orders/${order.id}`)
+        .setColor(embedColors.green)
+        .setTimestamp()
+        .addField({
+          name: "Order ID",
+          value: order.id
+        })
+        .addField({
+          name: "Player UUID",
+          value: order.playerUuid
+        })
+        .addField({
+          name: "Order Status",
+          value: "Completed"
+        })
+    )
+  ]);
 }
 
 export const declineOrder = async (order: Order, reason: string) => {
@@ -106,6 +129,26 @@ export const disputeUpdate = async (order: Order, state: "open" | "won" | "lost"
   if (state === "open") { // fire on chargeback
     await queueCommandsWhere("chargeback", order);
   }
+  await sendOrderWebhook(
+    new Embed()
+      .setTitle("Dispute Update")
+      .setDescription(`Dispute for ${order.playerUuid} has been updated.`)
+      .setUrl(`${env.BASE_URL}/admin/orders/${order.id}`)
+      .setColor(embedColors.yellow)
+      .setTimestamp()
+      .addField({
+        name: "Order ID",
+        value: order.id
+      })
+      .addField({
+        name: "Player UUID",
+        value: order.playerUuid
+      })
+      .addField({
+        name: "Dispute State",
+        value: state
+      })
+  )
 }
 
 export const refundOrder = async (order: Order) => {
@@ -113,7 +156,27 @@ export const refundOrder = async (order: Order) => {
     db.update(orders).set({
       status: "refunded"
     }).where(eq(orders.id, order.id)),
-    queueCommandsWhere("refund", order)
+    queueCommandsWhere("refund", order),
+    sendOrderWebhook(
+      new Embed()
+        .setTitle("Order Refunded")
+        .setDescription(`Order for ${order.playerUuid} has been refunded.`)
+        .setUrl(`${env.BASE_URL}/admin/orders/${order.id}`)
+        .setColor(embedColors.yellow)
+        .setTimestamp()
+        .addField({
+          name: "Order ID",
+          value: order.id
+        })
+        .addField({
+          name: "Player UUID",
+          value: order.playerUuid
+        })
+        .addField({
+          name: "Order Status",
+          value: "Refunded"
+        })
+    )
   ]);
 }
 
@@ -123,13 +186,55 @@ export const renewOrder = async (order: Order) => {
       subscriptionStatus: "active",
       lastRenewedAt: new Date()
     }).where(eq(orders.id, order.id)),
-    queueCommandsWhere("renew", order)
+    queueCommandsWhere("renew", order),
+    sendOrderWebhook(
+      new Embed()
+        .setTitle("Subscription Renewed")
+        .setDescription(`Subscription for ${order.playerUuid} has been renewed.`)
+        .setUrl(`${env.BASE_URL}/admin/orders/${order.id}`)
+        .setColor(embedColors.green)
+        .setTimestamp()
+        .addField({
+          name: "Order ID",
+          value: order.id
+        })
+        .addField({
+          name: "Player UUID",
+          value: order.playerUuid
+        })
+        .addField({
+          name: "Subscription Status",
+          value: "Active"
+        })
+    )
   ]);
 }
 
 export const expireOrder = async (order: Order) => {
-  await db.update(orders).set({
-    subscriptionStatus: "expired"
-  }).where(eq(orders.id, order.id));
-  await queueCommandsWhere("expire", order);
+  await Promise.all([
+    db.update(orders).set({
+      subscriptionStatus: "expired"
+    }).where(eq(orders.id, order.id)),
+    queueCommandsWhere("expire", order),
+    sendOrderWebhook(
+      new Embed()
+        .setTitle("Subscription Expired")
+        .setDescription(`Subscription for ${order.playerUuid} has expired.`)
+        .setUrl(`${env.BASE_URL}/admin/orders/${order.id}`)
+        .setColor(embedColors.red)
+        .setTimestamp()
+        .addField({
+          name: "Order ID",
+          value: order.id
+        })
+        .addField({
+          name: "Player UUID",
+          value: order.playerUuid
+        })
+        .addField({
+          name: "Subscription Status",
+          value: "Expired"
+        })
+    )
+  ]);
 }

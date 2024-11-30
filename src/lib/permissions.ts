@@ -11,7 +11,8 @@ export const roles = {
     can: [
       "products:*",
       "settings:*",
-      "servers:*"
+      "servers:*",
+      "orders:*",
     ],
     inherits: ["user"]
   },
@@ -20,6 +21,7 @@ export const roles = {
       "products:*",
       "users:*",
       "servers:*",
+      "orders:*",
       "admin:*"
     ],
     inherits: ["admin"]
