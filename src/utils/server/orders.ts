@@ -11,7 +11,10 @@ import { v4 as uuidv4 } from "uuid";
 const resolveProducts = async (order: Order) => {
   const productIds = order.items.map((item) => item.productId);
   const products = await db.query.products.findMany({
-    where: (p, { inArray }) => inArray(p.id, productIds)
+    where: (p, { inArray }) => inArray(p.id, productIds),
+    with: {
+      productToDelivery: true
+    }
   });
   return products;
 }
@@ -20,52 +23,53 @@ export const queueCommandsWhere = async (when: (typeof deliveryWhen)[number], or
   const products = await resolveProducts(order);
   const queuedCommandsArr: QueuedCommand[] = [];
   
-  await Promise.all(products.map(async (product: Product) => {
+  await Promise.all(products.map(async (product) => {
     await Promise.all(order.items.map(async (item) => {
-      if (item.productId === product.id && product.delivery) {
-        await Promise.all(
-          product.delivery.map(async (delivery) => {
-            if (!delivery.scope) return; // skip if no scope
-            if (delivery.when === when) {
-              console.log(delivery.value);
-              // find a list of variables in the payload
-              const vars = delivery.value.match(/\{([^}]+)\}/g);
-              let payload = delivery.value;
-              
-              if (vars) {
-                // fetch values
-                const varsWithValues = await Promise.all(
-                  vars.map(async (v) => {
-                    const varName = v.replace(/[{}]/g, "");
-                    const variable = variables.find((var_) => var_.name === varName);
-                    const value = await variable?.replace(varName, order, product);
-                    return {
-                      name: varName,
-                      value
-                    };
-                  })
-                );
+      if (item.productId === product.id) {
+        const deliveryIds = product.productToDelivery.map((d) => d.deliveryId).filter((id): id is string => id !== null);
+        const deliveries = await db.query.deliveries.findMany({
+          where: (d, { inArray }) => inArray(d.id, deliveryIds),
+        });
+        await Promise.all(deliveries.map(async (delivery) => {
+          if (!delivery.scope) return; // skip if no scope
+          if (delivery.when === when) {
+            // find a list of variables in the payload
+            const vars = delivery.value.match(/\{([^}]+)\}/g);
+            let payload = delivery.value;
+            
+            if (vars) {
+              // fetch values
+              const varsWithValues = await Promise.all(
+                vars.map(async (v) => {
+                  const varName = v.replace(/[{}]/g, "");
+                  const variable = variables.find((var_) => var_.name === varName);
+                  const value = await variable?.replace(varName, order, product);
+                  return {
+                    name: varName,
+                    value
+                  };
+                })
+              );
 
-                // Replace variables in payload
-                varsWithValues.forEach(({name, value}) => {
-                  payload = payload.replace(`{${name}}`, String(value));
-                });
-              }
-
-              queuedCommandsArr.push({
-                id: uuidv4(),
-                createdAt: new Date(),
-                orderId: order.id,
-                minecraftUuid: order.playerUuid,
-                requireOnline: delivery.requireOnline,
-                delay: delivery.delay,
-                payload,
-                server: delivery.scope,
-                executed: false
+              // Replace variables in payload
+              varsWithValues.forEach(({name, value}) => {
+                payload = payload.replace(`{${name}}`, String(value));
               });
             }
-          })
-        );
+
+            queuedCommandsArr.push({
+              id: uuidv4(),
+              createdAt: new Date(),
+              orderId: order.id,
+              minecraftUuid: order.playerUuid,
+              requireOnline: delivery.requireOnline,
+              delay: Number(delivery.delay),
+              payload,
+              server: delivery.scope,
+              executed: false
+            });
+          }
+        }));
       }
     }));
   }));

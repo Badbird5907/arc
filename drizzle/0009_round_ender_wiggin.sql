@@ -1,0 +1,1 @@
+ALTER TABLE "deliveries" ADD COLUMN "delay" integer NOT NULL DEFAULT 0;

@@ -11,13 +11,14 @@ import {
   pgEnum,
   pgTable,
   pgTableCreator,
+  primaryKey,
   text,
   timestamp,
   uuid,
 } from "drizzle-orm/pg-core";
 import { rolesArr } from "@/lib/permissions";
 import { relations, sql } from "drizzle-orm";
-import { Delivery } from "@/types";
+import { Delivery, deliveryWhen } from "@/types";
 
 /**
  * This is an example of how to use the multi-project schema feature of Drizzle ORM. Use the same
@@ -98,6 +99,7 @@ export const categoryRelations = relations(categories, ({ one, many }) => ({
     relationName: "product_category_relation",
   }),
 }))
+
 export const products = createTable(
   "products",
   {
@@ -119,9 +121,6 @@ export const products = createTable(
     categoryId: uuid("category_id").references(() => categories.id, { onDelete: "restrict" }),
     sortPriority: integer("sort_priority").default(0).notNull(),
 
-    // game server command, or other stuff
-    delivery: jsonb("delivery").$type<Delivery[]>(),
-
     createdAt: timestamp("created_at", { precision: 3, mode: "date" })
       .defaultNow()
       .notNull(),
@@ -142,12 +141,58 @@ export const products = createTable(
 )
 
 
-export const productRelations = relations(products, ({ one }) => ({
+export const pgDeliveryWhen = pgEnum("delivery_when", deliveryWhen)
+export const deliveries = createTable('deliveries', {
+  id: uuid('id')
+    .primaryKey()
+    .notNull()
+    .$defaultFn(() => uuidv4()),
+  type: text('type').notNull(),
+  value: text('value').notNull(),
+  scope: uuid('scope').references(() => servers.id, { onDelete: "set null" }),
+  when: pgDeliveryWhen('when').notNull().default('purchase'),
+  requireOnline: boolean('require_online').default(false).notNull(),
+  delay: integer('delay').default(0).notNull(),
+  createdAt: timestamp('created_at', { precision: 3, mode: 'date' })
+    .defaultNow()
+    .notNull(),
+});
+
+export const deliveryRelations = relations(deliveries, ({ many }) => ({
+  productToDelivery: many(productToDelivery)
+}))
+
+export const productToDelivery = createTable(
+  "product_to_delivery",
+  {
+    productId: uuid("product_id").references(() => products.id, { onDelete: "cascade" }),
+    deliveryId: uuid("delivery_id").references(() => deliveries.id, { onDelete: "cascade" }),
+  },
+  (t) => [
+    {
+      pk: primaryKey({ columns: [t.productId, t.deliveryId] })
+    }
+  ]
+)
+
+export const productToDeliveryRelations = relations(productToDelivery, ({ one }) => ({
+  product: one(products, {
+    fields: [productToDelivery.productId],
+    references: [products.id],
+  }),
+  delivery: one(deliveries, {
+    fields: [productToDelivery.deliveryId],
+    references: [deliveries.id],
+  })
+}))
+
+export const productRelations = relations(products, ({ one, many }) => ({
   category: one(categories, {
     fields: [products.categoryId],
     references: [categories.id],
     relationName: "product_category_relation",
-  })
+  }),
+  productToDelivery: many(productToDelivery)
 }))
 
 export const paymentProviders = pgEnum("payment_provider", ["tebex"])
@@ -155,6 +200,7 @@ export const orderStatus = ["pending", "completed", "canceled", "refunded"] as c
 export const pgOrderStatus = pgEnum("order_status", orderStatus)
 export const disputeState = pgEnum("dispute_state", ["open", "won", "lost", "closed"])
 export const subscriptionStatus = pgEnum("subscription_status", ["active", "expired", "canceled"])
+
 
 export const orders = createTable(
   "orders",
@@ -271,3 +317,41 @@ export const servers = createTable(
       .notNull(),
   }
 )
+
+export const giftcards = createTable(
+  "giftcards",
+  {
+    id: uuid("id")
+      .primaryKey()
+      .notNull()
+      .$defaultFn(() => uuidv4()),
+    code: text("code").notNull().unique(),
+    initialAmount: doublePrecision("initial_amount").notNull(),
+    balance: doublePrecision("balance").notNull(),
+    lastUsed: timestamp("last_used", { precision: 3, mode: "date" }),
+    createdAt: timestamp("created_at", { precision: 3, mode: "date" })
+      .defaultNow()
+      .notNull(),
+  }
+)
+
+export const orderToGiftcard = createTable(
+  "order_to_giftcard",
+  {
+    id: uuid("id")
+      .primaryKey()
+      .notNull()
+      .$defaultFn(() => uuidv4()),
+    orderId: uuid("order_id")
+      .notNull()
+      .references(() => orders.id),
+    giftcardId: uuid("giftcard_id")
+      .notNull()
+      .references(() => giftcards.id),
+    amountUsed: doublePrecision("amount_used").notNull(),
+    createdAt: timestamp("created_at", { precision: 3, mode: "date" })
+      .defaultNow()
+      .notNull(),
+  }
+)
+

@@ -9,6 +9,7 @@
     "db:migrate": "drizzle-kit migrate",
     "db:push": "drizzle-kit push",
     "db": "drizzle-kit",
+    "db:check": "dotenv -- drizzle-kit check",
     "db:studio": "drizzle-kit studio",
     "db:push:func": "dotenv -- tsx ./push-functions.ts",
     "dev": "next dev --turbo -p 8571",

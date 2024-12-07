@@ -10,18 +10,27 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { getVariableListAction } from "@/server/actions/variables";
 import { api } from "@/trpc/react";
-import { type Delivery, type Product, zodDelivery } from "@/types";
+import { type Delivery, type ProductWithDeliveries, zodDelivery } from "@/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { DotsHorizontalIcon, QuestionMarkCircledIcon } from "@radix-ui/react-icons";
 import { InfoIcon, PlusIcon, TrashIcon } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
 
-export const EditDeliveryCard = ({ product }: { product: Product }) => {
+export const DeliveryEditor = ({ 
+  initialDeliveries,
+  onSubmit,
+  isSubscriptionProduct = false,
+}: { 
+  initialDeliveries: Delivery[];
+  onSubmit: (deliveries: Delivery[]) => Promise<void>;
+  isProduct?: boolean;
+  isSubscriptionProduct?: boolean;
+}) => {
   const form = useForm<{ delivery: Delivery[] }>({
-    defaultValues: { delivery: product.delivery ?? [] },
+    defaultValues: { delivery: initialDeliveries },
     resolver: zodResolver(z.object({
       delivery: z.array(zodDelivery),
     })),
@@ -32,22 +41,22 @@ export const EditDeliveryCard = ({ product }: { product: Product }) => {
     name: "delivery",
   });
   const { data: servers } = api.servers.getServers.useQuery();
-  const modifyProduct = api.products.modifyProduct.useMutation();
-  const onSubmit = form.handleSubmit(async (data) => {
-    console.log(data);
-    await modifyProduct.mutateAsync({
-      id: product.id,
-      data: {
-        delivery: data.delivery,
-      }
-    })
-    toast.success("Delivery settings saved!")
-  })
 
   const [variables, setVariables] = useState<{ name: string; description: string; }[]>([]);
   useEffect(() => {
     void getVariableListAction().then(setVariables);
   }, []);
+
+  const handleSubmit = form.handleSubmit(async (data) => {
+    try {
+      await onSubmit(data.delivery);
+      toast.success("Delivery settings saved!");
+    } catch (error) {
+      toast.error("Failed to save delivery settings!", {
+        description: "Have you selected a server scope for all commands?",
+      });
+    }
+  });
 
   return (
     <Card>
@@ -57,7 +66,7 @@ export const EditDeliveryCard = ({ product }: { product: Product }) => {
           <div className="flex flex-row gap-2 justify-between">
             <span className="hidden md:block content-center">Delivery</span>
             <div className="flex flex-col md:flex-row gap-2 w-full justify-end">
-              {product.type === "subscription" && (
+              {isSubscriptionProduct && (
                 <Dialog>
                   <DialogTrigger asChild className="w-full md:w-fit">
                     <Button variant="outline" className="">
@@ -133,7 +142,7 @@ export const EditDeliveryCard = ({ product }: { product: Product }) => {
       <CardContent>
         <div className="flex flex-col gap-4">
           <Form {...form}>
-            <form onSubmit={onSubmit} className="space-y-8">
+            <form onSubmit={handleSubmit} className="space-y-8">
               {fields.map((field, index) => (
                 <div key={field.id} className="flex flex-col md:flex-row gap-2 w-full">
                   <FormField
@@ -147,10 +156,10 @@ export const EditDeliveryCard = ({ product }: { product: Product }) => {
                         <SelectContent>
                           <SelectItem value="purchase">
                             On
-                            {product.type === "subscription" ? " (first) " : " "}
+                            {isSubscriptionProduct ? " (first) " : " "}
                             Purchase
                           </SelectItem>
-                          {product.type === "subscription" && (
+                          {isSubscriptionProduct && (
                             <>
                               <SelectItem value="renew">On Renew</SelectItem>
                               <SelectItem value="expire">On Expire</SelectItem>
@@ -188,13 +197,6 @@ export const EditDeliveryCard = ({ product }: { product: Product }) => {
                       )
                     }}
                   />
-                  {/*<FormField
-                    control={form.control}
-                    name={`delivery.${index}.scope`}
-                    render={({ field }) => (
-                      <Input {...field} placeholder="Server scope" className="w-full md:w-1/4" required />
-                    )}
-                  />*/}
                   <FormField
                     control={form.control}
                     name={`delivery.${index}.scope`}

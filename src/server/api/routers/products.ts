@@ -1,13 +1,13 @@
 import { createTRPCRouter, procedure, publicProcedure } from "@/server/api/trpc";
 import { db } from "@/server/db";
-import { products } from "@/server/db/schema";
+import { categories, deliveries, products, productToDelivery } from "@/server/db/schema";
 import { createProductInput, getProductsInput, modifyProductInput } from "@/trpc/schema/products";
 import { createBareServerClient } from "@/utils/supabase/server";
-import { and, type AnyColumn, asc, desc, eq, getTableColumns, type SQL, sql, type SQLWrapper } from "drizzle-orm";
+import { and, type AnyColumn, asc, desc, eq, getTableColumns, inArray, notInArray, type SQL, sql, type SQLWrapper } from "drizzle-orm";
 import { z } from "zod";
 import { v4 as uuid } from "uuid";
 import { TRPCError } from "@trpc/server";
-import { type Product, type ProductAndCategory } from "@/types";
+import { zodDelivery, type Product } from "@/types";
 import { del } from "@/server/redis";
 
 export const productRouter = createTRPCRouter({
@@ -80,15 +80,33 @@ export const productRouter = createTRPCRouter({
       .orderBy(orderBy);
   }),
   getProduct: procedure("products:read")
-  .input(z.object({ id: z.string() }))
+  .input(z.object({ id: z.string(), delivery: z.boolean().default(false) }))
   .query(async ({ input }) => {
-    const val = await db.query.products.findFirst({
-      where: (p, { eq }) => eq(p.id, input.id),
-      with: {
-        category: true
+    const val = await db.select().from(products)
+    .where(eq(products.id, input.id))
+    .leftJoin(categories, eq(products.categoryId, categories.id))
+    .leftJoin(productToDelivery, eq(products.id, productToDelivery.productId))
+    .leftJoin(deliveries, eq(productToDelivery.deliveryId, deliveries.id));
+
+    // Group results by product to handle multiple deliveries
+    const productDeliveries = new Map();
+    for (const row of val) {
+      if (!productDeliveries.has(row.products.id)) {
+        productDeliveries.set(row.products.id, {
+          ...row.products,
+          category: row.categories,
+          deliveries: []
+        });
       }
-    });
-    return val as ProductAndCategory;
+      if (row.deliveries) {
+        productDeliveries.get(row.products.id).deliveries.push(row.deliveries);
+      }
+    }
+
+    return Array.from(productDeliveries.values())[0] ?? {
+      category: null,
+      deliveries: []
+    };
   }),
   createProduct: procedure("products:create")
   .input(createProductInput)
@@ -108,6 +126,34 @@ export const productRouter = createTRPCRouter({
       del(`product:${input.id}:mdx`),
     ]);
     return all[0]
+  }),
+  modifyDelivery: procedure("products:delivery:edit")
+  .input(z.object({ id: z.string(), deliveries: zodDelivery.array() }))
+  .mutation(async ({ input }) => {
+    // delete all existing deliveries, and their productToDelivery entries
+    // will need to rewrite this if we want to do syncing deliveries with other products
+    await db.transaction(async (tx) => {
+      const existingIds = (await tx.select({ id: productToDelivery.deliveryId }).from(productToDelivery).where(eq(productToDelivery.productId, input.id)))
+      .filter((e) => !!e.id)
+      .map((e) => e.id)
+      .filter((id): id is string => id !== null);
+      if (existingIds.length > 0) {
+        await tx.delete(productToDelivery).where(inArray(productToDelivery.deliveryId, existingIds));
+        await tx.delete(deliveries).where(inArray(deliveries.id, existingIds));
+      }
+      if (input.deliveries.length > 0) {
+        // insert new deliveries  
+        const newDeliveries = input.deliveries.map((d) => ({
+          id: d.id ?? uuid(),
+          ...d
+        }));
+        await tx.insert(deliveries).values(newDeliveries);
+        await tx.insert(productToDelivery).values(newDeliveries.map((d) => ({
+          productId: input.id,
+          deliveryId: d.id
+        })));
+      }
+    });
   }),
   deleteProduct: procedure("products:delete")
   .input(z.object({ id: z.string() }))

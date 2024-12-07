@@ -64,6 +64,7 @@ export type Server = Omit<SensitiveServer, "secretKey">;
 export const subscriptionDeliveryWhen = ["expire", "renew"] as const;
 export const deliveryWhen = ["purchase", ...subscriptionDeliveryWhen, "chargeback", "refund"] as const;
 export const zodDelivery = z.object({
+  id: z.string().uuid().optional(),
   type: z.literal("command"),
   value: z.string(),
   scope: z.string(),
@@ -83,6 +84,9 @@ export type ProductAndCategory = Product & {
   category?: Category;
 }
 
+export type ProductWithDeliveries = ProductAndCategory & {
+  deliveries: Delivery[];
+}
 
 export type SlimProduct = Pick<Product, "id" | "name" | "hidden" | "categoryId"> & { __product: true };
 export type SlimCategory = Omit<Category, "createdAt" | "modifiedAt"> & { __category: true };

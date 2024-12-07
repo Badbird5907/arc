@@ -1,6 +1,7 @@
 import { SelectProduct } from "@/components/select-product";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { queryClient } from "@/trpc/react";
 import { type Delivery, type Product } from "@/types";
 import { CopyIcon } from "lucide-react";
 import { useState } from "react";
@@ -28,9 +29,10 @@ export const CopyDelivery = ({ setDelivery }: { setDelivery: (delivery: Delivery
           setSelectedProduct(product);
         }} />
         <DialogClose asChild>
-          <Button type="button" onClick={() => {
+          <Button type="button" onClick={async () => {
             if (selectedProduct) {
-              setDelivery(selectedProduct.delivery ?? []);
+              const p = await queryClient.products.getProduct.query({ id: selectedProduct.id, delivery: true });
+              setDelivery(p.deliveries ?? []);
             }
           }} disabled={!selectedProduct}>Copy</Button>
         </DialogClose>

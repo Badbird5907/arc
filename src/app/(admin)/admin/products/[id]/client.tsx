@@ -1,7 +1,7 @@
 "use client";
 import { ProductActionsCard } from "@/app/(admin)/admin/products/[id]/actions-card";
 import { EditProductBasic } from "@/app/(admin)/admin/products/[id]/edit-basic";
-import { EditDeliveryCard } from "@/app/(admin)/admin/products/[id]/edit-delivery";
+import { DeliveryEditor } from "@/app/(admin)/admin/products/[id]/edit-delivery";
 import { ModifyImagesCard } from "@/app/(admin)/admin/products/[id]/modify-images";
 import { ErrorPage } from "@/components/pages/error";
 import { Badge } from "@/components/ui/badge";
@@ -9,7 +9,8 @@ import { Spinner } from "@/components/ui/spinner";
 import { api } from "@/trpc/react";
 
 const ProductPageClient = ({ id }: { id: string }) => {
-  const { isLoading, isError, data: product } = api.products.getProduct.useQuery({ id });
+  const { isLoading, isError, data: product } = api.products.getProduct.useQuery({ id, delivery: true });
+  const modifyDelivery = api.products.modifyDelivery.useMutation();
   if (isLoading) return <Spinner />
   if (isError) return <ErrorPage code="500" />
   if (!product) return <ErrorPage code="404" />;
@@ -27,7 +28,9 @@ const ProductPageClient = ({ id }: { id: string }) => {
           <ModifyImagesCard product={product} />
         </div>
       </div>
-      <EditDeliveryCard product={product} />
+      <DeliveryEditor initialDeliveries={product.deliveries} onSubmit={async (deliveries) => {
+        await modifyDelivery.mutateAsync({ id, deliveries });
+      }} />
     </div>
   );
 }
