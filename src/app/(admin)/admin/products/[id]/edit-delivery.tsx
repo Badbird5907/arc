@@ -132,7 +132,7 @@ export const DeliveryEditor = ({
               <CopyDelivery setDelivery={(delivery) => {
                 form.setValue("delivery", delivery);
               }} />
-              <Button type="button" onClick={() => append({ type: "command", value: "", scope: "", when: "purchase", requireOnline: false, delay: 0 })} className="w-full md:w-fit">
+              <Button type="button" onClick={() => append({ type: "command", value: "", scope: "", when: "purchase", requireOnline: false, delay: 0, global: false })} className="w-full md:w-fit">
                 <PlusIcon className="w-4 h-4" />
               </Button>
             </div>

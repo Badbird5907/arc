@@ -85,6 +85,20 @@
       "when": 1733802931411,
       "tag": "0011_friendly_blue_blade",
       "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "7",
+      "when": 1733837807552,
+      "tag": "0012_loud_the_renegades",
+      "breakpoints": true
+    },
+    {
+      "idx": 13,
+      "version": "7",
+      "when": 1734309106195,
+      "tag": "0013_glamorous_gauntlet",
+      "breakpoints": true
     }
   ]
 }

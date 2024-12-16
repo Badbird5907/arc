@@ -10,8 +10,8 @@ import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, Di
 import { Spinner } from "@/components/ui/spinner";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { api } from "@/trpc/react";
-import { Cross2Icon, QuestionMarkCircledIcon } from "@radix-ui/react-icons";
-import { CheckIcon, LinkIcon, RefreshCcwIcon, TrashIcon } from "lucide-react";
+import { QuestionMarkCircledIcon } from "@radix-ui/react-icons";
+import { LinkIcon, TrashIcon } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { useMemo } from "react";

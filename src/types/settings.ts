@@ -33,14 +33,7 @@ export const allSettings = [
     defaultValue: "",
     type: "string",
   },
-  {
-    key: "dummyString",
-    name: "Dummy String",
-    description: "A dummy string setting",
-    defaultValue: "hello",
-    type: "string",
-  },
-  {
+  { // this is here so the types still work. We can remove it once there is a proper number setting
     key: "dummyNumber",
     name: "Dummy Number",
     description: "A dummy number setting",

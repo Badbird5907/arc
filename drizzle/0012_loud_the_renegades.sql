@@ -1,0 +1,1 @@
+ALTER TABLE "deliveries" ADD COLUMN "global" boolean DEFAULT false NOT NULL;

@@ -1,9 +1,9 @@
 import { env } from "@/env";
 import { db } from "@/server/db";
 import { orders, queuedCommands } from "@/server/db/schema";
-import { type Product, type QueuedCommand, type Order, deliveryWhen } from "@/types";
+import { type QueuedCommand, type Order, deliveryWhen } from "@/types";
 import { variables } from "@/utils/helpers/delivery-variables";
-import { embedColors, getOrderWebhook, sendOrderWebhook } from "@/utils/helpers/discord";
+import { embedColors, sendOrderWebhook } from "@/utils/helpers/discord";
 import { Embed } from "@vermaysha/discord-webhook";
 import { eq } from "drizzle-orm";
 import { v4 as uuidv4 } from "uuid";
@@ -27,48 +27,43 @@ export const queueCommandsWhere = async (when: (typeof deliveryWhen)[number], or
     await Promise.all(order.items.map(async (item) => {
       if (item.productId === product.id) {
         const deliveryIds = product.productToDelivery.map((d) => d.deliveryId).filter((id): id is string => id !== null);
+        
         const deliveries = await db.query.deliveries.findMany({
-          where: (d, { inArray }) => inArray(d.id, deliveryIds),
+          where: (d, { inArray, or, and, eq, isNotNull }) => {
+            return and(
+              or(inArray(d.id, deliveryIds), eq(d.global, true)), // either from a product, or it is global
+              and(eq(d.when, when), isNotNull(d.scope)) // correct when and scope
+            )
+          },
         });
         await Promise.all(deliveries.map(async (delivery) => {
-          if (!delivery.scope) return; // skip if no scope
-          if (delivery.when === when) {
-            // find a list of variables in the payload
-            const vars = delivery.value.match(/\{([^}]+)\}/g);
-            let payload = delivery.value;
-            
-            if (vars) {
-              // fetch values
-              const varsWithValues = await Promise.all(
-                vars.map(async (v) => {
-                  const varName = v.replace(/[{}]/g, "");
-                  const variable = variables.find((var_) => var_.name === varName);
-                  const value = await variable?.replace(varName, order, product);
-                  return {
-                    name: varName,
-                    value
-                  };
-                })
-              );
-
-              // Replace variables in payload
-              varsWithValues.forEach(({name, value}) => {
-                payload = payload.replace(`{${name}}`, String(value));
-              });
+          // find a list of variables in the payload
+          const vars = delivery.value.match(/\{([^}]+)\}/g);
+          let payload = delivery.value;
+          
+          if (vars) {
+            // Replace each variable one at a time
+            for (const v of vars) {
+              const varName = v.replace(/[{}]/g, "");
+              const variable = variables.find((var_) => var_.name === varName);
+              if (variable) {
+                const value = await variable.replace(varName, order, product);
+                payload = payload.replace(`{${varName}}`, String(value));
+              }
             }
-
-            queuedCommandsArr.push({
-              id: uuidv4(),
-              createdAt: new Date(),
-              orderId: order.id,
-              minecraftUuid: order.playerUuid,
-              requireOnline: delivery.requireOnline,
-              delay: Number(delivery.delay),
-              payload,
-              server: delivery.scope,
-              executed: false
-            });
           }
+
+          queuedCommandsArr.push({
+            id: uuidv4(),
+            createdAt: new Date(),
+            orderId: order.id,
+            minecraftUuid: order.playerUuid,
+            requireOnline: delivery.requireOnline,
+            delay: Number(delivery.delay),
+            payload,
+            server: delivery.scope!,
+            executed: false
+          });
         }));
       }
     }));
@@ -154,7 +149,7 @@ export const disputeUpdate = async (order: Order, state: "open" | "won" | "lost"
       })
   )
 }
-
+  
 export const refundOrder = async (order: Order) => {
   await Promise.all([
     db.update(orders).set({

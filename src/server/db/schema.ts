@@ -19,6 +19,7 @@ import {
 import { rolesArr } from "@/lib/permissions";
 import { relations, sql } from "drizzle-orm";
 import { Delivery, deliveryWhen } from "@/types";
+import { orderToCoupon } from "@/server/db/coupons";
 
 /**
  * This is an example of how to use the multi-project schema feature of Drizzle ORM. Use the same
@@ -153,6 +154,7 @@ export const deliveries = createTable('deliveries', {
   when: pgDeliveryWhen('when').notNull().default('purchase'),
   requireOnline: boolean('require_online').default(false).notNull(),
   delay: integer('delay').default(0).notNull(),
+  global: boolean('global').default(false).notNull(),
   createdAt: timestamp('created_at', { precision: 3, mode: 'date' })
     .defaultNow()
     .notNull(),
@@ -335,6 +337,7 @@ export const giftcards = createTable(
   }
 )
 
+
 export const orderToGiftcard = createTable(
   "order_to_giftcard",
   {
@@ -355,3 +358,27 @@ export const orderToGiftcard = createTable(
   }
 )
 
+export const orderToGiftcardRelations = relations(orderToGiftcard, ({ one }) => ({
+  order: one(orders, {
+    fields: [orderToGiftcard.orderId],
+    references: [orders.id],
+  }),
+  giftcard: one(giftcards, {
+    fields: [orderToGiftcard.giftcardId],
+    references: [giftcards.id],
+  })
+}))
+
+export const giftcardRelations = relations(giftcards, ({ one, many }) => ({
+  orderToGiftcard: many(orderToGiftcard),
+}))
+
+export const discountType = ["percentage", "amount"] as const;
+export const pgDiscountType = pgEnum("discount_type", discountType)
+
+export const orderRelations = relations(orders, ({ one, many }) => ({
+  orderToGiftcard: many(orderToGiftcard),
+  orderToCoupon: many(orderToCoupon),
+}))
+
+export * from "@/server/db/coupons";

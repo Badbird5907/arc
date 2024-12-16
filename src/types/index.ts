@@ -58,6 +58,8 @@ export type OrderWithPlayer = Order & {
 
 export type QueuedCommand = InferResultType<"queuedCommands">;
 
+export type Coupon = InferResultType<"coupons">;
+
 export type SensitiveServer = InferResultType<"servers">;
 export type Server = Omit<SensitiveServer, "secretKey">;
 
@@ -71,6 +73,7 @@ export const zodDelivery = z.object({
   when: z.enum(deliveryWhen).default("purchase"),
   requireOnline: z.boolean().default(false),
   delay: z.coerce.number().default(0),
+  global: z.boolean().default(false),
 })
 export type Delivery = z.infer<typeof zodDelivery>;
 
