@@ -1,11 +1,13 @@
 "use client";
 
 import { StatusBadge } from "@/app/(admin)/admin/orders/status-badge";
+import { DebouncedInput } from "@/components/debounced-input";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { DataTable } from "@/components/ui/data-table";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
 import { Input } from "@/components/ui/input";
+import { Spinner } from "@/components/ui/spinner";
 import { api } from "@/trpc/react";
 import { Order, OrderWithPlayer } from "@/types";
 import { type ColumnDef, type PaginationState } from "@tanstack/react-table";
@@ -97,13 +99,15 @@ export const OrdersClient = () => {
         data={data?.data ?? []}
         actionsBar={
           <div className="flex flex-col md:flex-row w-full items-center gap-2">
-            <Input
-              className="w-full md:w-1/3 mx-2"
+            <DebouncedInput
+              className="w-full md:w-1/3"
               type="text"
               placeholder="Search"
               startContent={<Search />}
-              value={filter}
-              onChange={(e) => setFilter(e.target.value)}
+              endContent={isLoading && <Spinner size={24} />}
+              defaultValue={filter}
+              debounceMs={500}
+              onDebouncedChange={(value) => setFilter(value)}
             />
           </div>
         }

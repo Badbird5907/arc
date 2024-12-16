@@ -1,23 +1,22 @@
 import { pgDiscountType } from "@/server/db/discounts";
 import { categories, orders, products } from "@/server/db/schema";
-import { relations } from "drizzle-orm";
+import { relations, sql } from "drizzle-orm";
 import {
-  type AnyPgColumn,
   boolean,
-  decimal,
   doublePrecision,
   index,
   integer,
-  jsonb,
   pgEnum,
   pgTable,
-  pgTableCreator,
   primaryKey,
   text,
   timestamp,
   uuid,
 } from "drizzle-orm/pg-core";
 import { v4 as uuidv4 } from "uuid";
+
+export const couponType = ["coupon", "giftcard"] as const;
+export const pgCouponType = pgEnum("coupon_type", couponType)
 
 export const coupons = pgTable(
   "coupons",
@@ -26,21 +25,40 @@ export const coupons = pgTable(
       .primaryKey()
       .notNull()
       .$defaultFn(() => uuidv4()),
+    type: pgCouponType("type").notNull().default("coupon"),
     code: text("code").notNull().unique(),
     discountType: pgDiscountType("discount_type").notNull().default("amount"),
     discountValue: doublePrecision("discount_value").notNull(),
     minOrderAmount: doublePrecision("min_order_amount").notNull().default(0),
     maxDiscountAmount: doublePrecision("max_discount_amount").notNull().default(-1),
-    description: text("description").notNull().default(""),
+    notes: text("notes").notNull().default(""),
+
     maxUses: integer("max_uses").notNull().default(1),
     uses: integer("uses").notNull().default(0),
+
+    // mainly used for "gift cards"
+    maxGlobalTotalDiscount: doublePrecision("max_global_total_discount").notNull().default(0),
+    availableGlobalTotalDiscount: doublePrecision("available_global_total_discount").notNull().default(0),
+
     enabled: boolean("enabled").notNull().default(true),
     expiresAt: timestamp("expires_at", { precision: 3, mode: "date" }),
     startsAt: timestamp("starts_at", { precision: 3, mode: "date" }).defaultNow(),
     createdAt: timestamp("created_at", { precision: 3, mode: "date" })
       .defaultNow()
       .notNull(),
-  }
+  },
+  (t) => ([
+    {
+      codeIdx: index("code_idx").on(t.code),
+      searchIndex: index("search_idx").using(
+        "gin",
+        sql`(
+          setweight(to_tsvector('english', ${t.code}), 'A') ||
+          setweight(to_tsvector('english', ${t.notes}), 'B')
+        )`
+      )
+    }
+  ])
 )
 
 export const couponToProduct = pgTable(

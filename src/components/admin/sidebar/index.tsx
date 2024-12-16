@@ -13,7 +13,7 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
 import { type User } from "@/types"
-import { Boxes, Home, Settings, ChevronUp, Server, Package } from "lucide-react"
+import { Boxes, Home, Settings, ChevronUp, Server, Package, TicketPercent } from "lucide-react"
 import Link from "next/link"
 
 export const adminSidebarItems = [
@@ -33,6 +33,12 @@ export const adminSidebarItems = [
     url: "/orders",
     icon: Package,
     permission: "admin:orders:view",
+  },
+  {
+    title: "Coupons",
+    url: "/coupons",
+    icon: TicketPercent,
+    permission: "admin:coupons:view",
   },
   {
     title: "Servers",

@@ -319,62 +319,7 @@ export const servers = pgTable(
   }
 )
 
-export const giftcards = pgTable(
-  "giftcards",
-  {
-    id: uuid("id")
-      .primaryKey()
-      .notNull()
-      .$defaultFn(() => uuidv4()),
-    code: text("code").notNull().unique(),
-    initialAmount: doublePrecision("initial_amount").notNull(),
-    balance: doublePrecision("balance").notNull(),
-    lastUsed: timestamp("last_used", { precision: 3, mode: "date" }),
-    createdAt: timestamp("created_at", { precision: 3, mode: "date" })
-      .defaultNow()
-      .notNull(),
-  }
-)
-
-
-export const orderToGiftcard = pgTable(
-  "order_to_giftcard",
-  {
-    id: uuid("id")
-      .primaryKey()
-      .notNull()
-      .$defaultFn(() => uuidv4()),
-    orderId: uuid("order_id")
-      .notNull()
-      .references(() => orders.id),
-    giftcardId: uuid("giftcard_id")
-      .notNull()
-      .references(() => giftcards.id),
-    amountUsed: doublePrecision("amount_used").notNull(),
-    createdAt: timestamp("created_at", { precision: 3, mode: "date" })
-      .defaultNow()
-      .notNull(),
-  }
-)
-
-export const orderToGiftcardRelations = relations(orderToGiftcard, ({ one }) => ({
-  order: one(orders, {
-    fields: [orderToGiftcard.orderId],
-    references: [orders.id],
-  }),
-  giftcard: one(giftcards, {
-    fields: [orderToGiftcard.giftcardId],
-    references: [giftcards.id],
-  })
-}))
-
-export const giftcardRelations = relations(giftcards, ({ one, many }) => ({
-  orderToGiftcard: many(orderToGiftcard),
-}))
-
-
 export const orderRelations = relations(orders, ({ one, many }) => ({
-  orderToGiftcard: many(orderToGiftcard),
   orderToCoupon: many(orderToCoupon),
 }))
 

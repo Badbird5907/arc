@@ -1,7 +1,7 @@
 import { PlayerInfo } from "@/components/cart";
 import { createTRPCRouter, procedure } from "@/server/api/trpc";
 import { orders, orderStatus, queuedCommands } from "@/server/db/schema";
-import { deliveryWhen, OrderWithPlayer } from "@/types";
+import { deliveryWhen } from "@/types";
 import { getPlayerFromUuid } from "@/utils/server/helpers";
 import { queueCommandsWhere } from "@/utils/server/orders";
 import { AnyColumn, asc, desc, and, eq, getTableColumns, sql, SQLWrapper } from "drizzle-orm";

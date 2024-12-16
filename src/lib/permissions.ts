@@ -13,15 +13,12 @@ export const roles = {
       "settings:*",
       "servers:*",
       "orders:*",
+      "coupons:*",
     ],
     inherits: ["user"]
   },
   super_admin: {
     can: [
-      "products:*",
-      "users:*",
-      "servers:*",
-      "orders:*",
       "admin:*"
     ],
     inherits: ["admin"]
