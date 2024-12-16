@@ -27,7 +27,6 @@ import { orderToCoupon } from "@/server/db/coupons";
  *
  * @see https://orm.drizzle.team/docs/goodies#multi-project-schema
  */
-export const createTable = pgTableCreator((name) => name);
 
 export const rolesPgEnum = pgEnum("roles", rolesArr);
 
@@ -52,7 +51,7 @@ export const users = pgTable(
 export const productType = pgEnum("product_type", ["single", "subscription"]);
 export const expiryPeriod = pgEnum("expiry_period", ["day", "month", "year"]);
 
-export const categories = createTable(
+export const categories = pgTable(
   "categories",
   {
     id: uuid("id")
@@ -101,7 +100,7 @@ export const categoryRelations = relations(categories, ({ one, many }) => ({
   }),
 }))
 
-export const products = createTable(
+export const products = pgTable(
   "products",
   {
     id: uuid("id")
@@ -143,7 +142,7 @@ export const products = createTable(
 
 
 export const pgDeliveryWhen = pgEnum("delivery_when", deliveryWhen)
-export const deliveries = createTable('deliveries', {
+export const deliveries = pgTable('deliveries', {
   id: uuid('id')
     .primaryKey()
     .notNull()
@@ -164,7 +163,7 @@ export const deliveryRelations = relations(deliveries, ({ many }) => ({
   productToDelivery: many(productToDelivery)
 }))
 
-export const productToDelivery = createTable(
+export const productToDelivery = pgTable(
   "product_to_delivery",
   {
     productId: uuid("product_id").references(() => products.id, { onDelete: "cascade" }),
@@ -204,7 +203,7 @@ export const disputeState = pgEnum("dispute_state", ["open", "won", "lost", "clo
 export const subscriptionStatus = pgEnum("subscription_status", ["active", "expired", "canceled"])
 
 
-export const orders = createTable(
+export const orders = pgTable(
   "orders",
   {
     id: uuid("id")
@@ -250,7 +249,7 @@ export const orders = createTable(
   ])
 )
 
-export const settings = createTable(
+export const settings = pgTable(
   "settings",
   {
     key: text("key").primaryKey().notNull(),
@@ -261,7 +260,7 @@ export const settings = createTable(
   }
 )
 
-export const queuedCommands = createTable(
+export const queuedCommands = pgTable(
   "queued_commands",
   {
     id: uuid("id")
@@ -299,7 +298,7 @@ export const queuedCommandRelations = relations(queuedCommands, ({ one }) => ({
 }))
 
 export const serverType = pgEnum("server_type", ["minecraft", "other"])
-export const servers = createTable(
+export const servers = pgTable(
   "servers",
   {
     id: uuid("id")
@@ -320,7 +319,7 @@ export const servers = createTable(
   }
 )
 
-export const giftcards = createTable(
+export const giftcards = pgTable(
   "giftcards",
   {
     id: uuid("id")
@@ -338,7 +337,7 @@ export const giftcards = createTable(
 )
 
 
-export const orderToGiftcard = createTable(
+export const orderToGiftcard = pgTable(
   "order_to_giftcard",
   {
     id: uuid("id")
@@ -373,12 +372,11 @@ export const giftcardRelations = relations(giftcards, ({ one, many }) => ({
   orderToGiftcard: many(orderToGiftcard),
 }))
 
-export const discountType = ["percentage", "amount"] as const;
-export const pgDiscountType = pgEnum("discount_type", discountType)
 
 export const orderRelations = relations(orders, ({ one, many }) => ({
   orderToGiftcard: many(orderToGiftcard),
   orderToCoupon: many(orderToCoupon),
 }))
 
+export * from "@/server/db/discounts";
 export * from "@/server/db/coupons";

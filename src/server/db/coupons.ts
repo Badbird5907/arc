@@ -1,4 +1,5 @@
-import { categories, createTable, orders, pgDiscountType, products } from "@/server/db/schema";
+import { pgDiscountType } from "@/server/db/discounts";
+import { categories, orders, products } from "@/server/db/schema";
 import { relations } from "drizzle-orm";
 import {
   type AnyPgColumn,
@@ -18,7 +19,7 @@ import {
 } from "drizzle-orm/pg-core";
 import { v4 as uuidv4 } from "uuid";
 
-export const coupons = createTable(
+export const coupons = pgTable(
   "coupons",
   {
     id: uuid("id")
@@ -42,7 +43,7 @@ export const coupons = createTable(
   }
 )
 
-export const couponToProduct = createTable(
+export const couponToProduct = pgTable(
   "coupon_to_product",
   {
     couponId: uuid("coupon_id")
@@ -59,7 +60,7 @@ export const couponToProduct = createTable(
   )
 )
 
-export const couponToCategory = createTable(
+export const couponToCategory = pgTable(
   "coupon_to_category",
   {
     couponId: uuid("coupon_id")
@@ -69,12 +70,12 @@ export const couponToCategory = createTable(
       .notNull()
       .references(() => categories.id, { onDelete: "cascade" }),
   },
-  (t) => ({
+  (t) => ([{
     pk: primaryKey({ columns: [t.couponId, t.categoryId] }),
-  })
+  }])
 )
 
-export const orderToCoupon = createTable(
+export const orderToCoupon = pgTable(
   "order_to_coupon",
   {
     id: uuid("id")

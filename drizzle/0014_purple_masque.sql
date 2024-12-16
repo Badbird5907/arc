@@ -1,0 +1,1 @@
+ALTER TABLE "coupon_to_category" DROP CONSTRAINT "coupon_to_category_coupon_id_category_id_pk";
