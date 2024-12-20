@@ -58,7 +58,13 @@ export type OrderWithPlayer = Order & {
 
 export type QueuedCommand = InferResultType<"queuedCommands">;
 
+type CouponToProduct = InferResultType<"couponToProduct">;
+type CouponToCategory = InferResultType<"couponToCategory">;
 export type Coupon = InferResultType<"coupons">;
+export type CouponWithConstraints = Coupon & {
+  couponToProduct: CouponToProduct[];
+  couponToCategory: CouponToCategory[];
+}
 
 export type SensitiveServer = InferResultType<"servers">;
 export type Server = Omit<SensitiveServer, "secretKey">;
@@ -98,7 +104,6 @@ export type CategoryAndSlimProducts = SlimCategory & {
   products: SlimProduct[];
   children: CategoryAndSlimProducts[];
 }
-
 
 export type CategoryTreeNode = CategoryAndSlimProducts | SlimProduct;
 export type CategoryTree = CategoryTreeNode[];

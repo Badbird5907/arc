@@ -45,7 +45,15 @@ export const ordersRouter = createTRPCRouter({
         return orderStuff(t.createdAt)
       }
       const whereStatus = status ? eq(orders.status, status) : undefined;
-      const whereSearch = search ? sql`to_tsvector('english', ${orders.items}) @@ to_tsquery('english', ${search})` : undefined;
+      const whereSearch = search ? (
+        sql`(
+          setweight(to_tsvector('english', ${orders.ipAddress}), 'A') ||
+          setweight(to_tsvector('english', ${orders.firstName}), 'B') ||
+          setweight(to_tsvector('english', ${orders.lastName}), 'C') ||
+          setweight(to_tsvector('english', ${orders.email}), 'D'))
+          @@ to_tsquery('english', ${search.replace(" ", " | ")}
+        )`
+      ) : undefined;
       const whereConditions = and(whereStatus, whereSearch);
       const [query, rowCount] = await Promise.all([
         ctx.db.select(getTableColumns(orders))

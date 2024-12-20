@@ -1,28 +1,29 @@
-import { db } from "@/server/db";
-import type { Coupon, Order } from "@/types";
+import type { Coupon, CouponWithConstraints, Order, Product } from "@/types";
 
 export const isCouponValid = (coupon: Coupon) => {
   if (!coupon.enabled) return false;
-  if (coupon.expiresAt && coupon.expiresAt < new Date()) return false;
-  if (coupon.startsAt && coupon.startsAt > new Date()) return false;
-  if (coupon.uses >= coupon.maxUses) return false;
+  const now = new Date();
+  if (coupon.expiresAt && coupon.expiresAt < now) return false;
+  if (coupon.startsAt && coupon.startsAt > now) return false;
+  if (coupon.maxUses > 0 && coupon.uses >= coupon.maxUses) return false;
   return true;
 }
 
-export const couponQualifies = async (coupon: Coupon, order: Order) => {
+export const couponQualifies = async (coupon: CouponWithConstraints, products: Product[], order: { items: { productId: string }[], subtotal: number }) => {
   if (!isCouponValid(coupon)) return false;
   const { items, subtotal } = order;
   if (subtotal < coupon.minOrderAmount) return false;
   if (coupon.maxDiscountAmount !== -1 && coupon.maxDiscountAmount < subtotal) return false;
-  if (coupon.appliesToProducts && coupon.appliesToProducts.length > 0) {
-    const productIds = items.map(item => item.productId);
-    if (!coupon.appliesToProducts.some(productId => productIds.includes(productId))) return false;
+  const productIds = items.map(item => item.productId);
+
+  if (coupon.couponToProduct && coupon.couponToProduct.length > 0) {
+    if (!coupon.couponToProduct.some(productId => productIds.includes(productId.productId))) return false;
   }
-    const productIds = items.map(item => item.productId);
-    const products = await db.query.products.findMany({
-      where: (products, { inArray }) => inArray(products.categoryId, coupon.appliesToCategories!),
-    })
-    if (products.length === 0) return false;
+  if (coupon.couponToCategory && coupon.couponToCategory.length > 0) {
+    // check categoryIds of products
+    const categoryIds = products.map(product => product.categoryId);
+    if (!coupon.couponToCategory.some(categoryId => categoryIds.includes(categoryId.categoryId))) return false;
   }
+
   return true;
 }

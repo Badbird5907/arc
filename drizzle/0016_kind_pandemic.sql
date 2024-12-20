@@ -1,0 +1,1 @@
+ALTER TABLE "coupons" RENAME COLUMN "description" TO "notes";

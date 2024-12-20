@@ -1,9 +1,9 @@
 "use client";
 
-import { EditNotes } from "@/app/(admin)/admin/orders/[id]/notes";
 import { QueuedRow } from "@/app/(admin)/admin/orders/[id]/queued-row";
 import { ResendCommandsDialog } from "@/app/(admin)/admin/orders/[id]/resend";
 import { StatusBadge } from "@/app/(admin)/admin/orders/status-badge";
+import { EditNotes } from "@/components/notes";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
@@ -24,6 +24,7 @@ export const OrderClient = ({ id }: { id: string }) => {
   const { data: products } = api.products.getProductsByIds.useQuery({ ids: productIds });
   const { data: commands, isLoading: commandsLoading } = api.orders.getQueuedCommands.useQuery({ id });
   const { data: servers } = api.servers.getServers.useQuery();
+  const updateNotes = api.orders.updateNotes.useMutation();
 
   const clearQueue = api.orders.clearQueue.useMutation({
     onSuccess: () => {
@@ -333,7 +334,7 @@ export const OrderClient = ({ id }: { id: string }) => {
               </Table>
             </CardContent>
           </Card>
-          <EditNotes id={id} content={data.metadata.notes as string ?? ""} />
+          <EditNotes content={data.metadata.notes as string ?? ""} updateNotes={(notes) => updateNotes.mutateAsync({ id, notes })} />
         </div>
       </div>
     </div>

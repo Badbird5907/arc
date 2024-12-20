@@ -7,6 +7,11 @@ import { getSession } from "@/server/actions/auth"
 import { getUser } from "@/utils/server/helpers";
 import { redirect } from "next/navigation";
 import React from "react";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Arc | Admin",
+}
 
 export default async function Layout({ children, breadcrumbs }: { children: React.ReactNode; breadcrumbs: React.ReactNode }) {
   const session = await getSession();

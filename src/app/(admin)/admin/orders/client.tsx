@@ -25,6 +25,9 @@ export const OrdersClient = () => {
     page: pagination.pageIndex + 1,
     limit: 10,
     withPlayers: true,
+    filter: {
+      search: filter,
+    }
   })
   const columns: ColumnDef<Order>[] = [
     {

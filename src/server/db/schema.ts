@@ -237,15 +237,17 @@ export const orders = pgTable(
       .notNull(),
   },
   (table) => ([
-    index("orders_search_index").using(
-      "gin",
-      sql`(
-        setweight(to_tsvector('english'::regconfig, coalesce(${table.ipAddress}, '')), 'A') ||
-        setweight(to_tsvector('english'::regconfig, coalesce(${table.firstName}, '')), 'B') ||
-        setweight(to_tsvector('english'::regconfig, coalesce(${table.lastName}, '')), 'C') ||
-        setweight(to_tsvector('english'::regconfig, coalesce(${table.email}, '')), 'D')
-      )`
-    ),
+    {
+      searchIndex: index("orders_search_index").using(
+        "gin",
+        sql`(
+          setweight(to_tsvector('english', ${table.ipAddress}), 'A') ||
+          setweight(to_tsvector('english', ${table.firstName}), 'B') ||
+          setweight(to_tsvector('english', ${table.lastName}), 'C') ||
+          setweight(to_tsvector('english', ${table.email}), 'D')
+        )`
+      )
+    }
   ])
 )
 

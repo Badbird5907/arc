@@ -120,6 +120,13 @@
       "when": 1734327716631,
       "tag": "0016_kind_pandemic",
       "breakpoints": true
+    },
+    {
+      "idx": 17,
+      "version": "7",
+      "when": 1734334374951,
+      "tag": "0017_heavy_ikaris",
+      "breakpoints": true
     }
   ]
 }

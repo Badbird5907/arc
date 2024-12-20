@@ -4,11 +4,11 @@ import { Button } from "@/components/ui/button"
 import { AlertCircle, ArrowLeft, Lock, CreditCard, Server } from "lucide-react"
 import Link from "next/link"
 
-import type { JSX } from "react";
+import { useMemo, type JSX } from "react";
 
 export type ErrorCode = "404" | "401" | "402" | "500";
 
-export const ErrorPage = ({ code }: { code: ErrorCode }) => {
+export const ErrorPage = ({ code, errorData }: { code: ErrorCode, errorData?: { error: Error & { digest?: string }, reset: () => void } }) => {
   const errorConfig: Record<ErrorCode, {
     title: string;
     message: string;
@@ -50,7 +50,11 @@ export const ErrorPage = ({ code }: { code: ErrorCode }) => {
       title: "Server Error",
       message: "Oops! Something went wrong on our end.",
       icon: <Server className="h-24 w-24 text-muted-foreground" />,
-      action: {
+      action: errorData ? {
+        text: "Try again",
+        href: "#",
+        onClick: () => errorData.reset(),
+      } : {
         text: "Try again",
         href: "#",
         onClick: () => window.location.reload(),
@@ -71,6 +75,26 @@ export const ErrorPage = ({ code }: { code: ErrorCode }) => {
 
   const error = errorConfig[code] ?? defaultError
 
+  const button = useMemo(() => {
+    if (!error.action) return null;
+    if (!error.action.href) {
+      return (
+        <Button className="mt-8" size="lg" onClick={error.action.onClick}>
+          <ArrowLeft className="mr-2 h-4 w-4" />
+          {error.action.text}
+        </Button>
+      )
+    }
+    return (
+      <Button asChild className="mt-8" size="lg">
+        <Link href={error.action.href} onClick={error.action.onClick}>
+          <ArrowLeft className="mr-2 h-4 w-4" />
+          {error.action.text}
+        </Link>
+      </Button>
+    )
+  }, [error]);
+
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-background text-foreground overflow-y-hidden">
       <div className="container flex max-w-md flex-col items-center text-center">
@@ -82,12 +106,7 @@ export const ErrorPage = ({ code }: { code: ErrorCode }) => {
           {error.title}
         </h1>
         <p className="mt-4 text-lg text-muted-foreground">{error.message}</p>
-        <Button asChild className="mt-8" size="lg">
-          <Link href={error.action.href} onClick={error.action.onClick}>
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            {error.action.text}
-          </Link>
-        </Button>
+        {button}
       </div>
     </div>
   )

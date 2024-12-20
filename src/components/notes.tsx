@@ -3,13 +3,12 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
-import { api } from "@/trpc/react";
-import { useState } from "react";
+import { useState, useTransition } from "react";
 import { toast } from "sonner";
 
-export const EditNotes = ({ id, content }: { id: string, content: string }) => {
+export const EditNotes = ({ content, updateNotes }: { content: string, updateNotes: (notes: string) => Promise<unknown> }) => {
   const [notes, setNotes] = useState(content);
-  const updateNotes = api.orders.updateNotes.useMutation();
+  const [isPending, beginTransition] = useTransition();
   return (
     <Card className="w-full">
       <CardHeader>
@@ -18,10 +17,14 @@ export const EditNotes = ({ id, content }: { id: string, content: string }) => {
       <CardContent className="space-y-4">
         <Textarea value={notes} onChange={(e) => setNotes(e.target.value)} />
         <Button onClick={() => {
-          updateNotes.mutateAsync({ id, notes }).then(() => {
-            toast.success("Notes updated!");
+          beginTransition(async () => {
+            await updateNotes(notes).then(() => {
+              toast.success("Notes updated!");
+            }).catch((error) => {
+              toast.error("Failed to update notes", { description: error.message });
+            });
           });
-        }} loading={updateNotes.isPending} className="w-full">
+        }} className="w-full" loading={isPending}>
           Save
         </Button>
       </CardContent>

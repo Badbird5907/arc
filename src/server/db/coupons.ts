@@ -1,3 +1,4 @@
+import { db } from "@/server/db";
 import { pgDiscountType } from "@/server/db/discounts";
 import { categories, orders, products } from "@/server/db/schema";
 import { relations, sql } from "drizzle-orm";
@@ -61,7 +62,7 @@ export const coupons = pgTable(
   ])
 )
 
-export const couponToProduct = pgTable(
+export const couponToProduct = pgTable( // filters coupon to only apply to certain products
   "coupon_to_product",
   {
     couponId: uuid("coupon_id")
@@ -78,7 +79,7 @@ export const couponToProduct = pgTable(
   )
 )
 
-export const couponToCategory = pgTable(
+export const couponToCategory = pgTable( // filters coupon to only apply to certain categories
   "coupon_to_category",
   {
     couponId: uuid("coupon_id")
@@ -139,3 +140,4 @@ export const couponToCategoryRelations = relations(couponToCategory, ({ one }) =
     references: [categories.id],
   }),
 }))
+
