@@ -1,4 +1,4 @@
-import type { Coupon, CouponWithConstraints, Order, Product } from "@/types";
+import type { Coupon, CouponWithConstraints, CouponWithUses, Product } from "@/types";
 
 export const isCouponExpired = (coupon: Coupon) => {
   const now = new Date();
@@ -7,10 +7,10 @@ export const isCouponExpired = (coupon: Coupon) => {
   return false;
 }
 
-export const isCouponValid = (coupon: Coupon) => {
+export const isCouponValid = (coupon: Coupon | CouponWithUses) => {
   if (!coupon.enabled) return false;
   if (isCouponExpired(coupon)) return false;
-  if (coupon.maxUses > 0 && coupon.uses >= coupon.maxUses) return false;
+  if ("uses" in coupon && coupon.maxUses > 0 && coupon.uses >= coupon.maxUses) return false;
   return true;
 }
 

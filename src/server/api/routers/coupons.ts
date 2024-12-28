@@ -1,11 +1,10 @@
 import { isValidUuid } from "@/lib/utils";
 import { createTRPCRouter, procedure, publicProcedure } from "@/server/api/trpc";
 import { coupons, couponType, orderToCoupon } from "@/server/db/coupons";
-import { isCouponValid } from "@/server/helpers/coupons";
-import { checkRateLimitAndThrowError } from "@/server/redis/rate-limit";
 import { createCouponForm, modifyCouponForm } from "@/trpc/schema/coupons";
-import { checkCoupons, getTotal, lookupProducts } from "@/utils/server/checkout";
-import { and, count, desc, eq, getTableColumns, gt, isNull, lt, or, sql, not } from "drizzle-orm";
+import { checkCoupons, lookupProducts } from "@/utils/server/checkout";
+import { getCouponsWithUses } from "@/utils/server/coupons";
+import { and, desc, eq, getTableColumns, gt, isNull, lt, or, sql, not, inArray } from "drizzle-orm";
 import { asc } from "drizzle-orm";
 import { AnyColumn, SQLWrapper } from "drizzle-orm";
 import { z } from "zod";
@@ -168,11 +167,9 @@ export const couponsRouter = createTRPCRouter({
     playerUuid: z.string().uuid()
   }))
   .meta({ rateLimit: "checkCoupon" })
-  .query(async ({ input, ctx }) => {
+  .query(async ({ input }) => {
     const { cart, coupons: couponCodes } = input;
-    const otherCoupons = await ctx.db.query.coupons.findMany({
-      where: (t, { inArray }) => inArray(t.code, couponCodes)
-    });
+    const otherCoupons = await getCouponsWithUses(inArray(coupons.code, couponCodes));
     // check for missing coupons
     const missingCoupons = couponCodes.filter(code => !otherCoupons.some(c => c.code === code));
     if (missingCoupons.length > 0) {

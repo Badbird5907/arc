@@ -1,12 +1,13 @@
 import { db } from "@/server/db";
-import { orders, orderToCoupon } from "@/server/db/schema";
+import { coupons, orders, orderToCoupon } from "@/server/db/schema";
 import { TebexPaymentProvider } from "@/server/payments/impl/tebex";
-import { PaymentProvider, Product } from "@/types";
+import { PaymentProvider } from "@/types";
 import { type Checkout } from "@/types/checkout";
 import { getTotal, lookupProducts } from "@/utils/server/checkout";
+import { getCouponsWithUses } from "@/utils/server/coupons";
 import { getIpAddress, getPlayer } from "@/utils/server/helpers";
 import { TRPCError } from "@trpc/server";
-import { eq } from "drizzle-orm";
+import { eq, inArray } from "drizzle-orm";
 
 export const getAvailablePaymentProviders = async (_checkoutData: Checkout) => {
   return ["tebex"]
@@ -31,15 +32,13 @@ export const checkout = async (checkoutData: Checkout, provider: string) => {
   }
   const player = result.data;
 
-  const [products, coupons, ip] = await Promise.all([
+  const [products, resolvedCoupons, ip] = await Promise.all([
     lookupProducts(checkoutData.cart),
-    db.query.coupons.findMany({
-      where: (coupons, { inArray }) => inArray(coupons.code, checkoutData.coupons ?? [])
-    }),
+    getCouponsWithUses(inArray(coupons.code, checkoutData.coupons ?? [])),
     getIpAddress()
   ]);
 
-  const total = await getTotal(products, coupons);
+  const total = await getTotal(products, resolvedCoupons);
   const order = await db.transaction(async (tx) => {
     const order = await tx.insert(orders).values({
       items: products.map((item) => ({
@@ -55,7 +54,7 @@ export const checkout = async (checkoutData: Checkout, provider: string) => {
       email: checkoutData.info.email,
     }).returning();
 
-    const coupons = total.couponStatus?.filter(s => s.success) ?? [];
+    const usedCoupons = total.couponStatus?.filter(s => s.success) ?? [];
     const orderId = order[0]?.id;
     if (!orderId) { // wtf
       tx.rollback();
@@ -64,12 +63,19 @@ export const checkout = async (checkoutData: Checkout, provider: string) => {
         message: "Failed to create order"
       });
     }
-    if (coupons.length > 0) {
-      await tx.insert(orderToCoupon).values(coupons.map((coupon) => ({
-        orderId,
-        couponCode: coupon.code,
-        couponId: coupon.id,
-      })));
+    if (usedCoupons.length > 0) {
+      await Promise.all([
+        tx.insert(orderToCoupon).values(usedCoupons.map((coupon) => ({
+          orderId,
+          couponCode: coupon.code,
+          couponId: coupon.id,
+        }))),
+        ...usedCoupons.filter(c => c.coupon && c.coupon.maxGlobalTotalDiscount > 0).map(c => {
+          return tx.update(coupons).set({
+            availableGlobalTotalDiscount: c.coupon!.availableGlobalTotalDiscount - (c.discountAmount ?? 0),
+          }).where(eq(coupons.id, c.coupon!.id));
+        })
+      ])
     }
     return order[0]!;
   })

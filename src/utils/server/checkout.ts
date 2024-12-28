@@ -3,12 +3,12 @@ import "server-only";
 import { db } from "@/server/db";
 import { couponToCategory, couponToProduct } from "@/server/db/coupons";
 import { isCouponValid } from "@/server/helpers/coupons";
-import { Coupon, type Product } from "@/types";
+import { CouponWithUses, type Product } from "@/types";
 import { eq } from "drizzle-orm";
 
 type CartItem = { product: Product, quantity: number }
 
-export const checkCoupons = async (coupons: Coupon[], cart: CartItem[]) => {
+export const checkCoupons = async (coupons: CouponWithUses[], cart: CartItem[]) => {
   const total = cart.reduce((acc, item) => acc + (item.quantity * item.product.price), 0);
   const status = await Promise.all(coupons.map(async (coupon) => {
     if (!isCouponValid(coupon)) {
@@ -95,6 +95,7 @@ export const checkCoupons = async (coupons: Coupon[], cart: CartItem[]) => {
       error: null,
       success: true,
       discountAmount,
+      coupon,
     }
   }))
   const discountAmount = status.reduce((acc, s) => acc + (s.discountAmount ?? 0), 0);
@@ -102,7 +103,7 @@ export const checkCoupons = async (coupons: Coupon[], cart: CartItem[]) => {
   return {status, total: newTotal, discountAmount};
 }
 
-export const getTotal = async (items: CartItem[], coupons?: Coupon[]) => {
+export const getTotal = async (items: CartItem[], coupons?: CouponWithUses[]) => {
   const total = items.reduce((acc, item) => acc + (item.quantity * item.product.price), 0);
   if (coupons) {
     const {status, total: couponTotal, discountAmount} = await checkCoupons(coupons, items);
