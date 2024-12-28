@@ -4,6 +4,7 @@ import { getSession } from "@/server/actions/auth";
 import type { User } from "@/types"
 import { getUser } from "@/utils/server/helpers";
 import { redirect } from "next/navigation";
+
 export const adminWrapper = <T,>(
   func: (data: {
     user: User

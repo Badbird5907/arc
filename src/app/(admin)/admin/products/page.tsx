@@ -9,9 +9,7 @@ const Page = adminWrapper(async ({ user }) => {
   ]);
   return (
     <HydrateClient>
-      <div>
-        <ProductsDataList />
-      </div>
+      <ProductsDataList />
     </HydrateClient>
   );
 }, "admin:products:view")

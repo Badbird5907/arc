@@ -8,6 +8,7 @@ export interface PaymentProvider {
   beginCheckout: (
     cart: Checkout, 
     products: { product: Product, quantity: number }[],
-    order: Order
+    order: Order,
+    discounts: { name: string; amount: number }[],
   ) => Promise<{ metadata: Record<string, unknown>, updateOrder: Partial<Order>, link: string }>;
 }

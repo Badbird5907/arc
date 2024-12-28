@@ -2,10 +2,18 @@ import "server-only";
 import { Redis } from "@upstash/redis";
 import { env } from "@/env";
 
-export const redis = new Redis({
-  url: env.UPSTASH_REDIS_REST_URL,
-  token: env.UPSTASH_REDIS_REST_TOKEN,
-});
+export const getRedis = () => {
+  if (globalThis.redis) {
+    return globalThis.redis;
+  }
+  const redis = new Redis({
+    url: env.UPSTASH_REDIS_REST_URL,
+    token: env.UPSTASH_REDIS_REST_TOKEN,
+  });
+
+  globalThis.redis = redis;
+  return redis;
+};
 
 export interface getOptions {
   force?: boolean;
@@ -15,7 +23,7 @@ export async function get<T>(
   options?: getOptions,
 ): Promise<T | null> {
   if (env.DISABLE_CACHING === true && !options?.force) return null;
-  const value = await redis.get(key);
+  const value = await getRedis().get(key);
   if (!value) return null;
   return value as T;
 }
@@ -31,7 +39,7 @@ export async function set<T>(
   options?: setOptions,
 ): Promise<void> {
   if (env.DISABLE_CACHING === true && !options?.force) return;
-  await redis.set(
+  await getRedis().set(
     key,
     JSON.stringify(value),
     options?.ttl ? { ex: options?.ttl } : { ex: 300 },
@@ -44,5 +52,5 @@ export interface delOptions {
 
 export async function del(key: string, options?: delOptions): Promise<void> {
   if (env.DISABLE_CACHING === true && !options?.force) return;
-  await redis.del(key);
+  await getRedis().del(key);
 }

@@ -10,7 +10,8 @@ export const checkoutSchema = z.object({
   info: infoSchema,
   cart: z.array(z.object({
     id: z.string(),
-    quantity: z.number()
-  }))
+    quantity: z.number().min(1)
+  })),
+  coupons: z.array(z.string()).optional()
 });
 export type Checkout = z.infer<typeof checkoutSchema>;

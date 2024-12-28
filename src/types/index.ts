@@ -61,6 +61,9 @@ export type QueuedCommand = InferResultType<"queuedCommands">;
 type CouponToProduct = InferResultType<"couponToProduct">;
 type CouponToCategory = InferResultType<"couponToCategory">;
 export type Coupon = InferResultType<"coupons">;
+export type CouponWithUses = Coupon & {
+  uses: number;
+}
 export type CouponWithConstraints = Coupon & {
   couponToProduct: CouponToProduct[];
   couponToCategory: CouponToCategory[];

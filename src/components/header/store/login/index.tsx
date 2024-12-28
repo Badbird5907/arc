@@ -1,13 +1,15 @@
 "use client";
+import { useCart } from "@/components/cart";
 import { usePublicSettings } from "@/components/client-config";
 import { EditionSelect } from "@/components/header/store/login/edition-select";
-import { LoginForm } from "@/components/header/store/login/login-form";
+import { PlayerSelectForm } from "@/components/player-select-form";
 import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { useState } from "react";
 
 export const StoreLoginDialog = () => {
   const { enableBedrock } = usePublicSettings();
+  const setPlayer = useCart((state) => state.setPlayer);
   const [edition, setEdition] = useState<"java" | "bedrock" | null>(!enableBedrock ? "java" : null);
   const [stage, setStage] = useState<"edition" | "login">(enableBedrock ? "edition" : "login");
   const [open, setOpen] = useState(false);
@@ -30,11 +32,14 @@ export const StoreLoginDialog = () => {
             {stage == "edition" ? "Select Edition" : "Login"}
           </DialogTitle>
         </DialogHeader>
-      {stage == "edition" && <EditionSelect onSelect={(edition) => {
-        setEdition(edition);
-        setStage("login");
-      }} />}
-      {stage == "login" && edition && <LoginForm editionState={[edition, setEdition]} close={() => setOpen(false)} />}
+        {stage == "edition" && <EditionSelect onSelect={(edition) => {
+          setEdition(edition);
+          setStage("login");
+        }} />}
+        {stage == "login" && edition && <PlayerSelectForm editionState={[edition, setEdition]} onSelect={(player) => {
+          setPlayer(player);
+          setOpen(false);
+        }} />}
       </DialogContent>
     </Dialog>
   )

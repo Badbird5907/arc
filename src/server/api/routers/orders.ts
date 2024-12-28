@@ -1,10 +1,11 @@
 import { PlayerInfo } from "@/components/cart";
 import { createTRPCRouter, procedure } from "@/server/api/trpc";
-import { orders, orderStatus, queuedCommands } from "@/server/db/schema";
+import { coupons, orders, orderStatus, orderToCoupon, queuedCommands } from "@/server/db/schema";
+import { ordersFilter } from "@/trpc/schema/orders";
 import { deliveryWhen } from "@/types";
 import { getPlayerFromUuid } from "@/utils/server/helpers";
 import { queueCommandsWhere } from "@/utils/server/orders";
-import { AnyColumn, asc, desc, and, eq, getTableColumns, sql, SQLWrapper } from "drizzle-orm";
+import { AnyColumn, asc, desc, and, eq, getTableColumns, sql, SQLWrapper, or } from "drizzle-orm";
 import { z } from "zod";
 
 export const ordersRouter = createTRPCRouter({
@@ -15,14 +16,10 @@ export const ordersRouter = createTRPCRouter({
       order: z.enum(["asc", "desc"]).default("asc").optional(),
       sort: z.enum(["created", "price", "products"]).default("created").optional(),
       withPlayers: z.boolean().optional().default(false),
-      filter: z.object({
-        search: z.string().optional(),
-        status: z.enum(orderStatus).optional(),
-      }).default({ search: "" }),
+      filter: ordersFilter.default({}),
     }))
     .query(async ({ input, ctx }) => {
       const { limit, page, order, filter } = input;
-      const { search, status } = filter;
       const offset = (page - 1) * limit;
 
       const orderStuff = (inQuery: AnyColumn | SQLWrapper) => {
@@ -44,73 +41,139 @@ export const ordersRouter = createTRPCRouter({
         }
         return orderStuff(t.createdAt)
       }
-      const whereStatus = status ? eq(orders.status, status) : undefined;
-      const whereSearch = search ? (
-        sql`(
-          setweight(to_tsvector('english', ${orders.ipAddress}), 'A') ||
-          setweight(to_tsvector('english', ${orders.firstName}), 'B') ||
-          setweight(to_tsvector('english', ${orders.lastName}), 'C') ||
-          setweight(to_tsvector('english', ${orders.email}), 'D'))
-          @@ to_tsquery('english', ${search.replace(" ", " | ")}
-        )`
-      ) : undefined;
-      const whereConditions = and(whereStatus, whereSearch);
+      const getWhereConditions = async (filter: {
+        playerUuid?: string;
+        email?: string;
+        name?: string;
+        status?: typeof orderStatus[number] | "all";
+        coupons?: string[];
+      }) => {
+        const conditions: SQLWrapper[] = [];
+      
+        if (filter.playerUuid) {
+          conditions.push(eq(orders.playerUuid, filter.playerUuid));
+        }
+
+        if (filter.email) {
+          conditions.push(
+            sql`to_tsvector('english', ${orders.email}) @@ 
+                plainto_tsquery('english', ${filter.email})`
+          );
+        }
+      
+        if (filter.name) {
+          conditions.push(
+            sql`(
+              setweight(to_tsvector('english', ${orders.firstName}), 'A') ||
+              setweight(to_tsvector('english', ${orders.lastName}), 'A')
+            ) @@ plainto_tsquery('english', ${filter.name})`
+          );
+        }
+      
+        if (filter.status && filter.status !== "all") {
+          conditions.push(eq(orders.status, filter.status as typeof orderStatus[number]));
+        }
+
+        if (filter.coupons && filter.coupons.length > 0) {
+          conditions.push(
+            sql`EXISTS (
+              SELECT 1 FROM ${orderToCoupon}
+              JOIN ${coupons} ON ${orderToCoupon.couponId} = ${coupons.id}
+              WHERE ${orderToCoupon.orderId} = ${orders.id}
+              AND ${coupons.code} IN (${sql.placeholder('couponCodes')})
+            )`
+          )
+        }
+      
+        return conditions.length > 0
+          ? and(...conditions)
+          : undefined;
+      };
+      
+      const whereConditions = await getWhereConditions(filter);
+      const queryParams = filter.coupons?.length ? { couponCodes: filter.coupons } : {};
       const [query, rowCount] = await Promise.all([
         ctx.db.select(getTableColumns(orders))
           .from(orders)
           .limit(limit)
           .orderBy(orderBy)
           .offset(offset)
-          .where(whereConditions),
+          .where(whereConditions)
+          .execute(queryParams),
         ctx.db.select({ 
-          count: sql<number>`count(*)`
+          count: sql<string>`count(*)` // this returns a string
         })
         .from(orders)
         .where(whereConditions)
+        .execute(queryParams),
       ]);
+
+      const rowCountNumber = parseInt(rowCount[0]?.count ?? "0");
 
       if (input.withPlayers) {
         const uuidSet = new Set(query.map(order => order.playerUuid));
         const uuidArray = Array.from(uuidSet);
         const players = await Promise.all(
           uuidArray.map((uuid) => getPlayerFromUuid(uuid))
-        ).then((arr) => arr.filter((player): player is { data: PlayerInfo } => !("notFound" in player)));
+        ).then((arr) => arr.filter((player) => !player.notFound));
         const playerMap = new Map(players.map(player => [player.data.uuid, player.data]));
         return {
           data: query.map(order => ({
             ...order,
             player: playerMap.get(order.playerUuid)
           })),
-          rowCount: rowCount[0]?.count ?? 0,
+          rowCount: rowCountNumber,
           playerMap,
         }
       }
 
       return {
         data: query,
-        rowCount: rowCount[0]?.count ?? 0,
+        rowCount: rowCountNumber,
       };
     }),
   getOrder: procedure("orders:read")
     .input(z.object({
       id: z.string(),
       withPlayer: z.boolean().optional().default(false),
+      withCoupons: z.boolean().optional().default(false),
     }))
     .query(async ({ input, ctx }) => {
-      const order = await ctx.db.select().from(orders).where(eq(orders.id, input.id));
+      const [order, orderCoupons] = await Promise.all([
+        ctx.db.select().from(orders).where(eq(orders.id, input.id)),
+        input.withCoupons 
+          ? ctx.db.select({
+              id: coupons.id,
+              code: coupons.code,
+              type: coupons.type,
+              discountType: coupons.discountType,
+              discountValue: coupons.discountValue,
+            })
+            .from(orderToCoupon)
+            .innerJoin(coupons, eq(orderToCoupon.couponId, coupons.id))
+            .where(eq(orderToCoupon.orderId, input.id))
+          : Promise.resolve([]),
+      ]);
+      
       if (!order.length) {
         return null;
       }
+
+      const result = {
+        ...order[0]!,
+        ...(input.withCoupons && { coupons: orderCoupons }),
+      };
+
       if (input.withPlayer) {
         const player = await getPlayerFromUuid(order[0]?.playerUuid ?? "");
-        if (!("notFound" in player)) {
+        if (!player.notFound) {
           return {
-            ...order[0]!,
+            ...result,
             player: player.data,
           }
         }
       }
-      return order[0];
+      return result;
     }),
   updateNotes: procedure("orders:update")
     .input(z.object({

@@ -11,8 +11,6 @@ const Page = ({ params }: { params: { provider: string } }) => {
   const cart = useCart();
   useEffect(() => {
     cart.clear();
-  }, []);
-  useEffect(() => {
     void confetti({
       particleCount: 300,
       spread: 360,

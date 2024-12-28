@@ -1,10 +1,15 @@
 import type { Coupon, CouponWithConstraints, Order, Product } from "@/types";
 
+export const isCouponExpired = (coupon: Coupon) => {
+  const now = new Date();
+  if (coupon.expiresAt && coupon.expiresAt < now) return true;
+  if (coupon.startsAt && coupon.startsAt > now) return true;
+  return false;
+}
+
 export const isCouponValid = (coupon: Coupon) => {
   if (!coupon.enabled) return false;
-  const now = new Date();
-  if (coupon.expiresAt && coupon.expiresAt < now) return false;
-  if (coupon.startsAt && coupon.startsAt > now) return false;
+  if (isCouponExpired(coupon)) return false;
   if (coupon.maxUses > 0 && coupon.uses >= coupon.maxUses) return false;
   return true;
 }

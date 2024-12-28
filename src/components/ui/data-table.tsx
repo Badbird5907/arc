@@ -1,9 +1,14 @@
+"use client";
+
 import { Button } from "@/components/ui/button"
 import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
+import { Spinner } from "@/components/ui/spinner"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { cn } from "@/lib/utils"
 import { Cell, type ColumnDef, type ColumnFiltersState, flexRender, getCoreRowModel, getFilteredRowModel, getPaginationRowModel, getSortedRowModel, PaginationState, type SortingState, Updater, useReactTable, type VisibilityState } from "@tanstack/react-table"
 import { ChevronDown } from "lucide-react"
-import React, { Dispatch, SetStateAction, useEffect, type JSX } from "react"
+import React, { Dispatch, SetStateAction, useEffect, useMemo, type JSX } from "react"
+import { Checkbox } from "@/components/ui/checkbox";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
@@ -17,6 +22,9 @@ export function DataTable<TData, TValue>({
   globalFilter,
   paginationData = undefined,
   defaultHiddenColumns = ["id"],
+  loading = false,
+  hideColumnsDropdown = false,
+  allowColumnSelection = false,
 }: DataTableProps<TData, TValue> & {
   hideIdDefault?: boolean;
   actionsBar?: JSX.Element | JSX.Element[];
@@ -26,6 +34,9 @@ export function DataTable<TData, TValue>({
     state: [PaginationState, Dispatch<SetStateAction<PaginationState>>]
   }
   defaultHiddenColumns?: string[]
+  loading?: boolean
+  hideColumnsDropdown?: boolean
+  allowColumnSelection?: boolean
 }) {
   const [sorting, setSorting] = React.useState<SortingState>([])
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
@@ -36,9 +47,39 @@ export function DataTable<TData, TValue>({
       defaultHiddenColumns.reduce((acc, col) => ({ ...acc, [col]: false }), {})
     )
   const [rowSelection, setRowSelection] = React.useState({})
+  const actualColumns = useMemo(() => {
+    if (allowColumnSelection) {
+      return [
+        {
+          id: "select",
+          header: ({ table }) => (
+            <Checkbox
+              checked={
+                table.getIsAllPageRowsSelected() ||
+                (table.getIsSomePageRowsSelected() && "indeterminate")
+              }
+              onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+              aria-label="Select all"
+            />
+          ),
+          cell: ({ row }) => (
+            <Checkbox
+              checked={row.getIsSelected()}
+              onCheckedChange={(value) => row.toggleSelected(!!value)}
+              aria-label="Select row"
+            />
+          ),
+          enableSorting: false,
+          enableHiding: false,
+        },
+        ...columns,
+      ]
+    }
+    return columns;
+  }, [columns, allowColumnSelection])
   const table = useReactTable({
     data,
-    columns,
+    columns: actualColumns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     getCoreRowModel: getCoreRowModel(),
@@ -59,6 +100,7 @@ export function DataTable<TData, TValue>({
     ...(paginationData ? {
       onPaginationChange: paginationData.state?.[1],
       manualPagination: true,
+      pageCount: Math.ceil(paginationData.rowCount / paginationData.state?.[0].pageSize),
     } : {}),
     state: {
       sorting,
@@ -79,7 +121,10 @@ export function DataTable<TData, TValue>({
 
   return (
     <div className="w-full">
-      <div className="flex flex-col md:flex-row items-center py-4">
+      <div className={cn(
+        "flex flex-col md:flex-row items-center",
+        actionsBar || !hideColumnsDropdown ? "py-4" : "py-0"
+      )}>
         {/*
         <Input
           placeholder="Filter emails..."
@@ -90,32 +135,36 @@ export function DataTable<TData, TValue>({
           className="max-w-sm"
         />*/}
         {actionsBar}
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="ml-auto mt-2 md:mt-0 w-full md:w-fit">
-              Columns <ChevronDown className="ml-2 h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            {table
-              .getAllColumns()
-              .filter((column) => column.getCanHide())
-              .map((column) => {
-                return (
-                  <DropdownMenuCheckboxItem
-                    key={column.id}
-                    className="capitalize"
-                    checked={column.getIsVisible()}
-                    onCheckedChange={(value) =>
-                      column.toggleVisibility(!!value)
-                    }
-                  >
-                    {column.id}
-                  </DropdownMenuCheckboxItem>
-                )
-              })}
-          </DropdownMenuContent>
-        </DropdownMenu>
+        {!hideColumnsDropdown && (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" className="ml-auto mt-2 md:mt-0 w-full md:w-fit">
+                Columns <ChevronDown className="ml-2 h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              {table
+                .getAllColumns()
+                .filter((column) => column.getCanHide())
+                .map((column) => {
+                  return (
+                    <DropdownMenuCheckboxItem
+                      key={column.id}
+                      className="capitalize"
+                      checked={column.getIsVisible()}
+                      onCheckedChange={(value) =>
+                        column.toggleVisibility(!!value)
+                      }
+                    >
+                      {typeof column.columnDef.header === 'string'
+                        ? column.columnDef.header
+                        : column.id}
+                    </DropdownMenuCheckboxItem>
+                  )
+                })}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        )}
       </div>
       <div className="rounded-md border">
         <Table>
@@ -160,7 +209,7 @@ export function DataTable<TData, TValue>({
                   colSpan={columns.length}
                   className="h-24 text-center"
                 >
-                  No results.
+                  {loading ? <Spinner className="w-4 h-4 justify-self-center" /> : "No results."}
                 </TableCell>
               </TableRow>
             )}
@@ -168,10 +217,16 @@ export function DataTable<TData, TValue>({
         </Table>
       </div>
       <div className="flex items-center justify-end space-x-2 py-4">
-        <div className="flex-1 text-sm text-muted-foreground">
-          {table.getFilteredSelectedRowModel().rows.length} of{" "}
-          {table.getFilteredRowModel().rows.length} row(s) selected.
-        </div>
+        {allowColumnSelection ? (
+          <div className="flex-1 text-sm text-muted-foreground">
+            {table.getFilteredSelectedRowModel().rows.length} of{" "}
+            {table.getFilteredRowModel().rows.length} row(s) selected.
+          </div>
+        ) : (
+          <div className="flex-1 text-sm text-muted-foreground">
+            Page {table.getState().pagination.pageIndex + 1} of {table.getPageCount()} (Showing {table.getFilteredRowModel().rows.length} of {paginationData?.rowCount ?? 0} rows)
+          </div>
+        )}
         <div className="space-x-2">
           <Button
             variant="outline"

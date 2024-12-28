@@ -19,8 +19,8 @@ const SelectValue = SelectPrimitive.Value
 
 const SelectTrigger = React.forwardRef<
   React.ElementRef<typeof SelectPrimitive.Trigger>,
-  React.ComponentPropsWithoutRef<typeof SelectPrimitive.Trigger>
->(({ className, children, ...props }, ref) => (
+  React.ComponentPropsWithoutRef<typeof SelectPrimitive.Trigger> & { showIcon?: boolean }
+>(({ className, children, showIcon = true, ...props }, ref) => (
   <SelectPrimitive.Trigger
     ref={ref}
     className={cn(
@@ -31,7 +31,7 @@ const SelectTrigger = React.forwardRef<
   >
     {children}
     <SelectPrimitive.Icon asChild>
-      <CaretSortIcon className="h-4 w-4 opacity-50" />
+      {showIcon && <CaretSortIcon className="h-4 w-4 opacity-50" />}
     </SelectPrimitive.Icon>
   </SelectPrimitive.Trigger>
 ))

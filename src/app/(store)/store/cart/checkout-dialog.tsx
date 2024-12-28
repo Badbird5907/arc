@@ -2,8 +2,8 @@ import { env } from "@/env";
 import Turnstile from "react-turnstile";
 
 export const CaptchaDialog = ({ keyState, done }: {
-  keyState: [string | null, React.Dispatch<React.SetStateAction<string | null>>]
-  done: () => void;
+  keyState?: [string | null, React.Dispatch<React.SetStateAction<string | null>>]
+  done: (token: string) => void;
 }) => {
   if (!env.TURNSTILE_SITE_KEY) return null;
   return (
@@ -13,8 +13,10 @@ export const CaptchaDialog = ({ keyState, done }: {
         sitekey={env.TURNSTILE_SITE_KEY}
         className="place-self-center"
         onVerify={(token: string) => {
-          keyState[1](token);
-          done();
+          if (keyState) {
+            keyState[1](token);
+          }
+          done(token);
         }}
       />
     </>

@@ -127,6 +127,27 @@
       "when": 1734334374951,
       "tag": "0017_heavy_ikaris",
       "breakpoints": true
+    },
+    {
+      "idx": 18,
+      "version": "7",
+      "when": 1734826558330,
+      "tag": "0018_curved_daimon_hellstrom",
+      "breakpoints": true
+    },
+    {
+      "idx": 19,
+      "version": "7",
+      "when": 1734826778136,
+      "tag": "0019_sticky_marvel_apes",
+      "breakpoints": true
+    },
+    {
+      "idx": 20,
+      "version": "7",
+      "when": 1735067165861,
+      "tag": "0020_bent_silk_fever",
+      "breakpoints": true
     }
   ]
 }

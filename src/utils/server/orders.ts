@@ -47,7 +47,16 @@ export const queueCommandsWhere = async (when: (typeof deliveryWhen)[number], or
               const varName = v.replace(/[{}]/g, "");
               const variable = variables.find((var_) => var_.name === varName);
               if (variable) {
-                const value = await variable.replace(varName, order, product);
+                const value = await variable.replace({
+                  value: varName,
+                  order,
+                  product,
+                  delivery: {
+                    ...delivery,
+                    type: "command",
+                    scope: delivery.scope ?? "",
+                  }
+                });
                 payload = payload.replace(`{${varName}}`, String(value));
               }
             }

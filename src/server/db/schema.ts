@@ -37,7 +37,7 @@ export const users = pgTable(
     id: uuid("id")
       .primaryKey()
       .notNull()
-      .$defaultFn(() => uuidv4()),
+      .defaultRandom(),
     username: text("username").notNull(),
     displayName: text("display_name").notNull(),
     email: text("email").notNull(),
@@ -57,7 +57,7 @@ export const categories = pgTable(
     id: uuid("id")
       .primaryKey()
       .notNull()
-      .$defaultFn(() => uuidv4()),
+      .defaultRandom(),
     name: text("name").notNull(),
     parentCategoryId: uuid("parent_category_id")
       .references((): AnyPgColumn => categories.id, { onDelete: "restrict" }),
@@ -106,7 +106,7 @@ export const products = pgTable(
     id: uuid("id")
       .primaryKey()
       .notNull()
-      .$defaultFn(() => uuidv4()),
+      .defaultRandom(),
     name: text("name").notNull(),
     price: doublePrecision("price").notNull(),
     description: text("description"),
@@ -146,7 +146,7 @@ export const deliveries = pgTable('deliveries', {
   id: uuid('id')
     .primaryKey()
     .notNull()
-    .$defaultFn(() => uuidv4()),
+    .defaultRandom(),
   type: text('type').notNull(),
   value: text('value').notNull(),
   scope: uuid('scope').references(() => servers.id, { onDelete: "set null" }),
@@ -209,7 +209,7 @@ export const orders = pgTable(
     id: uuid("id")
       .primaryKey()
       .notNull()
-      .$defaultFn(() => uuidv4()),
+      .defaultRandom(),
     items: jsonb("items")
       .notNull()
       .default([])
@@ -238,15 +238,13 @@ export const orders = pgTable(
   },
   (table) => ([
     {
-      searchIndex: index("orders_search_index").using(
-        "gin",
-        sql`(
-          setweight(to_tsvector('english', ${table.ipAddress}), 'A') ||
-          setweight(to_tsvector('english', ${table.firstName}), 'B') ||
-          setweight(to_tsvector('english', ${table.lastName}), 'C') ||
-          setweight(to_tsvector('english', ${table.email}), 'D')
-        )`
-      )
+      nameSearchIdx: index('orders_name_search_idx')
+      .using('gin', sql`(
+        setweight(to_tsvector('english', ${table.firstName}), 'A') ||
+        setweight(to_tsvector('english', ${table.lastName}), 'A')
+      )`),
+      emailSearchIdx: index('orders_email_search_idx')
+      .using('gin', sql`to_tsvector('english', ${table.email})`),
     }
   ])
 )
@@ -268,7 +266,7 @@ export const queuedCommands = pgTable(
     id: uuid("id")
       .primaryKey()
       .notNull()
-      .$defaultFn(() => uuidv4()),
+      .defaultRandom(),
     orderId: uuid("order_id").notNull().references(() => orders.id, { onDelete: "cascade" }),
     minecraftUuid: uuid("minecraft_uuid").notNull(),
     requireOnline: boolean("require_online").notNull().default(false),
@@ -306,7 +304,7 @@ export const servers = pgTable(
     id: uuid("id")
       .primaryKey()
       .notNull()
-      .$defaultFn(() => uuidv4()),
+      .defaultRandom(),
     name: text("name").notNull().unique(),
     secretKey: text("secret_key").notNull(),
     type: serverType("type").notNull().default("minecraft"),

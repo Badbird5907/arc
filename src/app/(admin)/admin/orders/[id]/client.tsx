@@ -11,14 +11,14 @@ import { Spinner } from "@/components/ui/spinner";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { api } from "@/trpc/react";
 import { QuestionMarkCircledIcon } from "@radix-ui/react-icons";
-import { LinkIcon, TrashIcon } from "lucide-react";
+import { ExternalLink, LinkIcon, TrashIcon } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { useMemo } from "react";
 import { toast } from "sonner";
 
 export const OrderClient = ({ id }: { id: string }) => {
-  const { data, isLoading } = api.orders.getOrder.useQuery({ id, withPlayer: true });
+  const { data, isLoading } = api.orders.getOrder.useQuery({ id, withPlayer: true, withCoupons: true });
   const productIds = useMemo(() => data?.items.map((item) => item.productId) ?? [], [data?.items]);
   const utils = api.useUtils();
   const { data: products } = api.products.getProductsByIds.useQuery({ ids: productIds });
@@ -135,7 +135,14 @@ export const OrderClient = ({ id }: { id: string }) => {
                               {data.provider === "tebex" ? "Please refer to the Tebex payment page for more details." : "Please refer to the payment provider for more details."}
                             </Link>
                           </DialogDescription>
-                          <DialogFooter>
+                          <DialogFooter className="w-full flex flex-row gap-2">
+                            {data.provider === "tebex" && (
+                              <Link href={paymentUrl} target="_blank" className="mr-auto">
+                                <Button variant="outline">
+                                  <ExternalLink className="h-4 w-4" />
+                                </Button>
+                              </Link>
+                            )}
                             <DialogClose asChild>
                               <Button>Close</Button>
                             </DialogClose>
@@ -311,25 +318,29 @@ export const OrderClient = ({ id }: { id: string }) => {
                     <TableHead>Code</TableHead>
                     <TableHead>Type</TableHead>
                     <TableHead>Amount</TableHead>
+                    <TableHead>Actions</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {/* demo stuff for now */}
-                  <TableRow>
-                    <TableCell>TESTCODE</TableCell>
-                    <TableCell>Percentage</TableCell>
-                    <TableCell>10%</TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell>TESTCODE2</TableCell>
-                    <TableCell>Fixed Amount</TableCell>
-                    <TableCell>$5</TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell>TESTCODE3</TableCell>
-                    <TableCell>Gift Card</TableCell>
-                    <TableCell>$15</TableCell>
-                  </TableRow>
+                  {data.coupons?.map((coupon) => (
+                    <TableRow key={coupon.id}>
+                      <TableCell>{coupon.code}</TableCell>
+                      <TableCell>{coupon.type}</TableCell>
+                      <TableCell>{coupon.discountType === "percentage" ? `${coupon.discountValue}%` : `$${coupon.discountValue}`}</TableCell>
+                      <TableCell>
+                        <Link href={`/admin/coupons/${coupon.id}`} className="text-muted-foreground hover:text-foreground transition-colors" target="_blank">
+                          <Button variant="outline" size="icon">
+                            <ExternalLink className="h-4 w-4" />
+                          </Button>
+                        </Link>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                  {!data.coupons?.length && (
+                    <TableRow>
+                      <TableCell colSpan={4} className="text-center">No coupons</TableCell>
+                    </TableRow>
+                  )}
                 </TableBody>
               </Table>
             </CardContent>

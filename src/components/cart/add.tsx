@@ -13,14 +13,24 @@ export const AddToCartButton = ({ product, className }: {
   className?: string;
 }) => {
   const addToCart = useCart((state) => state.addItem);
-  const subscriptionItem = useCart((state) => state.subscriptionItem);
+  const items = useCart((state) => state.items);
+  const subscriptionItem = useMemo(() => {
+    const entry = Object.entries(items).find(([_, item]) => item.subscription);
+    if (entry) {
+      return {
+        id: entry[0],
+        ...entry[1]
+      };
+    }
+    return null;
+  }, [items]);
   const [check, setCheck] = useState(false);
   const [quantity, setQuantity] = useState(product.minQuantity);
   const { fire } = useConfetti();
   const ref = useRef<HTMLButtonElement | null>(null);
   return (
     <>
-      {subscriptionItem === product.id && <p className="text-md text-gray-500">
+      {subscriptionItem?.subscription && product.type === "subscription" && <p className="text-md text-gray-500">
         You can only have one subscription item in your cart.
       </p>}
       <div className={cn("w-full flex flex-col md:flex-row items-center gap-2", className)}>
@@ -51,7 +61,7 @@ export const AddToCartButton = ({ product, className }: {
           fire(ref);
           setCheck(true);
           setTimeout(() => setCheck(false), 1000);
-        }} ref={ref} className="w-full" disabled={subscriptionItem === product.id}>
+        }} ref={ref} className="w-full" disabled={subscriptionItem?.id === product.id}>
           {check ? (
             <Check size={20} />
           ) : (

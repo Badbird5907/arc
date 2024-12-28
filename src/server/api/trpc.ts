@@ -15,10 +15,12 @@ import { db } from "@/server/db";
 import { getSession } from "@/server/actions/auth";
 import { getUser } from "@/utils/server/helpers";
 import { RBAC } from "@/lib/permissions";
+import { checkRateLimitAndThrowError } from "@/server/redis/rate-limit";
 
 interface Meta {
-  permissions: string[] | string;
+  permissions?: string[] | string;
   validateSome?: boolean;
+  rateLimit?: string;
 }
 
 /**
@@ -33,7 +35,7 @@ interface Meta {
  *
  * @see https://trpc.io/docs/server/context
  */
-export const createTRPCContext = async (opts: { headers: Headers }) => {
+export const createTRPCContext = async (opts: { headers: Headers; sourceIp?: string }) => {
   const session = await getSession();
 
   return {
@@ -108,6 +110,16 @@ const timingMiddleware = t.middleware(async ({ next, path }) => {
   return result;
 });
 
+const rateLimitMiddleware = t.middleware(async ({ next, meta, ctx }) => {
+  const { sourceIp } = ctx;
+  if (meta?.rateLimit) {
+    await checkRateLimitAndThrowError({
+      identifier: `${meta.rateLimit}:${sourceIp}`
+    })
+  }
+  return next();
+});
+
 /**
  * Public (unauthenticated) procedure
  *
@@ -115,7 +127,7 @@ const timingMiddleware = t.middleware(async ({ next, path }) => {
  * guarantee that a user querying is authorized, but you can still access user session data if they
  * are logged in.
  */
-export const publicProcedure = t.procedure.use(timingMiddleware);
+export const publicProcedure = t.procedure.use(timingMiddleware).use(rateLimitMiddleware);
 
 /** Reusable middleware that enforces users are logged in before running the procedure. */
 const enforceUserIsAuthed = t.middleware(async ({ ctx, next, meta }) => {
@@ -167,7 +179,7 @@ const enforceUserIsAuthed = t.middleware(async ({ ctx, next, meta }) => {
  *
  * @see https://trpc.io/docs/procedures
  */
-export const protectedProcedure = t.procedure.use(enforceUserIsAuthed);
+export const protectedProcedure = t.procedure.use(enforceUserIsAuthed).use(rateLimitMiddleware);
 
 export const procedure = (permissions: string | string[]) => {
   return protectedProcedure.meta({ permissions });

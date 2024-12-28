@@ -1,10 +1,11 @@
 import { isValidUuid } from "@/lib/utils";
-import { createTRPCRouter, procedure } from "@/server/api/trpc";
-import { coupons, couponType } from "@/server/db/coupons";
-import { discountType } from "@/server/db/schema";
-import { modifyCouponForm } from "@/trpc/schema/coupons";
-import { TRPCError } from "@trpc/server";
-import { and, desc, eq, getTableColumns, gt, isNull, lt, or, sql } from "drizzle-orm";
+import { createTRPCRouter, procedure, publicProcedure } from "@/server/api/trpc";
+import { coupons, couponType, orderToCoupon } from "@/server/db/coupons";
+import { isCouponValid } from "@/server/helpers/coupons";
+import { checkRateLimitAndThrowError } from "@/server/redis/rate-limit";
+import { createCouponForm, modifyCouponForm } from "@/trpc/schema/coupons";
+import { checkCoupons, getTotal, lookupProducts } from "@/utils/server/checkout";
+import { and, count, desc, eq, getTableColumns, gt, isNull, lt, or, sql, not } from "drizzle-orm";
 import { asc } from "drizzle-orm";
 import { AnyColumn, SQLWrapper } from "drizzle-orm";
 import { z } from "zod";
@@ -19,8 +20,8 @@ export const couponsRouter = createTRPCRouter({
       filter: z.object({
         search: z.string().optional(),
         type: z.enum(couponType).or(z.literal("all")).optional(),
-        active: z.boolean().optional(),
-      }).default({ search: "", active: true }),
+        active: z.enum(["true", "false", "all"]).optional(),
+      }).default({ search: "", active: "all" }),
     }))
     .query(async ({ input, ctx }) => {
       const { limit, page, order, filter } = input;
@@ -42,20 +43,49 @@ export const couponsRouter = createTRPCRouter({
           setweight(to_tsvector('english', ${coupons.notes}), 'B'))
           @@ to_tsquery('english', ${filter.search})`
       ) : undefined;
-      const whereActive = filter.active ? (
+      const whereActive = filter.active === "all" ? undefined : (
+        filter.active === "true" ? 
         and(
-          eq(coupons.enabled, filter.active),
+          eq(coupons.enabled, true),
           or(
             isNull(coupons.expiresAt),
-            lt(coupons.expiresAt, new Date()),
+            gt(coupons.expiresAt, new Date())
+          ),
+          or(
+            isNull(coupons.startsAt),
+            lt(coupons.startsAt, new Date())
+          ),
+          or(
+            eq(coupons.maxUses, -1),
+            sql`(SELECT COUNT(*) FROM ${orderToCoupon} WHERE ${orderToCoupon.couponId} = ${coupons.id}) < ${coupons.maxUses}::int`
+          )
+        ) :
+        // inactive if any of these conditions are true
+        or(
+          eq(coupons.enabled, false),
+          and(
+            not(isNull(coupons.expiresAt)),
+            lt(coupons.expiresAt, new Date())
+          ),
+          and(
+            not(isNull(coupons.startsAt)),
             gt(coupons.startsAt, new Date())
+          ),
+          and(
+            not(eq(coupons.maxUses, -1)),
+            sql`(SELECT COUNT(*) FROM ${orderToCoupon} WHERE ${orderToCoupon.couponId} = ${coupons.id}) >= ${coupons.maxUses}::int`
           )
         )
-      ) : undefined;
+      );
       const whereConditions = and(whereType, whereSearch, whereActive);
       const [data, rowCount] = await Promise.all([
-        ctx.db.select(getTableColumns(coupons))
+        ctx.db.select({
+          ...getTableColumns(coupons),
+          uses: sql<number>`(SELECT COUNT(*) FROM ${orderToCoupon} WHERE ${orderToCoupon.couponId} = ${coupons.id})`,
+        })
           .from(coupons)
+          .leftJoin(orderToCoupon, eq(orderToCoupon.couponId, coupons.id))
+          .groupBy(coupons.id)
           .limit(limit)
           .orderBy(orderBy)
           .offset(offset)
@@ -66,13 +96,14 @@ export const couponsRouter = createTRPCRouter({
         .from(coupons)
         .where(whereConditions)
       ]);
+      console.log(data);
       return {
         data,
         rowCount: rowCount[0]?.count ?? 0,
       }
     }),
   createCoupon: procedure("coupons:write")
-    .input(modifyCouponForm)
+    .input(createCouponForm)
     .mutation(async ({ input, ctx }) => {
       return await ctx.db.insert(coupons).values(input);
     }),
@@ -84,10 +115,24 @@ export const couponsRouter = createTRPCRouter({
       if (!isValidUuid(input.id)) {
         return null;
       }
-      const coupon = await ctx.db.query.coupons.findFirst({
-        where: (t, { eq }) => eq(t.id, input.id),
-      });
-      console.log(coupon);
+      // we might as well perform a sync here too 
+      // const [coupon, uses] = await Promise.all([
+      //   ctx.db.query.coupons.findFirst({
+      //     where: (t, { eq }) => eq(t.id, input.id),
+      //   }),
+      //   ctx.db.select({ count: count() })
+      //     .from(orderToCoupon)
+      //     .where(eq(orderToCoupon.couponId, input.id))
+      // ]);
+      const coupon = await ctx.db.select({
+        ...getTableColumns(coupons),
+        uses: sql<number>`(SELECT COUNT(*) FROM ${orderToCoupon} WHERE ${orderToCoupon.couponId} = ${coupons.id})::int`,
+      })
+      .from(coupons)
+      .where(eq(coupons.id, input.id))
+      .innerJoin(orderToCoupon, eq(orderToCoupon.couponId, coupons.id))
+      .groupBy(coupons.id)
+      .then(result => result[0]);
       return { coupon };
     }),
   deleteCoupon: procedure("coupons:delete")
@@ -113,4 +158,32 @@ export const couponsRouter = createTRPCRouter({
     .mutation(async ({ input, ctx }) => {
       return await ctx.db.update(coupons).set(input.form).where(eq(coupons.id, input.id));
     }),
+  
+  checkCoupons: publicProcedure.input(z.object({
+    cart: z.array(z.object({
+      id: z.string(),
+      quantity: z.number()
+    })),
+    coupons: z.array(z.string()),
+    playerUuid: z.string().uuid()
+  }))
+  .meta({ rateLimit: "checkCoupon" })
+  .query(async ({ input, ctx }) => {
+    const { cart, coupons: couponCodes } = input;
+    const otherCoupons = await ctx.db.query.coupons.findMany({
+      where: (t, { inArray }) => inArray(t.code, couponCodes)
+    });
+    // check for missing coupons
+    const missingCoupons = couponCodes.filter(code => !otherCoupons.some(c => c.code === code));
+    if (missingCoupons.length > 0) {
+      return {
+        error: `The following coupons are not valid: ${missingCoupons.join(", ")}`,
+        invalidCoupons: missingCoupons,
+        success: false,
+      }
+    }
+    const products = await lookupProducts(cart);
+    const result = await checkCoupons(otherCoupons, products);
+    return result;
+  })
 });

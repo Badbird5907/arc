@@ -14,3 +14,14 @@ export const formatExpiryPeriod = (period: TebexPackage["expiry_period"], length
   }
   return `${length} ${period}s`;
 }
+
+export const formatExpiryPeriodShort = (period: TebexPackage["expiry_period"], length: number) => {
+  if (length === 1) {
+    if (period === "month") return "mo";
+    if (period === "year") return "yr";
+    if (period === "day") return "d";
+    if (period === "week") return "w";
+    return period;
+  }
+  return `${length} ${period}s`;
+}

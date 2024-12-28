@@ -2,7 +2,7 @@
 
 import { DataTable } from "@/components/ui/data-table";
 import { api } from "@/trpc/react";
-import { Coupon } from "@/types";
+import { CouponWithUses } from "@/types";
 import { Pencil, Search } from "lucide-react";
 import { ColumnDef, PaginationState } from "@tanstack/react-table";
 import { useState } from "react";
@@ -13,8 +13,9 @@ import { UpsertCouponForm } from "@/app/(admin)/admin/coupons/new";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { isCouponValid } from "@/server/helpers/coupons";
 
-const columns: ColumnDef<Coupon>[] = [
+const columns: ColumnDef<CouponWithUses>[] = [
   {
     header: "ID",
     accessorKey: "id",
@@ -48,9 +49,8 @@ const columns: ColumnDef<Coupon>[] = [
     header: "Active",
     accessorKey: "enabled",
     cell: ({ row }) => {
-      const { enabled } = row.original;
       return <span>
-        {enabled ? (
+        {isCouponValid(row.original) ? (
           <Badge variant={"success"}>
             Yes
           </Badge>
@@ -83,11 +83,11 @@ export const CouponsClient = () => {
   });
   const [filter, setFilter] = useState<{
     search: string,
-    active: boolean,
+    active: "true" | "false" | "all",
     type: "coupon" | "giftcard" | "all",
   }>({
     search: "",
-    active: true,
+    active: "all",
     type: "all",
   });
   const { data, isLoading } = api.coupons.getCoupons.useQuery({
@@ -104,16 +104,6 @@ export const CouponsClient = () => {
         actionsBar={(
           <div className="flex flex-col md:flex-row gap-2 w-full">
             <UpsertCouponForm className="w-full md:w-fit" />
-            <Select value={filter.type} onValueChange={(value) => setFilter({ ...filter, type: value as "coupon" | "giftcard" | "all" })}>
-              <SelectTrigger className="w-full md:w-1/12 h-full">
-                <SelectValue placeholder="Select a type" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All</SelectItem>
-                <SelectItem value="coupon">Coupon</SelectItem>
-                <SelectItem value="giftcard">Gift Card</SelectItem>
-              </SelectContent>
-            </Select>
             <DebouncedInput
               className="w-full md:w-1/3"
               type="text"
@@ -124,12 +114,33 @@ export const CouponsClient = () => {
               debounceMs={500}
               onDebouncedChange={(value) => setFilter({ ...filter, search: value })}
             />
+            <Select value={filter.type} onValueChange={(value) => setFilter({ ...filter, type: value as "coupon" | "giftcard" | "all" })}>
+              <SelectTrigger className="w-full md:w-56 h-full">
+                <SelectValue placeholder="Select a type" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Coupons & Gift Cards</SelectItem>
+                <SelectItem value="coupon">Coupons</SelectItem>
+                <SelectItem value="giftcard">Gift Cards</SelectItem>
+              </SelectContent>
+            </Select>
+            <Select value={filter.active} onValueChange={(value) => setFilter({ ...filter, active: value as "true" | "false" | "all" })}>
+              <SelectTrigger className="w-full md:w-1/12 h-full">
+                <SelectValue placeholder="Select a status" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Statuses</SelectItem>
+                <SelectItem value="true">Active</SelectItem>
+                <SelectItem value="false">Inactive</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
         )}
         paginationData={{
           rowCount: data?.rowCount ?? 0,
           state: [pagination, setPagination],
         }}
+        loading={isLoading}
       />
     </div>
   )

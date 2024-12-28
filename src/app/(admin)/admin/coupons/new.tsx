@@ -1,32 +1,37 @@
 "use client";
 
+import { format } from "date-fns";
 import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { modifyCouponForm } from "@/trpc/schema/coupons";
+import { createCouponForm } from "@/trpc/schema/coupons";
 import { api } from "@/trpc/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { customAlphabet } from "nanoid";
 import { useTransition, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { Pencil, Plus } from "lucide-react";
+import { CalendarIcon, Pencil, Plus, X } from "lucide-react";
 import { Dialog, DialogDescription, DialogTitle, DialogHeader, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { Coupon } from "@/types";
-import { E } from "node_modules/@upstash/redis/zmscore-Dc6Llqgr.mjs";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { TimePickerBar } from "@/components/ui/time-picker/time";
+import { cn } from "@/lib/utils";
+import { Calendar } from "@/components/ui/calendar";
+import { DialogClose } from "@radix-ui/react-dialog";
 
 const defaultId = customAlphabet("ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789", 10);
 
 export const UpsertCouponForm = ({ coupon, className }: { coupon?: Coupon, className?: string }) => {
-  const form = useForm<z.infer<typeof modifyCouponForm>>({
-    resolver: zodResolver(modifyCouponForm),
+  const form = useForm<z.infer<typeof createCouponForm>>({
+    resolver: zodResolver(createCouponForm),
     defaultValues: {
       code: defaultId(10),
       type: "coupon",
       discountType: "amount",
       discountValue: 0,
-      minOrderAmount: 0,
+      minOrderAmount: -1,
       maxDiscountAmount: -1,
       maxUses: -1,
       notes: "",
@@ -41,7 +46,7 @@ export const UpsertCouponForm = ({ coupon, className }: { coupon?: Coupon, class
   const utils = api.useUtils();
   const createCoupon = api.coupons.createCoupon.useMutation({
     onSettled: async () => {
-      await utils.coupons.getCoupon.invalidate();
+      await utils.coupons.getCoupons.invalidate();
     }
   });
   const modifyCoupon = api.coupons.modifyCoupon.useMutation({
@@ -50,7 +55,7 @@ export const UpsertCouponForm = ({ coupon, className }: { coupon?: Coupon, class
     }
   });
 
-  const onSubmit = async (values: z.infer<typeof modifyCouponForm>) => {
+  const onSubmit = async (values: z.infer<typeof createCouponForm>) => {
     startTransition(async () => {
       if (coupon) {
         await modifyCoupon.mutateAsync({ id: coupon.id, form: values });
@@ -76,7 +81,7 @@ export const UpsertCouponForm = ({ coupon, className }: { coupon?: Coupon, class
           )}
         </Button>
       </DialogTrigger>
-      <DialogContent>
+      <DialogContent className="w-full max-w-3xl">
         <DialogHeader>
           <DialogTitle>{!coupon ? "Create Coupon" : "Edit Coupon"}</DialogTitle>
         </DialogHeader>
@@ -84,7 +89,6 @@ export const UpsertCouponForm = ({ coupon, className }: { coupon?: Coupon, class
           {coupon ? "Edit a coupon to give to your customers." : "Create a new coupon to give to your customers."} (-1 = Unlimited)
         </DialogDescription>
         <div className="flex flex-col gap-2">
-
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-2">
               <FormField
@@ -165,27 +169,113 @@ export const UpsertCouponForm = ({ coupon, className }: { coupon?: Coupon, class
                   </FormItem>
                 )}
               />
-              <div className="flex flex-row gap-2 w-full">
+              <FormField
+                control={form.control}
+                name="maxDiscountAmount"
+                render={({ field }) => (
+                  <FormItem className="w-full">
+                    <FormLabel>Max Discount Amount</FormLabel>
+                    <FormControl>
+                      <Input {...field} type="number" />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+              <div className="flex flex-col md:flex-row gap-2 w-full">
                 <FormField
                   control={form.control}
-                  name="maxDiscountAmount"
+                  name="startsAt"
                   render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Max Discount Amount</FormLabel>
+                    <FormItem className="w-full">
+                      <FormLabel>Starts At</FormLabel>
                       <FormControl>
-                        <Input {...field} type="number" />
+                        <Popover>
+                          <FormControl>
+                            <PopoverTrigger asChild className="w-full">
+                              <Button
+                                variant="outline"
+                                className={cn(
+                                  "w-full justify-start text-left font-normal",
+                                  !field.value && "text-muted-foreground"
+                                )}
+                              >
+                                <CalendarIcon className="mr-2 h-4 w-4" />
+                                {field.value ? (
+                                  format(field.value, "PPP hh:mm aa")
+                                ) : (
+                                  <span>Pick a date</span>
+                                )}
+                              </Button>
+                            </PopoverTrigger>
+                          </FormControl>
+                          <PopoverContent className="w-[250px] p-0">
+                            <Calendar
+                              mode="single"
+                              selected={field.value}
+                              onSelect={field.onChange}
+                              initialFocus
+                            />
+                            <div className="p-3 border-t border-border">
+                              <TimePickerBar
+                                setDate={field.onChange}
+                                date={field.value}
+                              />
+                            </div>
+                          </PopoverContent>
+                        </Popover>
                       </FormControl>
                     </FormItem>
                   )}
                 />
                 <FormField
                   control={form.control}
-                  name="maxUses"
+                  name="expiresAt"
                   render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Max Uses</FormLabel>
+                    <FormItem className="w-full">
+                      <FormLabel>Expires At</FormLabel>
                       <FormControl>
-                        <Input {...field} type="number" />
+                        <Popover>
+                          <FormControl>
+                            <PopoverTrigger asChild className="w-full">
+                              <Button
+                                variant="outline"
+                                className={cn(
+                                  "w-full justify-start text-left font-normal",
+                                  !field.value && "text-muted-foreground"
+                                )}
+                              >
+                                <CalendarIcon className="mr-2 h-4 w-4" />
+                                {field.value ? (
+                                  format(field.value, "PPP hh:mm aa")
+                                ) : (
+                                  <span>Pick a date</span>
+                                )}
+                                <div className="ml-auto text-muted-foreground hover:text-white hover:cursor-pointer rounded-md border border-transparent hover:border-border p-1 transition-all duration-150"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    field.onChange(null);
+                                  }}
+                                >
+                                  <X size={16} />
+                                </div>
+                              </Button>
+                            </PopoverTrigger>
+                          </FormControl>
+                          <PopoverContent className="w-[250px] p-0">
+                            <Calendar
+                              mode="single"
+                              selected={field.value ?? undefined}
+                              onSelect={field.onChange}
+                              initialFocus
+                            />
+                            <div className="p-3 border-t border-border">
+                              <TimePickerBar
+                                setDate={field.onChange}
+                                date={field.value ?? undefined}
+                              />
+                            </div>
+                          </PopoverContent>
+                        </Popover>
                       </FormControl>
                     </FormItem>
                   )}
@@ -203,7 +293,62 @@ export const UpsertCouponForm = ({ coupon, className }: { coupon?: Coupon, class
                   </FormItem>
                 )}
               />
-              <Button type="submit" className="w-full" loading={isPending}>
+              <Dialog>
+                <DialogTrigger asChild>
+                  <Button variant="outline">
+                    Open unsupported settings
+                  </Button>
+                </DialogTrigger>
+                <DialogContent>
+                  <DialogTitle>Unsupported Settings</DialogTitle>
+                  <DialogDescription>
+                    <span>These settings are not reliable due to technical limitations with tebex.</span>
+                    <span>Please do not rely on these limits, as they are vulnerable to abuse.</span>
+                  </DialogDescription>
+                  <FormField
+                    control={form.control}
+                    name="maxUses"
+                    render={({ field }) => (
+                      <FormItem className="w-full">
+                        <FormLabel>Max Uses</FormLabel>
+                        <FormControl>
+                          <Input {...field} type="number" />
+                        </FormControl>
+                      </FormItem>
+                    )}
+                  />
+                  <div className="flex flex-row gap-2 w-full">
+                    <FormField
+                      control={form.control}
+                      name="maxGlobalTotalDiscount"
+                      render={({ field }) => (
+                        <FormItem className="w-full">
+                          <FormLabel>Max Global Total Discount</FormLabel>
+                          <FormControl>
+                            <Input {...field} type="number" />
+                          </FormControl>
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="availableGlobalTotalDiscount"
+                      render={({ field }) => (
+                        <FormItem className="w-full">
+                          <FormLabel>Available Global Total Discount</FormLabel>
+                          <FormControl>
+                            <Input {...field} type="number" />
+                          </FormControl>
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                  <DialogClose asChild>
+                    <Button>Close</Button>
+                  </DialogClose>
+                </DialogContent>
+              </Dialog>
+              <Button type="submit" className="w-full mt-2" loading={isPending}>
                 {!coupon ? "Create" : "Save"}
               </Button>
             </form>

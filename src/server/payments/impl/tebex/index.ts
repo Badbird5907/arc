@@ -1,47 +1,126 @@
 import { env } from "@/env";
-import { createCheckoutSession, type TebexBasket, type TebexPackage } from "@/server/payments/impl/tebex/api-client";
+import { createTebexBasket, CreateBasketResponse, createCheckoutSession, type TebexBasket, type TebexPackage, addPackageToTebexBasket } from "@/server/payments/impl/tebex/api-client";
 import { type PaymentProvider } from "@/server/payments/providers";
 import { type Order, type Product } from "@/types";
 import { type Checkout } from "@/types/checkout";
+import { getIpAddress } from "@/utils/server/helpers";
 
+const productToTebexPackage = (product: Product, quantity: number): TebexPackage => {
+  return {
+    name: product.name,
+    price: product.price,
+    type: product.type,
+    qty: quantity,
+    custom: {
+      productId: product.id,
+    },
+    ...(product.type === "subscription" ? {
+      expiry_period: product.expiryPeriod,
+      expiry_length: product.expiryLength,
+    } : {})
+  }
+}
 
-export class TebexPaymentProvider implements PaymentProvider {
-  name = "Tebex";
-  icon = "https://www.tebex.io/branding/Tebex_logo_vertical.svg"
-  beginCheckout = async (cart: Checkout, products: { product: Product, quantity: number }[], order: Order) => {
-    const basket: TebexBasket = {
-      first_name: cart.info.firstName,
-      last_name: cart.info.lastName,
+const beginSingleApiCheckout = async (cart: Checkout,
+  products: { product: Product; quantity: number; }[],
+  order: Order,
+  discounts: { name: string; amount: number }[]) => { // this api is just broken...
+  const basket: TebexBasket = {
+    first_name: cart.info.firstName,
+    last_name: cart.info.lastName,
+    email: cart.info.email,
+    return_url: `${env.BASE_URL}/store/checkout/callback/tebex/return`,
+    complete_url: `${env.BASE_URL}/store/checkout/callback/tebex/complete`,
+    custom: {
+      orderId: order.id,
+    }
+  }
+
+  const packages = products.map((product) => {
+    if (!product.product) return null;
+    return productToTebexPackage(product.product, product.quantity);
+  }).filter(item => !!item);
+  // const sale: TebexSale | undefined = discountAmount && discountAmount > 0 ? {
+  //   name: "Discount",
+  //   discount_type: "amount",
+  //   amount: discountAmount
+  // } : undefined;
+  const sales: TebexPackage[] =  discounts.map((discount) => ({
+    name: discount.name,
+    price: -discount.amount,
+    type: "single",
+    qty: 1,
+    custom: {
+      productId: "discount",
+    }
+  }));
+  const session = await createCheckoutSession(basket, [
+    ...packages,
+    ...sales
+  ]);
+  return {
+    metadata: session,
+    updateOrder: {
+      providerOrderId: `INTERNAL_tbx_bskt:${session.ident}`
+    },
+    link: session.links.checkout!
+  }
+}
+const beginBasketApiCheckout = async (cart: Checkout,
+  products: { product: Product; quantity: number; }[],
+  order: Order,
+  discounts: { name: string; amount: number }[]) => {
+    const basket: CreateBasketResponse = await createTebexBasket({
+      returnUrl: `${env.BASE_URL}/store/checkout/callback/tebex/return`,
+      completeUrl: `${env.BASE_URL}/store/checkout/callback/tebex/complete`,
+      firstName: cart.info.firstName,
+      lastName: cart.info.lastName,
       email: cart.info.email,
-      return_url: `${env.BASE_URL}/store/checkout/callback/tebex/return`,
-      complete_url: `${env.BASE_URL}/store/checkout/callback/tebex/complete`,
+      expiresAt: new Date(Date.now() + 1000 * 60 * 60), // 1 hour
+      completeAutoRedirect: true,
+      country: "CA",
+      ip: await getIpAddress(),
       custom: {
         orderId: order.id,
       }
-    };
-
-    const packages: TebexPackage[] = products.map((product) => {
-      if (!product.product) return null;
-      const p = product.product;
-      return {
-        name: p.name,
-        price: typeof p.price === "string" ? Number(p.price) : p.price,
-        type: p.type,
-        qty: product.quantity,
-        expiry_period: p.expiryPeriod,
-        expiry_length: p.expiryLength,
+    });
+    console.log(" -> Basket created!");
+    await Promise.all(products.map(async (product) => {
+      await addPackageToTebexBasket(basket.ident, productToTebexPackage(product.product, product.quantity));
+    }));
+    console.log(" -> Packages added!");
+    await Promise.all(discounts.map(async (discount) => { // make sure the discounts appear below the packages
+      await addPackageToTebexBasket(basket.ident, {
+        name: discount.name,
+        price: -discount.amount,
+        type: "single",
+        qty: 1,
         custom: {
-          productId: p.id,
+          productId: "discount",
         }
-      }
-    }).filter(item => !!item) as TebexPackage[];
-    const session = await createCheckoutSession(basket, packages);
+      });
+    }));
+    console.log(" -> Discounts added!");
+    console.log(" -> Basket done! ", basket);
     return {
-      metadata: session,
+      metadata: basket,
       updateOrder: {
-        providerOrderId: `INTERNAL_tbx_bskt:${session.ident}`
+        providerOrderId: `INTERNAL_tbx_bskt:${basket.ident}`
       },
-      link: session.links.checkout!
+      link: basket.links.checkout!
     }
+}
+export class TebexPaymentProvider implements PaymentProvider {
+  name = "Tebex";
+  icon = "https://www.tebex.io/branding/Tebex_logo_vertical.svg"
+  beginCheckout = async (cart: Checkout,
+                         products: { product: Product; quantity: number; }[],
+                         order: Order,
+                         discounts: { name: string; amount: number }[],
+                        ) => {
+    if (products.every(product => product.quantity === 1)) { // single api checkout is broken and quantity doesn't work
+      return beginSingleApiCheckout(cart, products, order, discounts);
+    }
+    return beginBasketApiCheckout(cart, products, order, discounts);
   }
 }

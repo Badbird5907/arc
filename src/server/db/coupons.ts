@@ -1,4 +1,3 @@
-import { db } from "@/server/db";
 import { pgDiscountType } from "@/server/db/discounts";
 import { categories, orders, products } from "@/server/db/schema";
 import { relations, sql } from "drizzle-orm";
@@ -14,7 +13,6 @@ import {
   timestamp,
   uuid,
 } from "drizzle-orm/pg-core";
-import { v4 as uuidv4 } from "uuid";
 
 export const couponType = ["coupon", "giftcard"] as const;
 export const pgCouponType = pgEnum("coupon_type", couponType)
@@ -25,7 +23,7 @@ export const coupons = pgTable(
     id: uuid("id")
       .primaryKey()
       .notNull()
-      .$defaultFn(() => uuidv4()),
+      .defaultRandom(),
     type: pgCouponType("type").notNull().default("coupon"),
     code: text("code").notNull().unique(),
     discountType: pgDiscountType("discount_type").notNull().default("amount"),
@@ -35,13 +33,14 @@ export const coupons = pgTable(
     notes: text("notes").notNull().default(""),
 
     maxUses: integer("max_uses").notNull().default(1),
-    uses: integer("uses").notNull().default(0),
 
     // mainly used for "gift cards"
-    maxGlobalTotalDiscount: doublePrecision("max_global_total_discount").notNull().default(0),
-    availableGlobalTotalDiscount: doublePrecision("available_global_total_discount").notNull().default(0),
+    maxGlobalTotalDiscount: doublePrecision("max_global_total_discount").notNull().default(-1),
+    availableGlobalTotalDiscount: doublePrecision("available_global_total_discount").notNull().default(-1),
 
     enabled: boolean("enabled").notNull().default(true),
+    canStack: boolean("can_stack").notNull().default(false),
+    conflictsWith: text("conflicts_with").array().notNull().default([]),
     expiresAt: timestamp("expires_at", { precision: 3, mode: "date" }),
     startsAt: timestamp("starts_at", { precision: 3, mode: "date" }).defaultNow(),
     createdAt: timestamp("created_at", { precision: 3, mode: "date" })
@@ -55,7 +54,7 @@ export const coupons = pgTable(
         "gin",
         sql`(
           setweight(to_tsvector('english', ${t.code}), 'A') ||
-          setweight(to_tsvector('english', ${t.notes}), 'B')
+          setweight(to_tsvector('english', ${t.notes}), 'B')  
         )`
       )
     }
@@ -100,13 +99,14 @@ export const orderToCoupon = pgTable(
     id: uuid("id")
       .primaryKey()
       .notNull()
-      .$defaultFn(() => uuidv4()),
+      .defaultRandom(),
     orderId: uuid("order_id")
       .notNull()
       .references(() => orders.id),
     couponId: uuid("coupon_id")
       .notNull()
       .references(() => coupons.id),
+    couponCode: text("coupon_code").notNull().references(() => coupons.code),
     createdAt: timestamp("created_at", { precision: 3, mode: "date" })
       .defaultNow()
       .notNull(),

@@ -1,6 +1,6 @@
 "use client";
 
-import { useCart } from "@/components/cart";
+import { PlayerInfo, useCart } from "@/components/cart";
 import { usePublicSettings } from "@/components/client-config";
 import { DebouncedInput } from "@/components/debounced-input";
 import { PlayerSkinImage } from "@/components/player-skin";
@@ -9,13 +9,12 @@ import { Tabs, TabsTrigger, TabsList } from "@/components/ui/tabs";
 import { api } from "@/trpc/react";
 import { useState } from "react";
 
-export const LoginForm = ({ editionState, close }: { editionState: [string | null, React.Dispatch<"java" | "bedrock">]; close: () => void }) => {
+export const LoginForm = ({ editionState, onSelect }: { editionState: [string | null, React.Dispatch<"java" | "bedrock">]; onSelect: (player: PlayerInfo) => void }) => {
   const { enableBedrock } = usePublicSettings();
   const [username, setUsername] = useState("");
 
-  const setPlayer = useCart((state) => state.setPlayer)
   const { data: player, isLoading } = api.utils.fetchPlayer.useQuery({ name: username, bedrock: editionState[0] === "bedrock" });
-  const valid = (!isLoading && player && 'data' in player && 'name' in player.data);
+  const valid = (!isLoading && player?.data?.name);
   return (
     <div className="flex flex-col md:flex-row items-start gap-6 p-2">
       <div className="w-40 h-35 flex items-start justify-center overflow-hidden place-self-center bg-accent/80 rounded-lg pt-1">
@@ -49,9 +48,8 @@ export const LoginForm = ({ editionState, close }: { editionState: [string | nul
           disabled={!valid}
           loading={isLoading}
           onClick={() => {
-            if (!player || !('data' in player)) return;
-            setPlayer(player.data);
-            close();
+            if (!player?.data || !player.notFound) return;
+            onSelect(player.data);
           }}
         >
           {!valid ? "Could not find your account!" : "Continue"}

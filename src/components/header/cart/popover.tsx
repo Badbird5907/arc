@@ -60,7 +60,7 @@ export const CartPopoverContent = () => {
               <Spinner size={32} />
             </div>
           ) : (
-            Object.entries(cart.items).map(([id, quantity], i) => {
+            Object.entries(cart.items).map(([id, { quantity }], i) => {
               const product = products.data?.find((p) => p.id === id);
               if (!product || i > 5) return null;
               return (

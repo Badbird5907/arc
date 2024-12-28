@@ -1,4 +1,5 @@
 import { createTRPCRouter, publicProcedure } from "@/server/api/trpc";
+import { verifyCaptcha } from "@/server/helpers/captcha";
 import { checkout, getAvailablePaymentProviders } from "@/server/payments";
 import { checkoutSchema } from "@/types/checkout";
 import { TRPCError } from "@trpc/server";
@@ -13,9 +14,17 @@ export const checkoutRouter = createTRPCRouter({
   checkout: publicProcedure
     .input(z.object({
       data: checkoutSchema,
+      captcha: z.string(),
       provider: z.string()
     }))
-    .mutation(async ({ input }) => {
+    .meta({ rateLimit: "checkoutBegin" })
+    .mutation(async ({ input, ctx }) => {
+      if (!await verifyCaptcha(input.captcha, ctx.sourceIp)) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Invalid captcha!"
+        })
+      }
       const providers = await getAvailablePaymentProviders(input.data);
       if (providers.length === 0) {
         throw new TRPCError({

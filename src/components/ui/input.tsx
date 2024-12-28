@@ -5,7 +5,6 @@ import { cva, type VariantProps } from "class-variance-authority"
 
 export const inputVariants = cva(
   "flex items-center h-10 w-full px-3 py-2 text-sm bg-transparent file:border-0 file:text-sm file:font-medium placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50 border border-transparent focus-within:outline-none aria-invalid:ring-1 aria-invalid:ring-destructive aria-invalid:focus-within:ring-2 aria-invalid:focus-within:ring-destructive",
-
   {
     variants: {
       rounded: {
@@ -61,7 +60,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
             {
               "pl-1.5": !!startContent,
               "pr-1.5": !!endContent,
-            }
+            },
           )}
         />
         {endContent && (

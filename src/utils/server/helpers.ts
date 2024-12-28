@@ -24,21 +24,21 @@ export const getIpAddress = async () => {
   return headersList.get(header) ?? "0.0.0.0";
 }
 
-export const getPlayer = async (username: string): Promise<{data: PlayerInfo} | { notFound: true }> => {
+export const getPlayer = async (username: string): Promise<{data: PlayerInfo, notFound: false } | { data: null, notFound: true }> => {
   const bedrock = username.startsWith(".");
   const enableBedrock = await getSetting("enableBedrock");
-  if (!enableBedrock && bedrock) return { notFound: true };
+  if (!enableBedrock && bedrock) return { notFound: true, data: null };
   const cached = await get<PlayerInfo | { notFound: true }>(`player:${username}`);
   if (cached) {
-    if ("notFound" in cached && cached.notFound) return { notFound: true };
-    return { data: cached as PlayerInfo };
+    if ("notFound" in cached && cached.notFound) return { notFound: true, data: null };
+    return { data: cached as PlayerInfo, notFound: false };
   }
   const response = await fetch(`https://api.geysermc.org/v2/utils/uuid/bedrock_or_java/${username}?prefix=.`, {
     headers: { Accept: 'application/json' }
   });
   if (response.status === 404 || response.status === 503) { // they return 503 if the account is not found in cache
     waitUntil(set(`player:${username}`, { notFound: true }));
-    return { notFound: true };
+    return { notFound: true, data: null };
   }
   if (!response.ok) {
     console.error("got response", response.status);
@@ -57,7 +57,7 @@ export const getPlayer = async (username: string): Promise<{data: PlayerInfo} | 
     bedrock
   };
   waitUntil(set(`player:${username}`, data));
-  return { data };
+  return { data, notFound: false };
 }
 
 const uuidToXuid = (uuid: string) => {
@@ -67,11 +67,11 @@ const uuidToXuid = (uuid: string) => {
   const two = one.slice(-13);
   return parseInt(two, 16);
 }
-export const getPlayerFromUuid = async (uuid: string): Promise<{data: PlayerInfo} | { notFound: true }> => {
+export const getPlayerFromUuid = async (uuid: string): Promise<{data: PlayerInfo; notFound: false} | { notFound: true; data: null }> => {
   const cached = await get<PlayerInfo | { notFound: true }>(`player:${uuid}`);
   if (cached) {
-    if ("notFound" in cached && cached.notFound) return { notFound: true };
-    return { data: cached as PlayerInfo };
+    if ("notFound" in cached && cached.notFound) return { notFound: true, data: null };
+    return { data: cached as PlayerInfo, notFound: false };
   }
   const fixed = fixUUID(uuid);
   const bedrock = fixed.startsWith("00000000");
@@ -84,7 +84,7 @@ export const getPlayerFromUuid = async (uuid: string): Promise<{data: PlayerInfo
       message?: string;
     };
     if (!result.gamertag) {
-      return { notFound: true };
+      return { notFound: true, data: null };
     }
     const data = {
       uuid: fixed,
@@ -92,11 +92,11 @@ export const getPlayerFromUuid = async (uuid: string): Promise<{data: PlayerInfo
       bedrock
     };
     waitUntil(set(`player:${uuid}`, data));
-    return { data };
+    return { data, notFound: false };
   }
   const profile = await fetch(`https://sessionserver.mojang.com/session/minecraft/profile/${fixed}`);
   if (profile.status === 404 || profile.status === 204) {
-    return { notFound: true };
+    return { notFound: true, data: null };
   }
   const result = await profile.json() as {
     id: string;
@@ -108,6 +108,6 @@ export const getPlayerFromUuid = async (uuid: string): Promise<{data: PlayerInfo
     bedrock
   };
   waitUntil(set(`player:${uuid}`, data));
-  return { data };
+  return { data, notFound: false };
 
 }
