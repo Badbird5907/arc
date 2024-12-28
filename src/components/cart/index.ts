@@ -57,7 +57,7 @@ export const useCart = create<CartStore>()(
         delete coupons[code];
         return { coupons };
       }),
-      clear: () => set({ items: {}, player: null, coupons: {} }) // to me in the morning; the zustand store is broken
+      clear: () => set({ items: {}, player: null, coupons: {} })
     })),
     {
 			name: `arc-cart`,
