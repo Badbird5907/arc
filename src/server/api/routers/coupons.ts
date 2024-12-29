@@ -1,6 +1,6 @@
 import { isValidUuid } from "@/lib/utils";
 import { createTRPCRouter, procedure, publicProcedure } from "@/server/api/trpc";
-import { coupons, couponType, orderToCoupon } from "@/server/db/coupons";
+import { coupons, couponToCategory, couponToProduct, couponType, orderToCoupon } from "@/server/db/coupons";
 import { createCouponForm, modifyCouponForm } from "@/trpc/schema/coupons";
 import { checkCoupons, lookupProducts } from "@/utils/server/checkout";
 import { getCouponsWithUses } from "@/utils/server/coupons";
@@ -182,5 +182,46 @@ export const couponsRouter = createTRPCRouter({
     const products = await lookupProducts(cart);
     const result = await checkCoupons(otherCoupons, products);
     return result;
-  })
+  }),
+  getProductAndCategoryFilters: procedure("coupons:read")
+    .input(z.object({
+      couponId: z.string(),
+    }))
+    .query(async ({ input, ctx }) => {
+      const [productFilters, categoryFilters] = await Promise.all([
+        ctx.db.select().from(couponToProduct).where(eq(couponToProduct.couponId, input.couponId)),
+        ctx.db.select().from(couponToCategory).where(eq(couponToCategory.couponId, input.couponId)),
+      ]);
+      return {
+        productFilters,
+        categoryFilters,
+      }
+    }),
+  updateProductFilters: procedure("coupons:write")
+    .input(z.object({
+      couponId: z.string(),
+      productIds: z.array(z.string()),
+    }))
+    .mutation(async ({ input, ctx }) => {
+      // delete all existing product filters
+      await ctx.db.delete(couponToProduct).where(eq(couponToProduct.couponId, input.couponId));
+      // insert new product filters
+      return await ctx.db.insert(couponToProduct).values(input.productIds.map(id => ({ couponId: input.couponId, productId: id })));
+    }),
+  updateCategoryFilters: procedure("coupons:write")
+    .input(z.object({
+      couponId: z.string(),
+      categoryIds: z.array(z.string()),
+    }))
+    .mutation(async ({ input, ctx }) => {
+      // delete all existing category filters
+      await ctx.db.delete(couponToCategory).where(eq(couponToCategory.couponId, input.couponId));
+      // insert new category filters
+      return await ctx.db.insert(couponToCategory).values(
+        input.categoryIds.map(id => ({ 
+          couponId: input.couponId, 
+          categoryId: id 
+        }))
+      );
+    }),
 });

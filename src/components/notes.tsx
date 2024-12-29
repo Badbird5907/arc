@@ -15,7 +15,11 @@ export const EditNotes = ({ content, updateNotes }: { content: string, updateNot
         <CardTitle>Notes</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
-        <Textarea value={notes} onChange={(e) => setNotes(e.target.value)} />
+        <Textarea 
+          value={notes} 
+          onChange={(e) => setNotes(e.target.value)}
+          className="min-h-[200px]" 
+        />
         <Button onClick={() => {
           beginTransition(async () => {
             await updateNotes(notes).then(() => {

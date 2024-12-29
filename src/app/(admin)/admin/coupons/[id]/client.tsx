@@ -19,6 +19,7 @@ import Link from "next/link";
 import { ToggleCoupon } from "@/app/(admin)/admin/coupons/[id]/enable";
 import { HoverCard, HoverCardContent } from "@/components/ui/hover-card";
 import { HoverCardTrigger } from "@radix-ui/react-hover-card";
+import { EditCouponFilters } from "@/app/(admin)/admin/coupons/[id]/edit-filters";
 
 export const CouponsClient = ({ id }: { id: string }) => {
   const { data, isLoading, error } = api.coupons.getCoupon.useQuery({ id });
@@ -147,7 +148,10 @@ export const CouponsClient = ({ id }: { id: string }) => {
               <CardTitle>Actions</CardTitle>
             </CardHeader>
             <CardContent className="flex flex-col gap-4">
-              <UpsertCouponForm coupon={coupon} className="w-full" />
+              <div className="flex flex-row gap-2">
+                <UpsertCouponForm coupon={coupon} className="w-full" />
+                <EditCouponFilters couponId={coupon.id} />
+              </div>
               <ToggleCoupon coupon={coupon} />
               <Dialog>
                 <DialogTrigger asChild>

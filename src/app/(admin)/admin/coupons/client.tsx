@@ -125,7 +125,7 @@ export const CouponsClient = () => {
               </SelectContent>
             </Select>
             <Select value={filter.active} onValueChange={(value) => setFilter({ ...filter, active: value as "true" | "false" | "all" })}>
-              <SelectTrigger className="w-full md:w-1/12 h-full">
+              <SelectTrigger className="w-full md:w-fit h-full">
                 <SelectValue placeholder="Select a status" />
               </SelectTrigger>
               <SelectContent>

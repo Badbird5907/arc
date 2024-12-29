@@ -1,4 +1,3 @@
-
 import { categoriesRouter } from "@/server/api/routers/categories";
 import { checkoutRouter } from "@/server/api/routers/checkout";
 import { couponsRouter } from "@/server/api/routers/coupons";
