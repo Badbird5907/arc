@@ -2,7 +2,7 @@
 
 import { StoreBanner } from "@/app/(store)/store-banner";
 import { CheckoutForm } from "@/app/(store)/store/cart/checkout-card";
-import { CouponsCard } from "@/app/(store)/store/cart/coupons-card";
+import { CouponsInput } from "@/app/(store)/store/cart/coupons-card";
 import { useCart } from "@/components/cart";
 import { usePublicSettings } from "@/components/client-config";
 import { PlayerSelectForm } from "@/components/player-select-form";
@@ -192,7 +192,7 @@ export default function Cart() {
               </CardTitle>
             </CardHeader>
             <CardContent className="flex flex-col gap-2">
-              <CouponsCard coupons={cart.coupons} cart={cart.items} player={cart.player} addCoupon={cart.addCoupon} removeCoupon={cart.removeCoupon} />
+              <CouponsInput />
             </CardContent>
           </Card>
 
@@ -201,7 +201,7 @@ export default function Cart() {
               <CardTitle className="text-2xl">Checkout</CardTitle>
             </CardHeader>
             <CardContent>
-              <CheckoutForm cart={cart} products={products.data ?? []} coupons={Object.keys(cart.coupons)} />
+              <CheckoutForm products={products.data ?? []} />
             </CardContent>
           </Card >
         </div>

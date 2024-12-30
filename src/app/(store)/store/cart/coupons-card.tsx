@@ -1,21 +1,25 @@
 "use client"
-import { type CartStore } from "@/components/cart"
+
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { queryClient } from "@/trpc/react";
-import { type PlayerInfo } from "@badbird5907/mc-utils";
 import { Plus, X } from "lucide-react";
 import { useState, useTransition } from "react";
 import { toast } from "sonner";
+import { useCart } from "@/components/cart";
+import { useShallow } from "zustand/react/shallow";
 
-export const CouponsCard = ({ coupons, cart, player, addCoupon, removeCoupon }: {
-  coupons: CartStore["coupons"],
-  cart: CartStore["items"],
-  player: PlayerInfo,
-  addCoupon: CartStore["addCoupon"],
-  removeCoupon: CartStore["removeCoupon"],
-}) => {
+export const CouponsInput = () => {
+  const { coupons, items: cart, player, addCoupon, removeCoupon } = useCart(
+    useShallow(s => ({
+      coupons: s.coupons,
+      items: s.items,
+      player: s.player,
+      addCoupon: s.addCoupon,
+      removeCoupon: s.removeCoupon
+   }))
+  )
   const [couponCode, setCouponCode] = useState("");
   const [isPending, startTransition] = useTransition();
 
@@ -35,6 +39,10 @@ export const CouponsCard = ({ coupons, cart, player, addCoupon, removeCoupon }: 
         <Input placeholder="Enter coupon code" value={couponCode} onChange={(e) => setCouponCode(e.target.value)} />
         <Button disabled={!couponCode} onClick={() => {
           startTransition(async () => {
+            if (!player) {
+              toast.error("Player not found!");
+              return;
+            }
             const result = await queryClient.coupons.checkCoupons.query({
               cart: Object.entries(cart).map(([id, { quantity }]) => ({
                 id,

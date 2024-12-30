@@ -1,7 +1,6 @@
 import { CaptchaDialog } from "@/app/(store)/store/cart/checkout-dialog"
-import { type CartStore } from "@/components/cart"
+import { useCart, type CartStore } from "@/components/cart"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { env } from "@/env"
 import { api } from "@/trpc/react"
@@ -13,6 +12,7 @@ import { infoSchema } from "@/types/checkout"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { toast } from "sonner"
+import { useShallow } from "zustand/react/shallow"
 
 const defaultStep = env.TURNSTILE_SITE_KEY ? "captcha" : "checkout";
 const messages = [
@@ -23,11 +23,17 @@ const messages = [
   "Just a moment...",
   "Almost done!",
 ]
-export const CheckoutForm = ({ cart, products, coupons }: {
-  cart: CartStore,
+export const CheckoutForm = ({ products }: {
   products: Product[],
-  coupons: string[]
 }) => {
+  const { items: cart, player, coupons } = useCart(
+    useShallow(s => ({
+      items: s.items,
+      player: s.player,
+      coupons: s.coupons
+    }))
+  )
+  
   const [step, setStep] = useState<"checkout" | "captcha">(defaultStep);
   const [checkoutLink, setCheckoutLink] = useState<string | null>(null);
   const [loadingText, setLoadingText] = useState<string>("Preparing...");
@@ -64,13 +70,13 @@ export const CheckoutForm = ({ cart, products, coupons }: {
       provider: "tebex",
       captcha: token,
       data: {
-        username: cart.player!.name,
+        username: player!.name,
         info: values,
-        cart: Object.entries(cart.items).map(([id, { quantity }]) => ({
+        cart: Object.entries(cart).map(([id, { quantity }]) => ({
           id,
           quantity
         })),
-        coupons: coupons
+        coupons: Object.keys(coupons)
       }
     }).then((resp) => {
       if (resp.link) {

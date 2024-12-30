@@ -6,23 +6,35 @@ import { Separator } from "@/components/ui/separator"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { api } from "@/trpc/react"
 import { type Product } from "@/types"
-import { calculateTotal } from "@/lib/utils/cart"
 import { Spinner } from "@/components/ui/spinner"
 import { MinusCircle, PlusCircle, ShoppingCart, X } from "lucide-react"
-import { CouponsCard } from "@/app/(store)/store/cart/coupons-card"
+import { CouponsInput } from "@/app/(store)/store/cart/coupons-card"
 import { toast } from "sonner"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { CheckoutForm } from "@/app/(store)/store/cart/checkout-card"
 import { Badge } from "@/components/ui/badge"
 import { formatExpiryPeriodShort } from "@badbird5907/mc-utils"
 import { PlayerSkinImage } from "@/components/player-skin"
+import { useShallow } from 'zustand/react/shallow'
 
 export const CartSheet = ({ trigger }: { trigger: ReactNode }) => {
-  const cart = useCart();
-  const items = useMemo(() => Object.entries(cart.items).map(([id, { quantity }]) => ({
+  const { cartItems, cartPlayer, cartCoupons, removeCoupon, setQuantity, setPlayer, removeItem, clear, hasHydrated } = useCart(
+    useShallow((state) => ({
+      cartItems: state.items,
+      cartPlayer: state.player,
+      cartCoupons: state.coupons,
+      removeCoupon: state.removeCoupon,
+      setQuantity: state.setQuantity,
+      setPlayer: state.setPlayer,
+      removeItem: state.removeItem,
+      clear: state.clear,
+      hasHydrated: state._hasHydrated,
+    }))
+  );
+  const items = useMemo(() => Object.entries(cartItems).map(([id, { quantity }]) => ({
     id,
     quantity
-  })), [cart.items]);
+  })), [cartItems]);
   const itemsKeys = useMemo(() => items.map(({ id }) => id), [items]);
   const products = api.products.getProductsByIds.useQuery({
     ids: itemsKeys,
@@ -34,31 +46,31 @@ export const CartSheet = ({ trigger }: { trigger: ReactNode }) => {
     });
     return record;
   }, [products.data]);
-  const hasUuid = !!cart.player && "uuid" in cart.player;
-  const couponCheckEnabled = Object.keys(cart.coupons).length > 0 && hasUuid;
+  const hasUuid = !!cartPlayer && "uuid" in cartPlayer;
+  const couponCheckEnabled = useMemo(() => Object.keys(cartCoupons).length > 0 && hasUuid, [cartCoupons, hasUuid]);
   const couponCheck = api.coupons.checkCoupons.useQuery({
-    cart: Object.entries(cart.items).map(([id, { quantity }]) => ({
+    cart: Object.entries(cartItems).map(([id, { quantity }]) => ({
       id,
       quantity
     })),
-    coupons: [...Object.keys(cart.coupons)],
-    playerUuid: hasUuid ? cart.player!.uuid : "",
+    coupons: [...Object.keys(cartCoupons)],
+    playerUuid: hasUuid ? cartPlayer.uuid : "",
   }, {
     enabled: couponCheckEnabled
   })
 
   const total = useMemo(() => {
-    if (!cart.items) return {
+    if (!cartItems) return {
       total: 0,
       discountAmount: 0,
       subtotal: 0
     };
-    const total = Object.keys(cart.items).reduce((acc, cur) => acc + (cart.items[cur]?.quantity ?? 0) * (products.data?.find(p => p.id === cur)?.price ?? 0), 0);
+    const total = Object.keys(cartItems).reduce((acc, cur) => acc + (cartItems[cur]?.quantity ?? 0) * (products.data?.find(p => p.id === cur)?.price ?? 0), 0);
     if (couponCheckEnabled && !!couponCheck.data && "discountAmount" in couponCheck.data) {
       const removeCoupons = couponCheck.data.status.filter(c => !c.success).map(c => c.code);
       if (removeCoupons.length > 0) {
         removeCoupons.forEach(code => {
-          cart.removeCoupon(code);
+          removeCoupon(code);
         });
         toast.error(`Removed ${removeCoupons.length} invalid coupon(s)!`, {
           description: removeCoupons.join(", ")
@@ -75,9 +87,9 @@ export const CartSheet = ({ trigger }: { trigger: ReactNode }) => {
       discountAmount: 0,
       subtotal: total
     };
-  }, [cart, couponCheckEnabled, couponCheck.data, products.data]);
-  if (!cart.player) return null;
-  if (!cart._hasHydrated) return <Spinner />;
+  }, [cartItems, couponCheckEnabled, couponCheck.data, products.data, removeCoupon]);
+  if (!cartPlayer) return null;
+  if (!hasHydrated) return <Spinner />;
   return (
     <Sheet>
       <SheetTrigger asChild>
@@ -93,7 +105,7 @@ export const CartSheet = ({ trigger }: { trigger: ReactNode }) => {
             <div className="flex flex-row items-center gap-2">
               <div className="w-16 flex items-start justify-center overflow-hidden place-self-center bg-accent/80 rounded-lg pt-1">
                 <PlayerSkinImage
-                  name={cart.player.name}
+                  name={cartPlayer.name}
                   width={48}
                   height={48}
                   renderConfig={{
@@ -103,9 +115,9 @@ export const CartSheet = ({ trigger }: { trigger: ReactNode }) => {
                 />
               </div>
               <div>
-                <h1 className="text-lg font-semibold">{cart.player.name}</h1>
+                <h1 className="text-lg font-semibold">{cartPlayer.name}</h1>
                 <Button
-                  onClick={() => cart.setPlayer(null)}
+                  onClick={() => setPlayer(null)}
                   variant="destructive"
                   size="sm"
                   className="mt-1"
@@ -118,7 +130,7 @@ export const CartSheet = ({ trigger }: { trigger: ReactNode }) => {
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={() => cart.clear()}
+                onClick={clear}
                 className="text-muted-foreground hover:text-destructive"
               >
                 Clear Cart
@@ -154,7 +166,7 @@ export const CartSheet = ({ trigger }: { trigger: ReactNode }) => {
                               size="icon"
                               className="h-8 w-8"
                               disabled={item.quantity <= product.minQuantity}
-                              onClick={() => cart.setQuantity(item.id, item.quantity - 1)}
+                              onClick={() => setQuantity(item.id, item.quantity - 1)}
                             >
                               <MinusCircle className="h-4 w-4" />
                             </Button>
@@ -164,7 +176,7 @@ export const CartSheet = ({ trigger }: { trigger: ReactNode }) => {
                               size="icon"
                               className="h-8 w-8"
                               disabled={product.maxQuantity > 0 && item.quantity >= product.maxQuantity}
-                              onClick={() => cart.setQuantity(item.id, item.quantity + 1)}
+                              onClick={() => setQuantity(item.id, item.quantity + 1)}
                             >
                               <PlusCircle className="h-4 w-4" />
                             </Button>
@@ -178,7 +190,7 @@ export const CartSheet = ({ trigger }: { trigger: ReactNode }) => {
                           variant="ghost"
                           size="icon"
                           className="h-8 w-8 text-muted-foreground hover:text-destructive"
-                          onClick={() => cart.removeItem(item.id)}
+                          onClick={() => removeItem(item.id)}
                         >
                           <X className="h-4 w-4" />
                         </Button>
@@ -193,7 +205,7 @@ export const CartSheet = ({ trigger }: { trigger: ReactNode }) => {
         </ScrollArea>
         {items.length > 0 && (
           <div className="space-y-4 pt-6">
-            <CouponsCard coupons={cart.coupons} cart={cart.items} player={cart.player} addCoupon={cart.addCoupon} removeCoupon={cart.removeCoupon} />
+            <CouponsInput />
             <div className="space-y-1.5">
               {/* <div className="flex items-center justify-between text-base">
                 <span className="font-medium">Subtotal</span>
@@ -231,7 +243,7 @@ export const CartSheet = ({ trigger }: { trigger: ReactNode }) => {
                     Checkout
                   </DialogTitle>
                 </DialogHeader>
-                <CheckoutForm cart={cart} products={products.data ?? []} coupons={Object.keys(cart.coupons)} />
+                <CheckoutForm products={products.data ?? []} />
               </DialogContent>
             </Dialog>
           </div>
