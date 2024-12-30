@@ -5,6 +5,7 @@ export type SiteConfig = {
   title: string;
   description: string;
   shortDescription: string;
+  logo?: string | null;
   nav: {
     title: string;
     link: string;
@@ -18,11 +19,12 @@ export type SiteConfig = {
     }[];
   }
 } & Metadata;
-export const discord = "https://discord.gg/cSEV8EAByx";
+export const discord = "https://discord.badbird.dev/";
 export const appConfig: SiteConfig = {
-  title: "DufjiSMP",
-  description: "Join our Hardcore Minecraft Survival Server, packed with custom features, unique events, and exclusive rewards that take gameplay to the next level!",
-  shortDescription: "Hardcore Survival",
+  title: "Arc",
+  description: "Arc is a Minecraft Server webstore made in Next.js, Supabase, and Drizzle.",
+  shortDescription: "Fully customisable Minecraft Server Webstore",
+  logo: null,
   nav: [
     {
       title: "Home",
@@ -42,7 +44,7 @@ export const appConfig: SiteConfig = {
     icons: [
       {
         icon: FaYoutube,
-        link: "https://www.youtube.com/channel/UC7oMVLCvDrQOJh8b7tmN8cg",
+        link: "https://www.youtube.com/@badbird5907",
       },
       {
         icon: FaDiscord,
@@ -50,7 +52,7 @@ export const appConfig: SiteConfig = {
       },
       {
         icon: FaTwitter,
-        link: "https://x.com/RDufji",
+        link: "https://x.com/badbird_5907",
       }
     ]
   }

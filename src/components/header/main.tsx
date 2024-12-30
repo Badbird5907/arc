@@ -25,7 +25,9 @@ export function MainNav({ admin, store }: { admin?: boolean; store?: boolean }) 
         <SidebarTrigger />
       )}
       <Link href="/" className="mr-6 flex items-center space-x-3">
-        <Image src="/img/logo.png" width={32} height={32} alt={appConfig.title} className="self-center" />
+        {appConfig.logo && (
+          <Image src={appConfig.logo} width={32} height={32} alt={appConfig.title} className="self-center" />
+        )}
         <span className="hidden font-bold sm:inline-block">{appConfig.title}</span>
       </Link>
       <nav className="flex items-center gap-6 text-sm">
