@@ -5,7 +5,7 @@ import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMe
 import { Spinner } from "@/components/ui/spinner"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { cn } from "@/lib/utils"
-import { type Cell, type ColumnDef, type ColumnFiltersState, flexRender, getCoreRowModel, getFilteredRowModel, getPaginationRowModel, getSortedRowModel, type PaginationState, type SortingState, Updater, useReactTable, type VisibilityState } from "@tanstack/react-table"
+import { type Cell, type ColumnDef, type ColumnFiltersState, flexRender, getCoreRowModel, getFilteredRowModel, getPaginationRowModel, getSortedRowModel, type PaginationState, type SortingState, useReactTable, type VisibilityState } from "@tanstack/react-table"
 import { ChevronDown } from "lucide-react"
 import React, { type Dispatch, type SetStateAction, useEffect, useMemo, type JSX } from "react"
 import { Checkbox } from "@/components/ui/checkbox";
@@ -209,7 +209,9 @@ export function DataTable<TData, TValue>({
                   colSpan={columns.length}
                   className="h-24 text-center"
                 >
-                  {loading ? <Spinner className="w-4 h-4 justify-self-center" /> : "No results."}
+                  <div className="flex justify-center">
+                    {loading ? <Spinner className="w-4 h-4" /> : "No results."}
+                  </div>
                 </TableCell>
               </TableRow>
             )}

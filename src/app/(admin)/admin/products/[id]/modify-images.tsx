@@ -104,7 +104,7 @@ export const ModifyImagesCard = ({ product }: { product: Product }) => {
               </div>
             ))}
             <button className="border-dashed border-4 w-full h-full rounded-lg" onClick={uploadNewImage}>
-              <div className="place-self-center py-24">
+              <div className="flex justify-center items-center py-24">
                 {isPending ? <Spinner /> : <Plus />}
               </div>
             </button>

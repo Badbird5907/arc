@@ -7,8 +7,8 @@ import Link from "next/link";
 
 export const SubCategorySelector = ({ base, current }: { base: CategoryWithChildren; current: Category }) => {
   return (
-    <div className="w-2/3 place-self-center">
-      <div className="w-fit px-4 py-4 border rounded-2xl translate-y-[-30px] bg-background place-self-center">
+    <div className="w-2/3 mx-auto">
+      <div className="w-fit px-4 py-4 border rounded-2xl translate-y-[-30px] bg-background mx-auto">
         <div className="flex flex-wrap justify-center gap-2">
           {[base, ...(base.children ? base.children : [])].map((category) => {
             const isBase = category.id === base.id;

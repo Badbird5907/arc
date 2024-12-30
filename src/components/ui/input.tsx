@@ -56,7 +56,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
           ref={ref}
           {...props}
           className={cn(
-            "w-full bg-transparent outline-none focus-visible:outline-none",
+            "w-full bg-transparent outline-none focus-visible:outline-none [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none [-moz-appearance:textfield]",
             {
               "pl-1.5": !!startContent,
               "pr-1.5": !!endContent,

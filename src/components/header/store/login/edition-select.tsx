@@ -28,7 +28,9 @@ export const EditionSelect = ({ onSelect }: { onSelect: (edition: keyof typeof e
               <CardTitle className="hidden">{edition.name}</CardTitle>
             </CardHeader>
             <CardContent className="pt-6 group grayscale hover:grayscale-0 hover:scale-105 cursor-pointer transition-all duration-500 text-center space-y-4">
-              <Image src={edition.image} width={64} height={64} alt={edition.name} className="justify-self-center" />
+              <div className="flex justify-center">
+                <Image src={edition.image} width={64} height={64} alt={edition.name} />
+              </div>
               <h1 className="text-xl font-bold">{edition.name}</h1>
             </CardContent>
           </Card>
