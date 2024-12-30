@@ -7,7 +7,7 @@ import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { useEffect } from "react";
 
-const Page = ({ params }: { params: { provider: string } }) => {
+const Page = () => {
   const cart = useCart();
   useEffect(() => {
     cart.clear();
