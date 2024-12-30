@@ -13,8 +13,8 @@ importers:
   .:
     dependencies:
       '@badbird5907/mc-utils':
-        specifier: ^0.0.7
-        version: 0.0.7
+        specifier: ^0.0.8
+        version: 0.0.8
       '@dnd-kit/core':
         specifier: ^6.1.0
         version: 6.1.0(react-dom@19.0.0-rc.1(react@19.0.0-rc.1))(react@19.0.0-rc.1)
@@ -300,8 +300,8 @@ packages:
     resolution: {integrity: sha512-4zpTHZ9Cm6L9L+uIqghQX8ZXg8HKFcjYO3qHoO8zTmRm6HQUJ8SSJ+KRvbMBZn0EGVlT4DRYeQ/6hjlyXBh+Kg==}
     engines: {node: '>=6.9.0'}
 
-  '@badbird5907/mc-utils@0.0.7':
-    resolution: {integrity: sha512-TeSWZjnmMXovEvlS40p3oayKIaLYpsc2xODQPwsJEO2ZDZZ3mwgar+Wdfr4bDcRFXOxtzL92OepYSr3ooYuofA==, tarball: https://npm.pkg.github.com/download/@badbird5907/mc-utils/0.0.7/82fcad6615cba281510211493bbce7ed03f592b5}
+  '@badbird5907/mc-utils@0.0.8':
+    resolution: {integrity: sha512-PkWsSE0ys405bem2LMBhZJKcoYEYFC5rf1628iYuPblmjx+QVfLxkf+4nGjevNEYi7Lv4sfIQ2eceW8zD2Rhbg==, tarball: https://npm.pkg.github.com/download/@badbird5907/mc-utils/0.0.8/c022188869b1f2402f590fcb60571cac1b598443}
 
   '@codemirror/autocomplete@6.18.1':
     resolution: {integrity: sha512-iWHdj/B1ethnHRTwZj+C1obmmuCzquH29EbcKr0qIjA9NfDeBDJ7vs+WOHsFeLeflE4o+dHfYndJloMKHUkWUA==}
@@ -2475,6 +2475,9 @@ packages:
   character-reference-invalid@2.0.1:
     resolution: {integrity: sha512-iBZ4F4wRbyORVsu0jPV7gXkOsGYjGHPmAyv+HiHG8gi5PtC9KI2j1+v8/tlibRvjoWX027ypmG/n0HtO5t7unw==}
 
+  child_process@1.0.2:
+    resolution: {integrity: sha512-Wmza/JzL0SiWz7kl6MhIKT5ceIlnFPJX+lwUGj7Clhy5MMldsSoJR0+uvRzOS5Kv45Mq7t1PoE8TsOA9bzvb6g==}
+
   chokidar@3.6.0:
     resolution: {integrity: sha512-7VT13fmjotKpGipCW9JEQAusEPE+Ei8nl6/g4FBAmIm0GOOLMua9NDDo/DWp0ZAxCr3cPq5ZpBqmPAQgDda2Pw==}
     engines: {node: '>= 8.10.0'}
@@ -4577,7 +4580,9 @@ snapshots:
     dependencies:
       regenerator-runtime: 0.14.1
 
-  '@badbird5907/mc-utils@0.0.7': {}
+  '@badbird5907/mc-utils@0.0.8':
+    optionalDependencies:
+      child_process: 1.0.2
 
   '@codemirror/autocomplete@6.18.1(@codemirror/language@6.10.3)(@codemirror/state@6.4.1)(@codemirror/view@6.34.1)(@lezer/common@1.2.3)':
     dependencies:
@@ -6934,6 +6939,9 @@ snapshots:
   character-entities@2.0.2: {}
 
   character-reference-invalid@2.0.1: {}
+
+  child_process@1.0.2:
+    optional: true
 
   chokidar@3.6.0:
     dependencies:
