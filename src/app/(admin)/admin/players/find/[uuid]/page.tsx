@@ -17,7 +17,7 @@ import { ExternalLink, Gavel } from "lucide-react";
 import { PlayerActions } from "@/app/(admin)/admin/players/find/[uuid]/actions";
 import { api, HydrateClient } from "@/trpc/server";
 import { PlayerSkinImage } from "@/components/player-skin";
-import { Metadata } from "next";
+import { type Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Player"

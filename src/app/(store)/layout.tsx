@@ -3,7 +3,7 @@ import { Footer } from "@/components/footer"
 import { SiteHeader } from "@/components/header"
 import { StoreHeader } from "@/components/header/store"
 import { api, HydrateClient } from "@/trpc/server"
-import { Metadata } from "next";
+import { type Metadata } from "next";
 
 export const metadata: Metadata = {
   title: {

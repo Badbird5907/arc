@@ -1,7 +1,7 @@
 import { adminWrapper } from "@/app/(admin)/admin/admin-panel";
 import { ServersClient } from "@/app/(admin)/admin/servers/client";
 import { api } from "@/trpc/server";
-import { Metadata } from "next";
+import { type Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Servers"

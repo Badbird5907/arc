@@ -1,7 +1,7 @@
 import { createTRPCRouter, procedure } from "@/server/api/trpc";
 import { deliveries } from "@/server/db/schema";
 import { setSetting } from "@/server/settings";
-import { Delivery, zodDelivery } from "@/types";
+import { type Delivery, zodDelivery } from "@/types";
 import { type SettingKey } from "@/types/settings";
 import { TRPCError } from "@trpc/server";
 import { eq } from "drizzle-orm";

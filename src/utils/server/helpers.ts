@@ -6,7 +6,7 @@ import { waitUntil } from "@vercel/functions";
 import { env } from "@/env";
 import { headers } from "next/headers";
 import { getSetting } from "@/server/settings";
-import { fetchPlayerByUsername, fetchPlayerByUUID, PlayerInfo, type PlayerResponse } from "@badbird5907/mc-utils";
+import { fetchPlayerByUsername, fetchPlayerByUUID, type PlayerInfo, type PlayerResponse } from "@badbird5907/mc-utils";
 
 export const getUser = async (id: string) => {
   const user = await db.query.users.findFirst({

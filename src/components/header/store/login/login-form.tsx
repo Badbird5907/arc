@@ -6,7 +6,7 @@ import { PlayerSkinImage } from "@/components/player-skin";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsTrigger, TabsList } from "@/components/ui/tabs";
 import { api } from "@/trpc/react";
-import { PlayerInfo } from "@badbird5907/mc-utils";
+import { type PlayerInfo } from "@badbird5907/mc-utils";
 import { useState } from "react";
 
 export const LoginForm = ({ editionState, onSelect }: { editionState: [string | null, React.Dispatch<"java" | "bedrock">]; onSelect: (player: PlayerInfo) => void }) => {

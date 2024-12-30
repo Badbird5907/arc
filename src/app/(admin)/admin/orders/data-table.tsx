@@ -3,9 +3,9 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
 import { StatusBadge } from "@/app/(admin)/admin/orders/status-badge";
-import { OrderWithPlayer } from "@/types";
-import { Order } from "@/types";
-import { ColumnDef } from "@tanstack/react-table";
+import { type OrderWithPlayer } from "@/types";
+import { type Order } from "@/types";
+import { type ColumnDef } from "@tanstack/react-table";
 import Link from "next/link";
 
 export const ordersColumns: ColumnDef<Order>[] = [
@@ -52,7 +52,7 @@ export const ordersColumns: ColumnDef<Order>[] = [
   {
     header: "Subtotal",
     accessorKey: "subtotal",
-    cell: ({ row }) => `$${(row.original as Order).subtotal.toFixed(2)}`,
+    cell: ({ row }) => `$${(row.original).subtotal.toFixed(2)}`,
   },
   {
     header: "Created At",

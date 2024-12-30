@@ -2,7 +2,7 @@ import { env } from "@/env";
 import { db } from "@/server/db";
 import { orders, players, queuedCommands } from "@/server/db/schema";
 import { getSetting } from "@/server/settings";
-import { type QueuedCommand, type Order, deliveryWhen } from "@/types";
+import { type QueuedCommand, type Order, type deliveryWhen } from "@/types";
 import { variables } from "@/utils/helpers/delivery-variables";
 import { embedColors, sendOrderWebhook } from "@/utils/helpers/discord";
 import { Embed } from "@vermaysha/discord-webhook";

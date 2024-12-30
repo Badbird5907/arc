@@ -7,7 +7,7 @@ import { and, type AnyColumn, asc, desc, eq, getTableColumns, inArray, notInArra
 import { z } from "zod";
 import { v4 as uuid } from "uuid";
 import { TRPCError } from "@trpc/server";
-import { zodDelivery, type Product } from "@/types";
+import { type Category, type Delivery, type ProductAndCategory, type ProductWithDeliveries, zodDelivery, type Product } from "@/types";
 import { del } from "@/server/redis";
 
 export const productRouter = createTRPCRouter({
@@ -89,7 +89,7 @@ export const productRouter = createTRPCRouter({
     .leftJoin(deliveries, eq(productToDelivery.deliveryId, deliveries.id));
 
     // Group results by product to handle multiple deliveries
-    const productDeliveries = new Map();
+    const productDeliveries = new Map<string, Product & { deliveries: Delivery[]; category: Category | null }>();
     for (const row of val) {
       if (!productDeliveries.has(row.products.id)) {
         productDeliveries.set(row.products.id, {
@@ -99,14 +99,14 @@ export const productRouter = createTRPCRouter({
         });
       }
       if (row.deliveries) {
-        productDeliveries.get(row.products.id).deliveries.push(row.deliveries);
+        productDeliveries.get(row.products.id)?.deliveries.push(row.deliveries as Delivery);
       }
     }
 
     return Array.from(productDeliveries.values())[0] ?? {
       category: null,
-      deliveries: []
-    };
+      deliveries: [] as Delivery[]
+    } as ProductAndCategory & ProductWithDeliveries;
   }),
   createProduct: procedure("products:create")
   .input(createProductInput)

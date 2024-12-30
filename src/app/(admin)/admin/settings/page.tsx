@@ -2,7 +2,7 @@ import { SettingsCard } from "@/app/(admin)/admin/settings/settings-card";
 import { getAllSettings } from "@/server/settings";
 import { DeliverySettings } from "@/app/(admin)/admin/servers/delivery-settings";
 import { api } from "@/trpc/server";
-import { Metadata } from "next";
+import { type Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Settings"

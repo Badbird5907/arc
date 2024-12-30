@@ -34,6 +34,8 @@ export default [...compat.extends(
         },
     },
 
+    ignores: ["eslint.config.mjs"],
+
     rules: {
         "@typescript-eslint/array-type": "off",
         "@typescript-eslint/consistent-type-definitions": "off",

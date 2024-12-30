@@ -1,17 +1,17 @@
 "use client";
 
-import { Button } from "@/components/ui/button"
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { api } from "@/trpc/react";
-import { Filter } from "lucide-react"
+import { Filter } from "lucide-react";
 import { ProductSelector } from "@/components/product-selector";
 import { CategorySelector } from "@/components/category-selector";
 import { useState, useMemo } from "react";
 import { toast } from "sonner";
 
 export const EditCouponFilters = ({ couponId }: { couponId: string }) => {
-  const { data, isLoading } = api.coupons.getProductAndCategoryFilters.useQuery({ couponId });
+  const { data } = api.coupons.getProductAndCategoryFilters.useQuery({ couponId });
   const utils = api.useUtils();
 
   const [selectedProducts, setSelectedProducts] = useState<string[]>([]);
@@ -19,8 +19,8 @@ export const EditCouponFilters = ({ couponId }: { couponId: string }) => {
   const [isDirty, setIsDirty] = useState(false);
 
   const updateProductsMutation = api.coupons.updateProductFilters.useMutation({
-    onSuccess: () => {
-      utils.coupons.getProductAndCategoryFilters.invalidate({ couponId });
+    onSuccess: async () => {
+      await utils.coupons.getProductAndCategoryFilters.invalidate({ couponId });
       setIsDirty(false);
       toast.success("Filters updated successfully!");
     },
@@ -32,8 +32,8 @@ export const EditCouponFilters = ({ couponId }: { couponId: string }) => {
   });
 
   const updateCategoriesMutation = api.coupons.updateCategoryFilters.useMutation({
-    onSuccess: () => {
-      utils.coupons.getProductAndCategoryFilters.invalidate({ couponId });
+    onSuccess: async () => {
+      await utils.coupons.getProductAndCategoryFilters.invalidate({ couponId });
       setIsDirty(false);
       toast.success("Filters updated successfully!");
     },
@@ -68,14 +68,14 @@ export const EditCouponFilters = ({ couponId }: { couponId: string }) => {
     setIsDirty(true);
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     // Save both product and category filters
-    Promise.all([
-      updateProductsMutation.mutate({
+    await Promise.all([
+      updateProductsMutation.mutateAsync({
         couponId,
         productIds: selectedProducts,
       }),
-      updateCategoriesMutation.mutate({
+      updateCategoriesMutation.mutateAsync({
         couponId,
         categoryIds: selectedCategories,
       })

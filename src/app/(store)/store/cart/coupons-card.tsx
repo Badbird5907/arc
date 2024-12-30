@@ -1,11 +1,11 @@
 "use client"
-import { CartStore } from "@/components/cart"
+import { type CartStore } from "@/components/cart"
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input";
 import { queryClient } from "@/trpc/react";
-import { PlayerInfo } from "@badbird5907/mc-utils";
+import { type PlayerInfo } from "@badbird5907/mc-utils";
 import { Plus, X } from "lucide-react";
 import { useState, useTransition } from "react";
 import { toast } from "sonner";
@@ -48,7 +48,7 @@ export const CouponsCard = ({ coupons, cart, player, addCoupon, removeCoupon }: 
                   quantity
                 })),
                 coupons: [...Object.keys(coupons), couponCode],
-                playerUuid: player!.uuid
+                playerUuid: player.uuid
               });
               if ("success" in result && !result.success) {
                 const { invalidCoupons } = result;

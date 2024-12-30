@@ -78,7 +78,7 @@ export const CheckoutCard = ({ cart, products, coupons }: {
       }
     }).catch((err) => {
       toast.error("An error occurred while beginning checkout!", {
-        description: err.message
+        description: (err as { message?: string })?.message ?? "An unknown error occurred! Please try again later."
       });
       setCheckoutLink("error");
     })

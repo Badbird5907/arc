@@ -12,7 +12,7 @@ import { type PaginationState } from "@tanstack/react-table";
 import { Mail, Search, Tag } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 import { useState } from "react";
-import { z } from "zod";
+import { type z } from "zod";
 
 const loadFiltersFromUrl = (params: URLSearchParams): z.infer<typeof ordersFilter> => {
   const playerUuid = params.get("playerUuid") as string | undefined;

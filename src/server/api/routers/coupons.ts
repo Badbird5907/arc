@@ -6,7 +6,7 @@ import { checkCoupons, lookupProducts } from "@/utils/server/checkout";
 import { getCouponsWithUses } from "@/utils/server/coupons";
 import { and, desc, eq, getTableColumns, gt, isNull, lt, or, sql, not, inArray } from "drizzle-orm";
 import { asc } from "drizzle-orm";
-import { AnyColumn, SQLWrapper } from "drizzle-orm";
+import { type AnyColumn, type SQLWrapper } from "drizzle-orm";
 import { z } from "zod";
 
 export const couponsRouter = createTRPCRouter({

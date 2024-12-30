@@ -3,7 +3,7 @@ import "server-only";
 import { db } from "@/server/db";
 import { couponToCategory, couponToProduct } from "@/server/db/coupons";
 import { isCouponValid } from "@/server/helpers/coupons";
-import { CouponWithUses, type Product } from "@/types";
+import { type CouponWithUses, type Product } from "@/types";
 import { eq } from "drizzle-orm";
 
 type CartItem = { product: Product, quantity: number }

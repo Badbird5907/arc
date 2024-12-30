@@ -1,5 +1,5 @@
 import { Badge } from "@/components/ui/badge";
-import { orderStatus } from "@/server/db/schema";
+import { type orderStatus } from "@/server/db/schema";
 
 export const StatusBadge = ({ status }: { status: (typeof orderStatus)[number] }) => {
   return (

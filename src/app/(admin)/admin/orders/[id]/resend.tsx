@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogTitle, DialogHeader, DialogTrigger, DialogDescription } from "@/components/ui/dialog"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { api } from "@/trpc/react";
-import { deliveryWhen } from "@/types";
+import { type deliveryWhen } from "@/types";
 import { RefreshCcwIcon } from "lucide-react"
 import { useState } from "react";
 import { toast } from "sonner";
@@ -11,8 +11,8 @@ import { toast } from "sonner";
 export const ResendCommandsDialog = ({ id, hasSubscription }: { id: string, hasSubscription: boolean }) => {
   const utils = api.useUtils();
   const requeueCommands = api.orders.requeueCommands.useMutation({
-    onSuccess: () => {
-      utils.orders.getQueuedCommands.invalidate({ id });
+    onSuccess: async () => {
+      await utils.orders.getQueuedCommands.invalidate({ id });
     },
   });
   const [when, setWhen] = useState<(typeof deliveryWhen)[number]>("purchase");

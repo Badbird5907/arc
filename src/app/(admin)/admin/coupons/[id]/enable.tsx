@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { api } from "@/trpc/react";
 import { X } from "lucide-react";
 import { Check } from "lucide-react";
-import { Coupon } from "@/types";
+import { type Coupon } from "@/types";
 import { useMemo } from "react";
 import { isCouponExpired, isCouponValid } from "@/server/helpers/coupons";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";

@@ -25,7 +25,7 @@ export const EditNotes = ({ content, updateNotes }: { content: string, updateNot
             await updateNotes(notes).then(() => {
               toast.success("Notes updated!");
             }).catch((error) => {
-              toast.error("Failed to update notes", { description: error.message });
+              toast.error("Failed to update notes", { description: (error as { message?: string })?.message ?? "An unknown error occurred! Please try again later." });
             });
           });
         }} className="w-full" loading={isPending}>

@@ -27,8 +27,8 @@ export const OrderClient = ({ id }: { id: string }) => {
   const updateNotes = api.orders.updateNotes.useMutation();
 
   const clearQueue = api.orders.clearQueue.useMutation({
-    onSuccess: () => {
-      utils.orders.getQueuedCommands.invalidate({ id });
+    onSuccess: async () => {
+      await utils.orders.getQueuedCommands.invalidate({ id });
     },
   });
   const queuedCommands = useMemo(() => {
@@ -180,8 +180,8 @@ export const OrderClient = ({ id }: { id: string }) => {
                         <DialogFooter>
                           <div className="flex flex-col gap-2 w-full">
                             <DialogClose asChild>
-                              <Button variant="destructive" className="w-full" onClick={() => {
-                                clearQueue.mutateAsync({ id }).then(() => {
+                              <Button variant="destructive" className="w-full" onClick={async () => {
+                                await clearQueue.mutateAsync({ id }).then(() => {
                                   toast.success("Queue cleared!");
                                 });
                               }} loading={clearQueue.isPending}>

@@ -1,6 +1,6 @@
 "use client";
 
-import { PlayerInfo } from "@badbird5907/mc-utils";
+import { type PlayerInfo } from "@badbird5907/mc-utils";
 import { PlayerSelectForm } from "@/components/player-select-form";
 import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";

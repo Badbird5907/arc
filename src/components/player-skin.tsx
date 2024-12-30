@@ -1,4 +1,4 @@
-import { buildSkinRenderUrl, RenderConfig } from "@badbird5907/mc-utils";
+import { buildSkinRenderUrl, type RenderConfig } from "@badbird5907/mc-utils";
 import { useMemo } from "react";
 import Image from "next/image";
 

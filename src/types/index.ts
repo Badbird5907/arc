@@ -6,7 +6,7 @@ import type {
 
 import type * as schema from "@/server/db/schema";
 import { z } from "zod";
-import { PlayerInfo } from "@badbird5907/mc-utils";
+import { type PlayerInfo } from "@badbird5907/mc-utils";
 
 type Schema = typeof schema;
 type TSchema = ExtractTablesWithRelations<Schema>;
@@ -94,7 +94,7 @@ export type CategoryWithChildren = Category & {
 };
 
 export type ProductAndCategory = Product & {
-  category?: Category;
+  category?: Category | null;
 }
 
 export type ProductWithDeliveries = ProductAndCategory & {

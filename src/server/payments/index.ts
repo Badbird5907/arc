@@ -1,7 +1,7 @@
 import { db } from "@/server/db";
 import { coupons, orders, orderToCoupon } from "@/server/db/schema";
 import { TebexPaymentProvider } from "@/server/payments/impl/tebex";
-import { PaymentProvider } from "@/types";
+import { type PaymentProvider } from "@/types";
 import { type Checkout } from "@/types/checkout";
 import { getTotal, lookupProducts } from "@/utils/server/checkout";
 import { getCouponsWithUses } from "@/utils/server/coupons";

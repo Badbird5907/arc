@@ -1,7 +1,7 @@
 import { adminWrapper } from "@/app/(admin)/admin/admin-panel";
 import { CategoryPageClient } from "@/app/(admin)/admin/category/[id]/client";
 import { api, HydrateClient } from "@/trpc/server";
-import { Metadata } from "next";
+import { type Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Category"

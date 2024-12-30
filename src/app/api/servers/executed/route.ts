@@ -13,7 +13,7 @@ export const DELETE = async (req: Request) => {
   if (!server) {
     return new Response("Unauthorized", { status: 401 });
   }
-  const body: Body = await req.json();
+  const body = await req.json() as Body;
   const { commandIds } = body;
   await db.update(queuedCommands).set({ executed: true }).where(inArray(queuedCommands.id, commandIds));
   return NextResponse.json({ success: true });

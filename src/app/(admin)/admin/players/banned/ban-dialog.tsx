@@ -1,7 +1,7 @@
 import { PlayerFilter } from "@/components/player-filter"
 import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
-import { PlayerInfo } from "@badbird5907/mc-utils";
+import { type PlayerInfo } from "@badbird5907/mc-utils";
 import { useState, useTransition } from "react";
 import { Gavel } from "lucide-react"
 import { Textarea } from "@/components/ui/textarea";

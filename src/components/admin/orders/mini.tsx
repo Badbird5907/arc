@@ -5,8 +5,8 @@ import { type PaginationState } from "@tanstack/react-table";
 import { DataTable } from "@/components/ui/data-table";
 import { ordersColumns } from "@/app/(admin)/admin/orders/data-table";
 import { api } from "@/trpc/react";
-import { ordersFilter } from "@/trpc/schema/orders";
-import { z } from "zod";
+import { type ordersFilter } from "@/trpc/schema/orders";
+import { type z } from "zod";
 
 export const MiniOrdersList = ({ filter }: { filter: z.infer<typeof ordersFilter> }) => {
   const [pagination, setPagination] = useState<PaginationState>({

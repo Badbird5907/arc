@@ -49,7 +49,7 @@ export default function Cart() {
       subtotal: 0
     };
     const total = Object.keys(cart.items).reduce((acc, cur) => acc + (cart.items[cur]?.quantity ?? 0) * (products.data?.find(p => p.id === cur)?.price ?? 0), 0);
-    if (couponCheckEnabled && !!couponCheck.data && "discountAmount" in couponCheck.data!) {
+    if (couponCheckEnabled && !!couponCheck.data && "discountAmount" in couponCheck.data) {
       const removeCoupons = couponCheck.data.status.filter(c => !c.success).map(c => c.code);
       if (removeCoupons.length > 0) {
         removeCoupons.forEach(code => {

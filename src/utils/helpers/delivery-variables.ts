@@ -1,4 +1,4 @@
-import { Delivery, Order, Product } from "@/types";
+import { type Delivery, type Order, type Product } from "@/types";
 import { getPlayerFromUuid } from "@/utils/server/helpers";
 import { expiryPeriodToDays } from "@badbird5907/mc-utils";
 

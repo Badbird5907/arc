@@ -2,9 +2,9 @@
 
 import { DataTable } from "@/components/ui/data-table";
 import { api } from "@/trpc/react";
-import { CouponWithUses } from "@/types";
+import { type CouponWithUses } from "@/types";
 import { Pencil, Search } from "lucide-react";
-import { ColumnDef, PaginationState } from "@tanstack/react-table";
+import { type ColumnDef, type PaginationState } from "@tanstack/react-table";
 import { useState } from "react";
 import { Spinner } from "@/components/ui/spinner";
 import { DebouncedInput } from "@/components/debounced-input";

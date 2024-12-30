@@ -29,11 +29,6 @@ export const CouponsClient = ({ id }: { id: string }) => {
   const deleteCoupon = api.coupons.deleteCoupon.useMutation();
   const router = useRouter();
 
-  if (isLoading) return <Spinner />;
-  if (error) return <ErrorPage code={"500"} />
-  if (!data?.coupon) return notFound();
-  const { coupon } = data;
-
   const warning = useMemo(() => {
     return (
       <HoverCard>
@@ -49,6 +44,11 @@ export const CouponsClient = ({ id }: { id: string }) => {
       </HoverCard>
     );
   }, []);
+
+  if (isLoading) return <Spinner />;
+  if (error) return <ErrorPage code={"500"} />
+  if (!data?.coupon) return notFound();
+  const { coupon } = data;
 
   const tableData = [
     { label: "Code", value: coupon.code },

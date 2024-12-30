@@ -1,6 +1,6 @@
 import { CouponsClient } from "@/app/(admin)/admin/coupons/[id]/client";
 import { api, HydrateClient } from "@/trpc/server";
-import { Metadata } from "next";
+import { type Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Coupon"

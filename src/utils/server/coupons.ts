@@ -1,7 +1,7 @@
 import "server-only";
 
 import { db } from "@/server/db";
-import { eq, getTableColumns, SQL, sql } from "drizzle-orm";
+import { eq, getTableColumns, type SQL, sql } from "drizzle-orm";
 import { coupons, orderToCoupon } from "@/server/db/coupons";
 
 export const getCouponWithConstraints = async (couponId: string) => {

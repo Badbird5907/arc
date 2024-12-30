@@ -4,7 +4,7 @@ import { type PaymentProvider } from "@/server/payments/providers";
 import { type Order, type Product } from "@/types";
 import { type Checkout } from "@/types/checkout";
 import { getIpAddress } from "@/utils/server/helpers";
-import { CreateBasketResponse, TebexBasket, TebexPackage } from "@badbird5907/mc-utils";
+import { type CreateBasketResponse, type TebexBasket, type TebexPackage } from "@badbird5907/mc-utils";
 
 const productToTebexPackage = (product: Product, quantity: number): TebexPackage => {
   return {

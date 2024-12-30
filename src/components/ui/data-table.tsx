@@ -5,9 +5,9 @@ import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMe
 import { Spinner } from "@/components/ui/spinner"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { cn } from "@/lib/utils"
-import { Cell, type ColumnDef, type ColumnFiltersState, flexRender, getCoreRowModel, getFilteredRowModel, getPaginationRowModel, getSortedRowModel, PaginationState, type SortingState, Updater, useReactTable, type VisibilityState } from "@tanstack/react-table"
+import { type Cell, type ColumnDef, type ColumnFiltersState, flexRender, getCoreRowModel, getFilteredRowModel, getPaginationRowModel, getSortedRowModel, type PaginationState, type SortingState, Updater, useReactTable, type VisibilityState } from "@tanstack/react-table"
 import { ChevronDown } from "lucide-react"
-import React, { Dispatch, SetStateAction, useEffect, useMemo, type JSX } from "react"
+import React, { type Dispatch, type SetStateAction, useEffect, useMemo, type JSX } from "react"
 import { Checkbox } from "@/components/ui/checkbox";
 
 interface DataTableProps<TData, TValue> {

@@ -4,8 +4,8 @@ import { getPlayer, getPlayerFromUuid } from "@/utils/server/helpers";
 import { db } from "@/server/db";
 import { players } from "@/server/db/schema";
 import { desc, eq, isNotNull, sql } from "drizzle-orm";
-import { PlayerInfo } from "@badbird5907/mc-utils";
-import { Player } from "@/types";
+import { type PlayerInfo } from "@badbird5907/mc-utils";
+import { type Player } from "@/types";
 
 export const playersRouter = createTRPCRouter({
   fetchPlayer: publicProcedure.input(z.object({
@@ -29,7 +29,7 @@ export const playersRouter = createTRPCRouter({
     }
     const username = bedrock ? "." + name : name;
     const player = await getPlayer(username);
-    if (player && player.data?.uuid) {
+    if (player?.data?.uuid) {
       const existing = await db.select().from(players).where(eq(players.uuid, player.data.uuid));
       if (existing.length > 0 && !!existing[0]) {
         return { ...player, banned: existing[0].banned ? true : false };
@@ -46,7 +46,7 @@ export const playersRouter = createTRPCRouter({
   })).query(async ({ input }) => {
     const { uuid } = input;
     const player = await getPlayerFromUuid(uuid);
-    if (player && player.data?.uuid) {
+    if (player?.data?.uuid) {
       // insert the player if it doesn't exist
       await db.insert(players).values({
         uuid: player.data.uuid,

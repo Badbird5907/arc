@@ -1,4 +1,4 @@
-import React, {ReactElement} from "react";
+import React, {type ReactElement} from "react";
 
 import {
   Breadcrumb,
@@ -33,7 +33,7 @@ export function Breadcrumbs({routes = []}: {routes: string[]}) {
       ) : null;
     
     // get the actual item (either parent or child)
-    const sidebarItem = parentItem || 
+    const sidebarItem = parentItem ??
       (parentWithChild?.children?.find(child => child.url === `/${route}`));
 
     const href: string = fullHref ? `${fullHref}/${route}` : `/admin/${route}`;

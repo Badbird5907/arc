@@ -2,11 +2,12 @@ import "server-only";
 
 import { TRPCError } from "@trpc/server";
 import { Ratelimit } from "@upstash/ratelimit";
-import { Redis } from "@upstash/redis";
+import { type Redis } from "@upstash/redis";
 import { env } from "@/env";
 import { getRedis } from "@/server/redis";
 
 declare global {
+  // eslint-disable-next-line no-var
   var redis: Redis | undefined;
 }
 

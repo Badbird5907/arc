@@ -1,10 +1,10 @@
 import { createTRPCRouter, procedure } from "@/server/api/trpc";
-import { coupons, orders, orderStatus, orderToCoupon, queuedCommands } from "@/server/db/schema";
+import { coupons, orders, type orderStatus, orderToCoupon, queuedCommands } from "@/server/db/schema";
 import { ordersFilter } from "@/trpc/schema/orders";
 import { deliveryWhen } from "@/types";
 import { getPlayerFromUuid } from "@/utils/server/helpers";
 import { queueCommandsWhere } from "@/utils/server/orders";
-import { AnyColumn, asc, desc, and, eq, getTableColumns, sql, SQLWrapper, or } from "drizzle-orm";
+import { type AnyColumn, asc, desc, and, eq, getTableColumns, sql, type SQLWrapper, or } from "drizzle-orm";
 import { z } from "zod";
 
 export const ordersRouter = createTRPCRouter({
@@ -70,7 +70,7 @@ export const ordersRouter = createTRPCRouter({
         }
       
         if (filter.status && filter.status !== "all") {
-          conditions.push(eq(orders.status, filter.status as typeof orderStatus[number]));
+          conditions.push(eq(orders.status, filter.status));
         }
 
         if (filter.coupons && filter.coupons.length > 0) {

@@ -1,6 +1,6 @@
 "use client";
 
-import { PlayerInfo } from "@badbird5907/mc-utils";
+import { type PlayerInfo } from "@badbird5907/mc-utils";
 import { PlayerSkinImage } from "@/components/player-skin";
 import { usePublicSettings } from "@/components/client-config";
 import { DebouncedInput } from "@/components/debounced-input";
