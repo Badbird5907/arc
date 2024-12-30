@@ -1,6 +1,6 @@
 import { type Metadata } from "next";
 import type React from "react";
-import { FaDiscord, FaYoutube, FaTwitter } from "react-icons/fa";
+import { FaDiscord, FaYoutube, FaTwitter, FaStore, FaHome } from "react-icons/fa";
 export type SiteConfig = {
   title: string;
   description: string;
@@ -11,6 +11,7 @@ export type SiteConfig = {
     link: string;
     checkExact?: boolean;
     className?: string | ((isActive?: boolean) => string);
+    icon?: React.ElementType;
   }[];
   footer: {
     icons: {
@@ -30,14 +31,17 @@ export const appConfig: SiteConfig = {
       title: "Home",
       link: "/",
       checkExact: true,
+      icon: FaHome,
     },
     {
       title: "Store",
       link: "/store",
+      icon: FaStore,
     },
     {
       title: "Discord",
       link: discord,
+      icon: FaDiscord,
     },
   ],
   footer: {

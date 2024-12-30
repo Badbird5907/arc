@@ -5,9 +5,10 @@ import { EditionSelect } from "@/components/header/store/login/edition-select";
 import { PlayerSelectForm } from "@/components/player-select-form";
 import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
+import { cn } from "@/lib/utils";
 import { useState } from "react";
 
-export const StoreLoginDialog = () => {
+export const StoreLoginDialog = ({ mr }: { mr?: boolean }) => {
   const { enableBedrock } = usePublicSettings();
   const setPlayer = useCart((state) => state.setPlayer);
   const [edition, setEdition] = useState<"java" | "bedrock" | null>(!enableBedrock ? "java" : null);
@@ -22,7 +23,7 @@ export const StoreLoginDialog = () => {
       }}
     >
       <DialogTrigger asChild>
-        <Button size="xl" className="mr-4">
+        <Button size="xl" className={cn(mr ? "mr-4" : "")}>
           Login
         </Button>
       </DialogTrigger>

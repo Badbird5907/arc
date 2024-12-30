@@ -79,7 +79,7 @@ export function MainNav({ admin, store }: { admin?: boolean; store?: boolean }) 
               </PopoverContent>
             </Popover>
           ) : (
-            <StoreLoginDialog />
+            <StoreLoginDialog mr />
           )}
         </div>
       )}
