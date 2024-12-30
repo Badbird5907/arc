@@ -3,9 +3,12 @@
 import { appConfig } from "@/app/app-config";
 import { useCart } from "@/components/cart";
 import { CartPopoverContent } from "@/components/header/cart/popover";
+import { CartSheet } from "@/components/header/cart/sheet";
 import { StoreLoginDialog } from "@/components/header/store/login";
 import { PlayerSkinImage } from "@/components/player-skin";
+import { VisuallyHidden } from "@/components/ui/hidden";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { cn } from "@/lib/utils";
 import { ShoppingCart } from "lucide-react";
@@ -18,6 +21,31 @@ export function MainNav({ admin, store }: { admin?: boolean; store?: boolean }) 
   const pathname = usePathname();
 
   const player = useCart((state) => state.player);
+
+  const storeCartTrigger = React.useMemo(() => {
+    if (!player || !store) return null;
+    return (
+      <button className="flex flex-row items-center gap-2">
+        <PlayerSkinImage
+          name={player.name}
+          renderConfig={{
+            name: "pixel",
+            crop: "face"
+          }}
+          height={40}
+          width={40}
+          className="rounded-md"
+        />
+        <div className="flex flex-col">
+          <p>{player.name}</p>
+          <p className="text-xs flex items-center gap-1">
+            <ShoppingCart size={16} />
+            Cart
+          </p>
+        </div>
+      </button>
+    )
+  }, [player, store])
 
   return (
     <div className="mr-4 hidden md:flex w-full">
@@ -52,32 +80,17 @@ export function MainNav({ admin, store }: { admin?: boolean; store?: boolean }) 
       {store && (
         <div className="flex flex-row ml-auto">
           {!!player ? (
-            <Popover>
-              <PopoverTrigger asChild>
-                <button className="flex flex-row items-center gap-2">
-                  <PlayerSkinImage
-                    name={player.name}
-                    renderConfig={{
-                      name: "pixel",
-                      crop: "face"
-                    }}
-                    height={40}
-                    width={40}
-                    className="rounded-md"
-                  />
-                  <div className="flex flex-col">
-                    <p>{player.name}</p>
-                    <p className="text-xs flex items-center gap-1">
-                      <ShoppingCart size={16} />
-                      Cart
-                    </p>
-                  </div>
-                </button>
-              </PopoverTrigger>
-              <PopoverContent>
-                <CartPopoverContent />
-              </PopoverContent>
-            </Popover>
+            appConfig.store.useSheetCart ? (
+              <CartSheet trigger={storeCartTrigger} />
+            ) : (
+              <Popover>
+                <PopoverTrigger asChild>
+                  {storeCartTrigger}
+                </PopoverTrigger>
+                <PopoverContent>
+                  <CartPopoverContent />
+                </PopoverContent>
+              </Popover>)
           ) : (
             <StoreLoginDialog mr />
           )}

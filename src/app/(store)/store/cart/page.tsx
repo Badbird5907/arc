@@ -1,7 +1,7 @@
 "use client";
 
 import { StoreBanner } from "@/app/(store)/store-banner";
-import { CheckoutCard } from "@/app/(store)/store/cart/checkout-card";
+import { CheckoutForm } from "@/app/(store)/store/cart/checkout-card";
 import { CouponsCard } from "@/app/(store)/store/cart/coupons-card";
 import { useCart } from "@/components/cart";
 import { usePublicSettings } from "@/components/client-config";
@@ -69,8 +69,8 @@ export default function Cart() {
       total,
       discountAmount: 0,
       subtotal: total
-   };
-  }, [cart.items, products.data, couponCheck.data]);
+    };
+  }, [cart, couponCheckEnabled, couponCheck.data, products.data]);
 
   if (!cart._hasHydrated) return <Spinner />;
   if (!cart.player) {
@@ -185,8 +185,25 @@ export default function Cart() {
           </Card>
         </div>
         <div className="mx-auto p-4 w-full md:w-1/4 flex flex-col gap-4">
-          <CouponsCard coupons={cart.coupons} cart={cart.items} player={cart.player} addCoupon={cart.addCoupon} removeCoupon={cart.removeCoupon} />
-          <CheckoutCard cart={cart} products={products.data ?? []} coupons={Object.keys(cart.coupons)} />
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-2xl">
+                Coupons & Gift Cards
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="flex flex-col gap-2">
+              <CouponsCard coupons={cart.coupons} cart={cart.items} player={cart.player} addCoupon={cart.addCoupon} removeCoupon={cart.removeCoupon} />
+            </CardContent>
+          </Card>
+
+          <Card className="w-full">
+            <CardHeader>
+              <CardTitle className="text-2xl">Checkout</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <CheckoutForm cart={cart} products={products.data ?? []} coupons={Object.keys(cart.coupons)} />
+            </CardContent>
+          </Card >
         </div>
       </div>
     </>

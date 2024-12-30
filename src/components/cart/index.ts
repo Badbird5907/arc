@@ -45,14 +45,14 @@ export const useCart = create<CartStore>()(
         const obj: Partial<CartStore> = { items };
         return obj;
       }),
-      setQuantity: (id, quantity) => set((state: CartStore) => ({ items: { ...state.items, [id]: quantity } })),
+      setQuantity: (id, quantity) => set((state: CartStore) => ({ items: { ...state.items, [id]: { quantity, subscription: state.items[id]?.subscription ?? false } } })),
       addCoupon: (code) => set((state: CartStore) => ({ coupons: { ...state.coupons, [code]: code } })),
       removeCoupon: (code) => set((state: CartStore) => {
         const coupons = { ...state.coupons };
         delete coupons[code];
         return { coupons };
       }),
-      clear: () => set({ items: {}, player: null, coupons: {} })
+      clear: () => set({ items: {}, coupons: {} })
     })),
     {
 			name: `arc-cart`,

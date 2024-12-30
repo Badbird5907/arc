@@ -18,6 +18,9 @@ export type SiteConfig = {
       icon: React.ElementType;
       link: string;
     }[];
+  };
+  store: {
+    useSheetCart: boolean;
   }
 } & Metadata;
 export const discord = "https://discord.badbird.dev/";
@@ -59,5 +62,8 @@ export const appConfig: SiteConfig = {
         link: "https://x.com/badbird_5907",
       }
     ]
+  },
+  store: {
+    useSheetCart: true,
   }
 };
