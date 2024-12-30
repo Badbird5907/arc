@@ -1,8 +1,6 @@
-import { type RenderConfig } from "@/types/skins";
-import Image from "next/image";
+import { buildSkinRenderUrl, RenderConfig } from "@badbird5907/mc-utils";
 import { useMemo } from "react";
-
-const endpoint = "https://starlightskins.lunareclipse.studio/render";
+import Image from "next/image";
 
 type PlayerSkinImageType = {
   name?: string;
@@ -11,28 +9,21 @@ type PlayerSkinImageType = {
   skinUrl?: string;
   height?: number;
   width?: number;
+  fill?: boolean;
   className?: string;
 }
-export const PlayerSkinImage = ({ name, skinUrl, renderConfig, height = 128, width = 128, className }: PlayerSkinImageType) => {
-  const queryParams = useMemo(() => {
-    const params = new URLSearchParams();
-    if (skinUrl)
-      params.append("skinUrl", skinUrl);
-    return params;
-  }, [skinUrl]);
-  const src = useMemo(() => {
-    const url = new URL(`${endpoint}/${renderConfig.name}/${name}/${renderConfig.crop}`);
-    if (queryParams)
-      url.search = queryParams.toString();
-    return url.toString();
-  }, [name, queryParams, renderConfig.crop, renderConfig.name]);
+
+export const PlayerSkinImage = ({ name, skinUrl, renderConfig, height = 128, width = 128, fill = false, className }: PlayerSkinImageType) => {
+  const src = useMemo(() => buildSkinRenderUrl(name, renderConfig, skinUrl), [name, renderConfig, skinUrl]);
+
+  const props = fill ? { fill: true } : { height, width };
+
   return (
     <Image
       src={src}
       alt={`${name}'s skin`}
-      height={height}
-      width={width}
       className={className}
+      {...props}
     />
   )
 }

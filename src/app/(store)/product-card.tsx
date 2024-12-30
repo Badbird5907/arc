@@ -5,7 +5,7 @@ import { AddToCartButton } from "@/components/cart/add";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { type Product } from "@/types";
-import { formatExpiryPeriod } from "@/utils";
+import { formatExpiryPeriod } from "@badbird5907/mc-utils";
 import { ShoppingCart } from "lucide-react";
 
 import "react-responsive-carousel/lib/styles/carousel.min.css";

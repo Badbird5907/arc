@@ -1,7 +1,6 @@
 "use client";
 
 import { ordersColumns } from "@/app/(admin)/admin/orders/data-table";
-import { PlayerInfo } from "@/components/cart";
 import { DebouncedInput } from "@/components/debounced-input";
 import { PlayerFilter } from "@/components/player-filter";
 import { DataTable } from "@/components/ui/data-table";
@@ -63,7 +62,6 @@ export const OrdersClient = ({ initialFilter }: { initialFilter?: z.infer<typeof
   });
 
   const [filter, _setFilter] = useState<z.infer<typeof ordersFilter>>(initialFilter ?? loadFiltersFromUrl(searchParams));
-  const [player, setPlayer] = useState<PlayerInfo | undefined>(undefined);
 
   const setFilter = (newFilter: z.infer<typeof ordersFilter>) => {
     const clean = cleanFilter(newFilter);
@@ -89,10 +87,8 @@ export const OrdersClient = ({ initialFilter }: { initialFilter?: z.infer<typeof
             <PlayerFilter className="w-full md:w-1/3" onSelect={(player) => {
               if (player) {
                 setFilter({ ...filter, playerUuid: player.uuid });
-                setPlayer(player);
               } else {
                 setFilter({ ...filter, playerUuid: undefined });
-                setPlayer(undefined);
               }
             }} playerUuid={filter.playerUuid} />
             <DebouncedInput

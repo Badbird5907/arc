@@ -15,6 +15,7 @@ export const roles = {
       "orders:*",
       "coupons:*",
       "categories:*",
+      "players:*",
     ],
     inherits: ["user"]
   },

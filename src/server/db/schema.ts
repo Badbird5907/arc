@@ -325,3 +325,4 @@ export const orderRelations = relations(orders, ({ one, many }) => ({
 
 export * from "@/server/db/discounts";
 export * from "@/server/db/coupons";
+export * from "@/server/db/players";

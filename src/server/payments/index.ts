@@ -24,7 +24,7 @@ export const checkout = async (checkoutData: Checkout, provider: string) => {
   }
 
   const result = await getPlayer(checkoutData.username);
-  if (result.notFound) {
+  if (result.notFound || !result.data) {
     throw new TRPCError({
       code: "NOT_FOUND",
       message: "Player not found!"

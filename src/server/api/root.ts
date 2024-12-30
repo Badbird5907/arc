@@ -2,10 +2,10 @@ import { categoriesRouter } from "@/server/api/routers/categories";
 import { checkoutRouter } from "@/server/api/routers/checkout";
 import { couponsRouter } from "@/server/api/routers/coupons";
 import { ordersRouter } from "@/server/api/routers/orders";
+import { playersRouter } from "@/server/api/routers/players";
 import { productRouter } from "@/server/api/routers/products";
 import { serversRouter } from "@/server/api/routers/servers";
 import { settingsRouter } from "@/server/api/routers/settings";
-import { utilsRouter } from "@/server/api/routers/utils";
 import { createCallerFactory, createTRPCRouter } from "@/server/api/trpc";
 
 /**
@@ -17,7 +17,7 @@ export const appRouter = createTRPCRouter({
   products: productRouter,
   categories: categoriesRouter,
   settings: settingsRouter,
-  utils: utilsRouter,
+  players: playersRouter,
   checkout: checkoutRouter,
   servers: serversRouter,
   orders: ordersRouter,

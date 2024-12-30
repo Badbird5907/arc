@@ -201,7 +201,7 @@ export const UpsertCouponForm = ({ coupon, className }: { coupon?: Coupon, class
                               >
                                 <CalendarIcon className="mr-2 h-4 w-4" />
                                 {field.value ? (
-                                  format(field.value, "PPP hh:mm aa")
+                                  format(field.value, "PP hh:mm aa")
                                 ) : (
                                   <span>Pick a date</span>
                                 )}
@@ -246,7 +246,7 @@ export const UpsertCouponForm = ({ coupon, className }: { coupon?: Coupon, class
                               >
                                 <CalendarIcon className="mr-2 h-4 w-4" />
                                 {field.value ? (
-                                  format(field.value, "PPP hh:mm aa")
+                                  format(field.value, "PP hh:mm aa")
                                 ) : (
                                   <span>Pick a date</span>
                                 )}

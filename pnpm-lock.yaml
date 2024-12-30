@@ -12,6 +12,9 @@ importers:
 
   .:
     dependencies:
+      '@badbird5907/mc-utils':
+        specifier: ^0.0.7
+        version: 0.0.7
       '@dnd-kit/core':
         specifier: ^6.1.0
         version: 6.1.0(react-dom@19.0.0-rc.1(react@19.0.0-rc.1))(react@19.0.0-rc.1)
@@ -34,6 +37,9 @@ importers:
         specifier: ^1.2.2
         version: 1.2.2(react-dom@19.0.0-rc.1(react@19.0.0-rc.1))(react@19.0.0-rc.1)(types-react-dom@19.0.0-rc.1)(types-react@19.0.0-rc.1)
       '@radix-ui/react-checkbox':
+        specifier: ^1.1.2
+        version: 1.1.2(react-dom@19.0.0-rc.1(react@19.0.0-rc.1))(react@19.0.0-rc.1)(types-react-dom@19.0.0-rc.1)(types-react@19.0.0-rc.1)
+      '@radix-ui/react-collapsible':
         specifier: ^1.1.2
         version: 1.1.2(react-dom@19.0.0-rc.1(react@19.0.0-rc.1))(react@19.0.0-rc.1)(types-react-dom@19.0.0-rc.1)(types-react@19.0.0-rc.1)
       '@radix-ui/react-dialog':
@@ -293,6 +299,9 @@ packages:
   '@babel/runtime@7.25.9':
     resolution: {integrity: sha512-4zpTHZ9Cm6L9L+uIqghQX8ZXg8HKFcjYO3qHoO8zTmRm6HQUJ8SSJ+KRvbMBZn0EGVlT4DRYeQ/6hjlyXBh+Kg==}
     engines: {node: '>=6.9.0'}
+
+  '@badbird5907/mc-utils@0.0.7':
+    resolution: {integrity: sha512-TeSWZjnmMXovEvlS40p3oayKIaLYpsc2xODQPwsJEO2ZDZZ3mwgar+Wdfr4bDcRFXOxtzL92OepYSr3ooYuofA==, tarball: https://npm.pkg.github.com/download/@badbird5907/mc-utils/0.0.7/82fcad6615cba281510211493bbce7ed03f592b5}
 
   '@codemirror/autocomplete@6.18.1':
     resolution: {integrity: sha512-iWHdj/B1ethnHRTwZj+C1obmmuCzquH29EbcKr0qIjA9NfDeBDJ7vs+WOHsFeLeflE4o+dHfYndJloMKHUkWUA==}
@@ -4567,6 +4576,8 @@ snapshots:
   '@babel/runtime@7.25.9':
     dependencies:
       regenerator-runtime: 0.14.1
+
+  '@badbird5907/mc-utils@0.0.7': {}
 
   '@codemirror/autocomplete@6.18.1(@codemirror/language@6.10.3)(@codemirror/state@6.4.1)(@codemirror/view@6.34.1)(@lezer/common@1.2.3)':
     dependencies:

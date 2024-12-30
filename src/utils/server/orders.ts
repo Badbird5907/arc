@@ -1,10 +1,12 @@
 import { env } from "@/env";
 import { db } from "@/server/db";
-import { orders, queuedCommands } from "@/server/db/schema";
+import { orders, players, queuedCommands } from "@/server/db/schema";
+import { getSetting } from "@/server/settings";
 import { type QueuedCommand, type Order, deliveryWhen } from "@/types";
 import { variables } from "@/utils/helpers/delivery-variables";
 import { embedColors, sendOrderWebhook } from "@/utils/helpers/discord";
 import { Embed } from "@vermaysha/discord-webhook";
+import { format } from "date-fns";
 import { eq } from "drizzle-orm";
 import { v4 as uuidv4 } from "uuid";
 
@@ -135,7 +137,28 @@ export const disputeUpdate = async (order: Order, state: "open" | "won" | "lost"
   }).where(eq(orders.id, order.id));
   // TODO: webhook, ban player
   if (state === "open") { // fire on chargeback
-    await queueCommandsWhere("chargeback", order);
+    const [ban] = await Promise.all([
+      getSetting("banOnChargeback"),
+      await queueCommandsWhere("chargeback", order)
+    ]);
+    if (ban.value) {
+      const note = `Auto-banned for chargeback on order: ${order.id} at ${format(new Date(), "PP hh:mm aa zzz")}`;
+      const existing = await db.query.players.findFirst({
+        where: (p, { eq }) => eq(p.uuid, order.playerUuid)
+      });
+      if (existing) {
+        await db.update(players).set({
+          banned: new Date(),
+          notes: `${existing.notes ?? ""}\n\n${note}`
+        }).where(eq(players.uuid, order.playerUuid));
+      } else {
+        await db.insert(players).values({
+          uuid: order.playerUuid,
+          banned: new Date(),
+          notes: note
+        });
+      }
+    }
   }
   await sendOrderWebhook(
     new Embed()

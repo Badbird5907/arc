@@ -1,15 +1,10 @@
 "use client";
 
 import { withStorageDOMEvents } from "@/lib/utils/persist";
+import { PlayerInfo } from "@badbird5907/mc-utils";
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 import { immer } from "zustand/middleware/immer";
-
-export type PlayerInfo = {
-  name: string;
-  uuid: string;
-  bedrock: boolean;
-}
 
 export type CartStore = {
   player: PlayerInfo | null;

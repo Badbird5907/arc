@@ -1,9 +1,10 @@
 import { env } from "@/env";
-import { createTebexBasket, CreateBasketResponse, createCheckoutSession, type TebexBasket, type TebexPackage, addPackageToTebexBasket } from "@/server/payments/impl/tebex/api-client";
+import { tebexClient } from "@/server/payments/impl/tebex/api-client";
 import { type PaymentProvider } from "@/server/payments/providers";
 import { type Order, type Product } from "@/types";
 import { type Checkout } from "@/types/checkout";
 import { getIpAddress } from "@/utils/server/helpers";
+import { CreateBasketResponse, TebexBasket, TebexPackage } from "@badbird5907/mc-utils";
 
 const productToTebexPackage = (product: Product, quantity: number): TebexPackage => {
   return {
@@ -54,7 +55,7 @@ const beginSingleApiCheckout = async (cart: Checkout,
       productId: "discount",
     }
   }));
-  const session = await createCheckoutSession(basket, [
+  const session = await tebexClient.createCheckoutSession(basket, [
     ...packages,
     ...sales
   ]);
@@ -70,7 +71,7 @@ const beginBasketApiCheckout = async (cart: Checkout,
   products: { product: Product; quantity: number; }[],
   order: Order,
   discounts: { name: string; amount: number }[]) => {
-    const basket: CreateBasketResponse = await createTebexBasket({
+    const basket: CreateBasketResponse = await tebexClient.createBasket({
       returnUrl: `${env.BASE_URL}/store/checkout/callback/tebex/return`,
       completeUrl: `${env.BASE_URL}/store/checkout/callback/tebex/complete`,
       firstName: cart.info.firstName,
@@ -86,11 +87,11 @@ const beginBasketApiCheckout = async (cart: Checkout,
     });
     console.log(" -> Basket created!");
     await Promise.all(products.map(async (product) => {
-      await addPackageToTebexBasket(basket.ident, productToTebexPackage(product.product, product.quantity));
+      await tebexClient.addPackageToBasket(basket.ident, productToTebexPackage(product.product, product.quantity));
     }));
     console.log(" -> Packages added!");
     await Promise.all(discounts.map(async (discount) => { // make sure the discounts appear below the packages
-      await addPackageToTebexBasket(basket.ident, {
+      await tebexClient.addPackageToBasket(basket.ident, {
         name: discount.name,
         price: -discount.amount,
         type: "single",

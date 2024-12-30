@@ -1,4 +1,3 @@
-import { PlayerInfo } from "@/components/cart";
 import { createTRPCRouter, procedure } from "@/server/api/trpc";
 import { coupons, orders, orderStatus, orderToCoupon, queuedCommands } from "@/server/db/schema";
 import { ordersFilter } from "@/trpc/schema/orders";
@@ -115,8 +114,8 @@ export const ordersRouter = createTRPCRouter({
         const uuidArray = Array.from(uuidSet);
         const players = await Promise.all(
           uuidArray.map((uuid) => getPlayerFromUuid(uuid))
-        ).then((arr) => arr.filter((player) => !player.notFound));
-        const playerMap = new Map(players.map(player => [player.data.uuid, player.data]));
+        ).then((arr) => arr.filter((player) => !player.notFound && player.data));
+        const playerMap = new Map(players.map(player => [player.data?.uuid, player.data]));
         return {
           data: query.map(order => ({
             ...order,

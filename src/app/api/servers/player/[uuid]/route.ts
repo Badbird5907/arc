@@ -1,6 +1,6 @@
 import { getServer } from "@/app/api/servers";
-import { isValidUuid } from "@/lib/utils";
 import { db } from "@/server/db";
+import { isValidUuid } from "@badbird5907/mc-utils";
 import { NextResponse } from "next/server";
 
 export const GET = async (req: Request, { params }: { params: { uuid: string } }) => {

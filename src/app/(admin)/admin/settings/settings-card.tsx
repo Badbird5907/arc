@@ -14,7 +14,7 @@ export const SettingsCard = ({ setting }: { setting: SettingWithValue<keyof Sett
   const setValue = (value: SettingType[typeof setting["type"]]) => {
     _setValue(value);
     setIsDirty(true);
-  } 
+  }
   const modifySetting = api.settings.modifySetting.useMutation();
   return (
     <Card className="flex flex-col">
@@ -24,11 +24,18 @@ export const SettingsCard = ({ setting }: { setting: SettingWithValue<keyof Sett
         </CardTitle>
       </CardHeader>
       <CardContent className="">
-        {setting.description && (
-          <p className="text-sm text-accent-foreground pb-2">
-            {setting.description}
-          </p>
-        )}
+        <div className="pb-2">
+          {setting.description && (
+            <p className="text-sm text-accent-foreground">
+              {setting.description}
+            </p>
+          )}
+          {setting.notes && (
+            <p className="text-sm text-accent-foreground/75">
+              {setting.notes}
+            </p>
+          )}
+        </div>
         {setting.type === "boolean" && (
           <Select defaultValue={value ? "true" : "false"} onValueChange={(value) => setValue(value === "true")}>
             <SelectTrigger>
@@ -58,13 +65,13 @@ export const SettingsCard = ({ setting }: { setting: SettingWithValue<keyof Sett
         <Button onClick={() => {
           console.log(`Setting value of ${setting.key} to ${value}`);
           modifySetting.mutateAsync({ key: setting.key, value })
-          .then(() => {
-            toast.success(`Setting ${setting.name} saved`);
-            setIsDirty(false);
-          }).catch((e) => {
-            toast.error(`Failed to save setting: ${e instanceof Error ? e.message : "Unknown error"}`);
-            console.error(e);
-          });
+            .then(() => {
+              toast.success(`Setting ${setting.name} saved`);
+              setIsDirty(false);
+            }).catch((e) => {
+              toast.error(`Failed to save setting: ${e instanceof Error ? e.message : "Unknown error"}`);
+              console.error(e);
+            });
         }} disabled={!isDirty} className="w-full" loading={modifySetting.isPending}>
           Save
         </Button>

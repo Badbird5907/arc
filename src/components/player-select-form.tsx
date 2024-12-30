@@ -1,9 +1,9 @@
 "use client";
 
-import { PlayerInfo, useCart } from "@/components/cart";
+import { PlayerInfo } from "@badbird5907/mc-utils";
+import { PlayerSkinImage } from "@/components/player-skin";
 import { usePublicSettings } from "@/components/client-config";
 import { DebouncedInput } from "@/components/debounced-input";
-import { PlayerSkinImage } from "@/components/player-skin";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsTrigger, TabsList } from "@/components/ui/tabs";
 import { api } from "@/trpc/react";
@@ -13,7 +13,7 @@ export const PlayerSelectForm = ({ editionState, onSelect, isOwnAccount }: { edi
   const { enableBedrock } = usePublicSettings();
   const [username, setUsername] = useState("");
 
-  const { data: player, isLoading } = api.utils.fetchPlayer.useQuery({ name: username, bedrock: editionState[0] === "bedrock" });
+  const { data: player, isLoading } = api.players.fetchPlayer.useQuery({ name: username, bedrock: editionState[0] === "bedrock" });
   const valid = (!isLoading && player?.data?.name);
   return (
     <div className="flex flex-col md:flex-row items-start gap-6 p-2">
@@ -41,7 +41,7 @@ export const PlayerSelectForm = ({ editionState, onSelect, isOwnAccount }: { edi
           debounceMs={500}
           onDebouncedChange={(value) => setUsername(value)}
           className="bg-zinc-900/50 border-zinc-800 text-white placeholder:text-zinc-400"
-          placeholder="Enter your Minecraft username"
+          placeholder={isOwnAccount ? "Enter your Minecraft username" : "Enter username"}
         />
         <Button
           className="w-full text-white"

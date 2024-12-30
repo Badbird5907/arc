@@ -1,6 +1,6 @@
 "use client";
 
-import { PlayerInfo } from "@/components/cart";
+import { PlayerInfo } from "@badbird5907/mc-utils";
 import { PlayerSelectForm } from "@/components/player-select-form";
 import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
@@ -12,7 +12,7 @@ export const PlayerFilter = ({ className, onSelect, playerUuid }: { className?: 
   const [edition, setEdition] = useState<"java" | "bedrock" | null>(null);
   const [open, setOpen] = useState(false);
 
-  const { data: player, isLoading } = api.utils.fetchPlayerByUuid.useQuery(
+  const { data: player, isLoading } = api.players.fetchPlayerByUuid.useQuery(
     { uuid: playerUuid ?? "" },
     { enabled: !!playerUuid }
   );

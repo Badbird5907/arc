@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import { appConfig } from '@/app/app-config'
-import { getVersionString } from '@/utils/server/info'
+import { getVersionString } from '@badbird5907/mc-utils';
 
 export async function Footer() {
   const { version, url } = await getVersionString();

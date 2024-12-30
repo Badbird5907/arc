@@ -26,8 +26,8 @@ export const env = createEnv({
     UPSTASH_REDIS_REST_TOKEN: z.string(),
     DISABLE_CACHING: z.boolean().default(false),
     TURNSTILE_SECRET_KEY: z.string().optional(),
-    TEBEX_PRIVATE_KEY: z.string().optional(),
-    TEBEX_PROJECT_ID: z.string().optional(),
+    TEBEX_PRIVATE_KEY: z.string(),
+    TEBEX_PROJECT_ID: z.string(),
     TEBEX_WEBHOOK_SECRET: z.string().optional(),
     IP_ADDRESS_RESOLVE_HEADER: z.string().default("x-forwarded-for"), // Like x-forwarded-for
   },

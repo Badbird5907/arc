@@ -1,4 +1,4 @@
-import { isValidUuid } from "@/lib/utils";
+import { isValidUuid } from "@badbird5907/mc-utils";
 import { createTRPCRouter, procedure, publicProcedure } from "@/server/api/trpc";
 import { coupons, couponToCategory, couponToProduct, couponType, orderToCoupon } from "@/server/db/coupons";
 import { createCouponForm, modifyCouponForm } from "@/trpc/schema/coupons";

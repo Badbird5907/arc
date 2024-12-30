@@ -12,7 +12,7 @@ import { Spinner } from "@/components/ui/spinner";
 import { Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { api } from "@/trpc/react";
 import { type Product } from "@/types";
-import { formatExpiryPeriodShort } from "@/utils";
+import { formatExpiryPeriodShort } from "@badbird5907/mc-utils";
 import { ArrowRight, XCircle } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";

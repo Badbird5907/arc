@@ -6,7 +6,7 @@ import type {
 
 import type * as schema from "@/server/db/schema";
 import { z } from "zod";
-import { PlayerInfo } from "@/components/cart";
+import { PlayerInfo } from "@badbird5907/mc-utils";
 
 type Schema = typeof schema;
 type TSchema = ExtractTablesWithRelations<Schema>;
@@ -51,6 +51,7 @@ export type User = InferResultType<"users">;
 export type Product = InferResultType<"products">;
 export type Category = InferResultType<"categories">;
 export type Order = InferResultType<"orders">;
+export type Player = InferResultType<"players">;
 
 export type OrderWithPlayer = Order & {
   player: PlayerInfo | null;

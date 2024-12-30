@@ -11,7 +11,7 @@ export default async function SettingsPage() {
       <h1 className="text-3xl font-bold">Settings</h1>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-4">
         <DeliverySettings />
-        {Object.values(settings).map((setting) => (
+        {Object.values(settings).filter((setting) => !setting.hidden).map((setting) => (
           <SettingsCard key={setting.key} setting={setting} />
         ))}
       </div>

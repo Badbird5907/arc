@@ -11,6 +11,8 @@ export type Setting<T extends keyof SettingType = keyof SettingType> = {
   defaultValue: SettingType[T];
   type: T;
   role?: string;
+  notes?: string;
+  hidden?: boolean;
 };
 
 export type SettingWithValue<T> = Setting & {
@@ -33,12 +35,21 @@ export const allSettings = [
     defaultValue: "",
     type: "string",
   },
+  {
+    key: "banOnChargeback",
+    name: "Ban on Chargeback",
+    description: "Ban the player (from the store) when a chargeback occurs.",
+    notes: "It is recommended to also ban the player from the game server using a global delivery setting.",
+    defaultValue: true,
+    type: "boolean",
+  },
   { // this is here so the types still work. We can remove it once there is a proper number setting
     key: "dummyNumber",
     name: "Dummy Number",
     description: "A dummy number setting",
     defaultValue: 42,
     type: "number",
+    hidden: true,
   }
 ] as const;
 export type SettingKey = typeof allSettings[number]["key"];

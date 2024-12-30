@@ -1,6 +1,6 @@
 import { Delivery, Order, Product } from "@/types";
-import { expiryPeriodToDays } from "@/utils";
 import { getPlayerFromUuid } from "@/utils/server/helpers";
+import { expiryPeriodToDays } from "@badbird5907/mc-utils";
 
 type Variable = {
   name: string;
@@ -15,7 +15,7 @@ export const variables: Variable[] = [
     if (player.notFound) {
       return order.playerUuid;
     }
-    return player.data.name;
+    return player.data?.name ?? order.playerUuid;
   } },
   { name: "ip", description: "The IP address of the customer", replace: async ({ order }) => order.ipAddress },
   { name: "email", description: "The email address of the customer", replace: async ({ order }) => order.email },
