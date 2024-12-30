@@ -11,16 +11,17 @@ type PlayerSkinImageType = {
   width?: number;
   fill?: boolean;
   className?: string;
+  srcOverride?: string;
 }
 
-export const PlayerSkinImage = ({ name, skinUrl, renderConfig, height = 128, width = 128, fill = false, className }: PlayerSkinImageType) => {
+export const PlayerSkinImage = ({ name, skinUrl, renderConfig, height = 128, width = 128, fill = false, className, srcOverride }: PlayerSkinImageType) => {
   const src = useMemo(() => buildSkinRenderUrl(name, renderConfig, skinUrl), [name, renderConfig, skinUrl]);
 
   const props = fill ? { fill: true } : { height, width };
 
   return (
     <Image
-      src={src}
+      src={srcOverride ?? src}
       alt={`${name}'s skin`}
       className={className}
       {...props}

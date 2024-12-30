@@ -21,7 +21,7 @@ export const PlayerSelectForm = ({ editionState, onSelect, isOwnAccount, checkBa
       <div className="w-40 h-35 flex items-start justify-center overflow-hidden place-self-center bg-accent/80 rounded-lg pt-1">
         <PlayerSkinImage
           name={valid ? player.data?.name : "Steve"}
-          skinUrl={!valid ? "https://s.namemc.com/i/eb9769cdc0ce3895.png" : undefined}
+          srcOverride={!valid ? "/img/unknown_bust.webp" : undefined}
           renderConfig={{
             name: "ultimate",
             crop: "bust"
