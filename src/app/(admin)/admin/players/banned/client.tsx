@@ -1,12 +1,15 @@
 "use client";
 
 import { BanDialog } from "@/app/(admin)/admin/players/banned/ban-dialog";
+import { Button } from "@/components/ui/button";
 import { DataTable } from "@/components/ui/data-table";
 import { api } from "@/trpc/react";
 import { Player } from "@/types";
 import { PlayerInfo } from "@badbird5907/mc-utils";
 import { ColumnDef, PaginationState } from "@tanstack/react-table";
 import { format } from "date-fns";
+import { Eye } from "lucide-react";
+import Link from "next/link";
 import { useState } from "react";
 
 type BannedPlayer = Player & { player: PlayerInfo | null | undefined };
@@ -32,6 +35,18 @@ const bannedPlayersColumns: ColumnDef<BannedPlayer>[] = [
       return val;
     },
   },
+  {
+    header: "Actions",
+    cell: ({ row }) => {
+      return (
+        <Link href={`/admin/players/find/${row.original.uuid}`}>
+          <Button variant="outline">
+            <Eye />
+          </Button>
+        </Link>
+      )
+    }
+  }
 ]
 
 export const BannedPlayersClient = () => {

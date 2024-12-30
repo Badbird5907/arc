@@ -1,8 +1,16 @@
+import { appConfig } from "@/app/app-config";
 import { Footer } from "@/components/footer"
 import { SiteHeader } from "@/components/header"
 import { StoreHeader } from "@/components/header/store"
 import { api, HydrateClient } from "@/trpc/server"
+import { Metadata } from "next";
 
+export const metadata: Metadata = {
+  title: {
+    template: `${appConfig.title} | Store > %s`,
+    default: `${appConfig.title} | Store`
+  }
+}
 export default async function StoreLayout({
   children
 }: {

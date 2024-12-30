@@ -9,12 +9,13 @@ import { Tabs, TabsTrigger, TabsList } from "@/components/ui/tabs";
 import { api } from "@/trpc/react";
 import { useState } from "react";
 
-export const PlayerSelectForm = ({ editionState, onSelect, isOwnAccount }: { editionState: [string | null, React.Dispatch<"java" | "bedrock">]; onSelect: (player: PlayerInfo) => void; isOwnAccount?: boolean }) => {
+export const PlayerSelectForm = ({ editionState, onSelect, isOwnAccount, checkBanned }: { editionState: [string | null, React.Dispatch<"java" | "bedrock">]; onSelect: (player: PlayerInfo) => void; isOwnAccount?: boolean; checkBanned?: boolean }) => {
   const { enableBedrock } = usePublicSettings();
   const [username, setUsername] = useState("");
 
-  const { data: player, isLoading } = api.players.fetchPlayer.useQuery({ name: username, bedrock: editionState[0] === "bedrock" });
-  const valid = (!isLoading && player?.data?.name);
+  const { data: player, isLoading } = api.players.fetchPlayer.useQuery({ name: username, bedrock: editionState[0] === "bedrock", checkBanned });
+  const banned = player && checkBanned && "banned" in player && player.banned;
+  const valid = (!isLoading && player?.data?.name) && !banned;
   return (
     <div className="flex flex-col md:flex-row items-start gap-6 p-2">
       <div className="w-40 h-35 flex items-start justify-center overflow-hidden place-self-center bg-accent/80 rounded-lg pt-1">
@@ -54,7 +55,9 @@ export const PlayerSelectForm = ({ editionState, onSelect, isOwnAccount }: { edi
         >
           {
             isOwnAccount ? (!valid ? "Could not find your account!" : "Continue") : (
-              !valid ? "Could not find that account!" : "Continue"
+              !valid ? (
+                banned ? "This account is banned!" : "Could not find that account!"
+              ) : "Continue"
             )
           }
         </Button>

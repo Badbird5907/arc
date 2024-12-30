@@ -5,6 +5,37 @@ import { SubCategorySelector } from "@/app/(store)/store/category/[...slug]/sele
 import { db } from "@/server/db";
 import { notFound } from "next/navigation";
 
+export async function generateMetadata({
+  params
+}: {
+  params: Promise<{ slug: string[] }>
+}) {
+  const slugs = (await params).slug;
+  const zero = slugs[0];
+  if (!zero) {
+    return notFound();
+  }
+  const base = await db.query.categories.findFirst({
+    where: (c, { eq, and, isNull }) => and(
+      eq(c.slug, zero),
+      isNull(c.parentCategoryId)
+    ),
+    with: {
+      children: true
+    }
+  });
+  if (!base) {
+    return notFound();
+  }
+  const current = slugs.length > 1 ? base.children.find((c) => c.slug === slugs[1]) : base;
+  if (!current) {
+    return notFound();
+  } 
+  return {
+    title: current.name
+  }
+}
+
 export default async function Page({
   params,
 }: {

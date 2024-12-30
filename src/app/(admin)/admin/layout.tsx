@@ -10,7 +10,10 @@ import React from "react";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Arc | Admin",
+  title: {
+    template: "Arc | Admin > %s",
+    default: "Arc | Admin"
+  },
 }
 
 export default async function Layout({ children, breadcrumbs }: { children: React.ReactNode; breadcrumbs: React.ReactNode }) {

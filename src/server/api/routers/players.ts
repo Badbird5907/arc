@@ -10,15 +10,17 @@ import { Player } from "@/types";
 export const playersRouter = createTRPCRouter({
   fetchPlayer: publicProcedure.input(z.object({
     name: z.string().trim().toLowerCase(),
-    bedrock: z.boolean()
+    bedrock: z.boolean(),
+    checkBanned: z.boolean().optional().default(false),
   }))
   .output(z.object({
     notFound: z.boolean(),
     data: z.object({
       uuid: z.string(),
       name: z.string(),
-      bedrock: z.boolean()
-    }).nullable()
+      bedrock: z.boolean(),
+    }).nullable(),
+    banned: z.boolean().optional(),
   }))
   .query(async ({ input }) => {
     const { name, bedrock } = input;
@@ -28,12 +30,16 @@ export const playersRouter = createTRPCRouter({
     const username = bedrock ? "." + name : name;
     const player = await getPlayer(username);
     if (player && player.data?.uuid) {
-      // insert the player if it doesn't exist
+      const existing = await db.select().from(players).where(eq(players.uuid, player.data.uuid));
+      if (existing.length > 0 && !!existing[0]) {
+        return { ...player, banned: existing[0].banned ? true : false };
+      }
+      // doesn't exist, insert it
       await db.insert(players).values({
         uuid: player.data.uuid,
       }).onConflictDoNothing();
     }
-    return player;
+    return { ...player, banned: false };
   }),
   fetchPlayerByUuid: publicProcedure.input(z.object({
     uuid: z.string().trim().toLowerCase(),

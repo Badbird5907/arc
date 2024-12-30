@@ -39,7 +39,7 @@ export const StoreLoginDialog = () => {
         {stage == "login" && edition && <PlayerSelectForm editionState={[edition, setEdition]} onSelect={(player) => {
           setPlayer(player);
           setOpen(false);
-        }} />}
+        }} checkBanned />}
       </DialogContent>
     </Dialog>
   )

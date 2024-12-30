@@ -17,7 +17,11 @@ import { ExternalLink, Gavel } from "lucide-react";
 import { PlayerActions } from "@/app/(admin)/admin/players/find/[uuid]/actions";
 import { api, HydrateClient } from "@/trpc/server";
 import { PlayerSkinImage } from "@/components/player-skin";
+import { Metadata } from "next";
 
+export const metadata: Metadata = {
+  title: "Player"
+}
 export default adminWrapper(async ({ params }: { params: Promise<{ uuid: string }> }) => {
   const { uuid } = await params;
   if (!isValidUuid(uuid)) return notFound();
@@ -85,6 +89,10 @@ export default adminWrapper(async ({ params }: { params: Promise<{ uuid: string 
     <HydrateClient>
       <div className="flex flex-col gap-4">
         <div className="flex gap-4 pt-4">
+          <PlayerSkinImage name={player.name} renderConfig={{
+            name: "pixel",
+            crop: "face"
+          }} height={32} width={32} />
           <h1 className="text-2xl font-bold">{player.name}</h1>
           {settings.enableBedrock && (
             <Badge variant="outline" className="flex flex-row gap-2">

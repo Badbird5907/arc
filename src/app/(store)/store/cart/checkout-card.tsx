@@ -77,7 +77,9 @@ export const CheckoutCard = ({ cart, products, coupons }: {
         setCheckoutLink(resp.link);
       }
     }).catch((err) => {
-      toast.error("Failed to begin checkout, please try again later.");
+      toast.error("An error occurred while beginning checkout!", {
+        description: err.message
+      });
       setCheckoutLink("error");
     })
   }
@@ -156,7 +158,9 @@ export const CheckoutCard = ({ cart, products, coupons }: {
                   <p>You will have 1 hour to complete your purchase. If you do not complete your purchase within 1 hour, please return to this page and try again.</p>
                   <Button className="w-full" onClick={() => {
                     if (checkoutLink === "error") {
-                      toast.error("Failed to begin checkout, please try again later.");
+                      toast.error("Failed to begin checkout!", {
+                        description: "Please try again later."
+                      });
                     } else if (checkoutLink) {
                       window.location.href = checkoutLink;
                     }

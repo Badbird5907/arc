@@ -32,11 +32,21 @@ export const checkout = async (checkoutData: Checkout, provider: string) => {
   }
   const player = result.data;
 
-  const [products, resolvedCoupons, ip] = await Promise.all([
+  const [products, resolvedCoupons, ip, profile] = await Promise.all([
     lookupProducts(checkoutData.cart),
     getCouponsWithUses(inArray(coupons.code, checkoutData.coupons ?? [])),
-    getIpAddress()
+    getIpAddress(),
+    db.query.players.findFirst({
+      where: (p, { eq }) => eq(p.uuid, player.uuid),
+    })
   ]);
+
+  if (profile?.banned) {
+    throw new TRPCError({
+      code: "UNAUTHORIZED",
+      message: "You are banned from purchasing from this store!"
+    });
+  }
 
   const total = await getTotal(products, resolvedCoupons);
   const order = await db.transaction(async (tx) => {
