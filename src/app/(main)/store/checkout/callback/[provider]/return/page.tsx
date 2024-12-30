@@ -1,10 +1,9 @@
 import AnimatedCancelMark from "@/components/animated-cancel";
-import AnimatedCheckMark from "@/components/animated-checkmark";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 
-const Page = ({ params }: { params: { provider: string } }) => {
+const Page = () => {
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-background text-foreground overflow-y-hidden">
       <div className="container flex max-w-md flex-col items-center text-center">
