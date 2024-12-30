@@ -95,7 +95,7 @@ type WebhookData = {
   date: string;
   subject: TebexWebhookPaymentSubject | TebexRecurringPaymentSubject;
 }
-export const STATUS_ID = {
+const STATUS_ID = {
   [-1]: "unknown",
   1: "complete",
   2: "refund",
