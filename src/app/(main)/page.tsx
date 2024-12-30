@@ -64,9 +64,6 @@ export default function MainStorePage() {
           <h1 className="text-6xl md:text-8xl font-bold">{appConfig.title}</h1>
           <h1 className="text-4xl md:text-6xl font-bold">{appConfig.shortDescription}</h1>
           <div className="flex flex-row gap-4 justify-center pt-4">
-            <Link href="/store">
-              <Button size={"xl"} className="hover:scale-105 transition-all duration-500">Support Me!</Button>
-            </Link>
             <Link href={discord}>
               <Button size={"xl"} className="hover:scale-105 transition-all duration-500">
                 <span className="flex flex-row gap-4 items-center">
