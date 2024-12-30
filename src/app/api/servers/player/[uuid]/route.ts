@@ -3,12 +3,12 @@ import { db } from "@/server/db";
 import { isValidUuid } from "@badbird5907/mc-utils";
 import { NextResponse } from "next/server";
 
-export const GET = async (req: Request, { params }: { params: { uuid: string } }) => {
+export const GET = async (req: Request, { params }: { params: Promise<{ uuid: string }> }) => {
   const server = await getServer(req);
   if (!server) {
     return new Response("Unauthorized", { status: 401 });
   }
-  const { uuid } = params;
+  const { uuid } = await params;
   if (!isValidUuid(uuid)) {
     return new Response("Invalid UUID", { status: 400 });
   }

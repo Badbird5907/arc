@@ -95,15 +95,15 @@ type WebhookData = {
   date: string;
   subject: TebexWebhookPaymentSubject | TebexRecurringPaymentSubject;
 }
-const STATUS_ID = {
-  [-1]: "unknown",
-  1: "complete",
-  2: "refund",
-  3: "chargeback",
-  18: "declined",
-  19: "pending",
-  21: "refund_pending"
-} as const;
+// const STATUS_ID = {
+//   [-1]: "unknown",
+//   1: "complete",
+//   2: "refund",
+//   3: "chargeback",
+//   18: "declined",
+//   19: "pending",
+//   21: "refund_pending"
+// } as const;
 export const POST = async (req: Request) => {
   const data = await req.json() as WebhookData;
   console.log("data", data);
