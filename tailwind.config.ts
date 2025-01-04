@@ -1,15 +1,17 @@
 import { type Config } from "tailwindcss";
 import { fontFamily } from "tailwindcss/defaultTheme";
+import { twTypography } from "tw-typography";
 
-const noYMargin = { marginTop: '0', marginBottom: '0' };
-const noYMarginKeys = ["h1", "h2", "h3", "h4", "h5", "h6", "p", "ul", "ol", "li", "blockquote"];
 export default {
 	darkMode: ["class"],
-	content: ["./src/**/*.tsx"],
+	content: ["./src/**/*.{js,ts,jsx,tsx,mdx}"],
   theme: {
   	extend: {
   		fontFamily: {
-  			sans: ["var(--font-geist-sans)", ...fontFamily.sans]
+  			sans: [
+  				'var(--font-geist-sans)',
+                    ...fontFamily.sans
+                ]
   		},
   		borderRadius: {
   			lg: 'var(--radius)',
@@ -68,30 +70,41 @@ export default {
   				ring: 'hsl(var(--sidebar-ring))'
   			}
   		},
-			keyframes: {
-        "accordion-down": {
-          from: { height: "0" },
-          to: { height: "var(--radix-accordion-content-height)" },
-        },
-        "accordion-up": {
-          from: { height: "var(--radix-accordion-content-height)" },
-          to: { height: "0" },
-        },
-      },
-      animation: {
-        "accordion-down": "accordion-down 0.2s ease-out",
-        "accordion-up": "accordion-up 0.2s ease-out",
-      },
-			typography: {
-				DEFAULT: {
-					css: {
-						...(noYMarginKeys.reduce((acc: Record<string, typeof noYMargin>, key) => {
-							acc[key] = noYMargin;
-							return acc;
-						}, {}))
-					}
-				}
-			}
+  		keyframes: {
+  			'accordion-down': {
+  				from: {
+  					height: '0'
+  				},
+  				to: {
+  					height: 'var(--radix-accordion-content-height)'
+  				}
+  			},
+  			'accordion-up': {
+  				from: {
+  					height: 'var(--radix-accordion-content-height)'
+  				},
+  				to: {
+  					height: '0'
+  				}
+  			},
+  			gradient: {
+  				to: {
+  					backgroundPosition: 'var(--bg-size) 0'
+  				}
+  			}
+  		},
+  		animation: {
+  			'accordion-down': 'accordion-down 0.2s ease-out',
+  			'accordion-up': 'accordion-up 0.2s ease-out',
+  			gradient: 'gradient 8s linear infinite'
+  		},
+  		typography: {
+  			DEFAULT: {
+  				css: {
+						...twTypography
+  				}
+  			}
+  		}
   	}
   },
   plugins: [require("tailwindcss-animate"), require('@tailwindcss/typography'),	],
