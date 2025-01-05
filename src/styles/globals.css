@@ -83,3 +83,8 @@
     @apply bg-background text-foreground;
   }
 }
+
+
+* {
+  font-weight: 700;
+}
