@@ -13,8 +13,8 @@ importers:
   .:
     dependencies:
       '@badbird5907/mc-utils':
-        specifier: ^0.0.9
-        version: 0.0.9
+        specifier: ^0.0.10
+        version: 0.0.10
       '@dnd-kit/core':
         specifier: ^6.1.0
         version: 6.1.0(react-dom@19.0.0-rc.1(react@19.0.0-rc.1))(react@19.0.0-rc.1)
@@ -300,8 +300,8 @@ packages:
     resolution: {integrity: sha512-4zpTHZ9Cm6L9L+uIqghQX8ZXg8HKFcjYO3qHoO8zTmRm6HQUJ8SSJ+KRvbMBZn0EGVlT4DRYeQ/6hjlyXBh+Kg==}
     engines: {node: '>=6.9.0'}
 
-  '@badbird5907/mc-utils@0.0.9':
-    resolution: {integrity: sha512-6sO6P3lTKtaZkuHHqIKskTm8Iv47jxEb5JHIrmjw9sPTlBXE3PpLlAn9W6ZFZSm3m5SaCGOTTf4DrZ/DRDihvA==, tarball: https://npm.pkg.github.com/download/@badbird5907/mc-utils/0.0.9/414d2838213aa5b08234bd59c542e1e28129b7ce}
+  '@badbird5907/mc-utils@0.0.10':
+    resolution: {integrity: sha512-mmvs4xrQKZ+SN9PTG/y0gjjGG1lchCtxbWv3jmM9ES3jPnrvzw20V6KDE2Vd/U8NDrtfSizsbjbqbZ61IIgmVQ==, tarball: https://npm.pkg.github.com/download/@badbird5907/mc-utils/0.0.10/65f0f7c00cd66cde974024bd561e1d50cedb47ed}
 
   '@codemirror/autocomplete@6.18.1':
     resolution: {integrity: sha512-iWHdj/B1ethnHRTwZj+C1obmmuCzquH29EbcKr0qIjA9NfDeBDJ7vs+WOHsFeLeflE4o+dHfYndJloMKHUkWUA==}
@@ -4566,7 +4566,7 @@ snapshots:
     dependencies:
       regenerator-runtime: 0.14.1
 
-  '@badbird5907/mc-utils@0.0.9':
+  '@badbird5907/mc-utils@0.0.10':
     optionalDependencies:
       child_process: 1.0.2
 
