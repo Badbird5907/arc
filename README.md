@@ -11,3 +11,6 @@ It's tech stack includes:
 The current supported payment gateways are:
 - Tebex
 
+## Why?
+
+I made this because I wanted to challenge myself to learn how payment gateways work.
