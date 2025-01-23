@@ -1,4 +1,7 @@
 # Arc
+![](https://tokei.rs/b1/github/Badbird5907/arc?category=code)
+Demo: https://arc.badbird.dev/
+
 Arc is a easy to use, configurable, and customizable minecraft webstore.
 It's tech stack includes:
 - NextJS
