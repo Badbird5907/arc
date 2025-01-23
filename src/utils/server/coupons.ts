@@ -1,7 +1,7 @@
 import "server-only";
 
 import { db } from "@/server/db";
-import { eq, getTableColumns, type SQL, sql } from "drizzle-orm";
+import { getTableColumns, type SQL, sql } from "drizzle-orm";
 import { coupons, orderToCoupon } from "@/server/db/coupons";
 
 export const getCouponWithConstraints = async (couponId: string) => {
@@ -12,10 +12,10 @@ export const getCouponWithConstraints = async (couponId: string) => {
       couponToCategory: true,
     },
     extras: {
-      uses: sql<number>`(
-        SELECT COUNT(*)::int 
+      uses: sql<number>`COALESCE(
+        (SELECT COUNT(*)::int 
         FROM ${orderToCoupon} 
-        WHERE ${orderToCoupon.couponId} = ${couponId}
+        WHERE ${orderToCoupon.couponId} = ${couponId}), 0
       )`.as('uses'),
     }
   })
@@ -24,11 +24,10 @@ export const getCouponWithConstraints = async (couponId: string) => {
 export const getCouponsWithUses = async (where: SQL<unknown>) => {
   const resolvedCoupons = await db.select({
     ...getTableColumns(coupons),
-    uses: sql<number>`(SELECT COUNT(*) FROM ${orderToCoupon} WHERE ${orderToCoupon.couponId} = ${coupons.id})::int`,
+    uses: sql<number>`COALESCE((SELECT COUNT(*) FROM ${orderToCoupon} WHERE ${orderToCoupon.couponId} = ${coupons.id})::int, 0)`,
   })
   .from(coupons)
   .where(where)
-  .innerJoin(orderToCoupon, eq(orderToCoupon.couponId, coupons.id))
   .groupBy(coupons.id);
   return resolvedCoupons;
 }
