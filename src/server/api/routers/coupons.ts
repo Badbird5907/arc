@@ -114,23 +114,12 @@ export const couponsRouter = createTRPCRouter({
       if (!isValidUuid(input.id)) {
         return null;
       }
-      // we might as well perform a sync here too 
-      // const [coupon, uses] = await Promise.all([
-      //   ctx.db.query.coupons.findFirst({
-      //     where: (t, { eq }) => eq(t.id, input.id),
-      //   }),
-      //   ctx.db.select({ count: count() })
-      //     .from(orderToCoupon)
-      //     .where(eq(orderToCoupon.couponId, input.id))
-      // ]);
       const coupon = await ctx.db.select({
         ...getTableColumns(coupons),
-        uses: sql<number>`(SELECT COUNT(*) FROM ${orderToCoupon} WHERE ${orderToCoupon.couponId} = ${coupons.id})::int`,
+        uses: sql<number>`COALESCE((SELECT COUNT(*) FROM ${orderToCoupon} WHERE ${orderToCoupon.couponId} = ${coupons.id})::int, 0)`,
       })
       .from(coupons)
       .where(eq(coupons.id, input.id))
-      .innerJoin(orderToCoupon, eq(orderToCoupon.couponId, coupons.id))
-      .groupBy(coupons.id)
       .then(result => result[0]);
       return { coupon };
     }),
