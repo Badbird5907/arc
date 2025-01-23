@@ -13,4 +13,6 @@ The current supported payment gateways are:
 
 ## Why?
 
-I made this because I wanted to challenge myself to learn how payment gateways work.
+I made this because I wanted to challenge myself to learn how payment gateways and e-commerce sites work.
+
+This code is probably not production ready, and I do not recommend using it for your own store.
