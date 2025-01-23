@@ -26,6 +26,11 @@ export const OrderClient = ({ id }: { id: string }) => {
   const { data: servers } = api.servers.getServers.useQuery();
   const updateNotes = api.orders.updateNotes.useMutation();
 
+  const hideIp = useMemo(() => {
+    const hideIp = localStorage.getItem("hideIp");
+    return hideIp === "true";
+  }, []);
+
   const clearQueue = api.orders.clearQueue.useMutation({
     onSuccess: async () => {
       await utils.orders.getQueuedCommands.invalidate({ id });
@@ -92,7 +97,7 @@ export const OrderClient = ({ id }: { id: string }) => {
                   </TableRow>
                   <TableRow>
                     <TableCell className="text-primary-foreground/60">IP</TableCell>
-                    <TableCell>{data.ipAddress ?? "Unknown"}</TableCell>
+                    <TableCell>{hideIp ? "[Hidden]" : data.ipAddress ?? "Unknown"}</TableCell>
                   </TableRow>
                   <TableRow>
                     <TableCell className="text-primary-foreground/60">Status</TableCell>
