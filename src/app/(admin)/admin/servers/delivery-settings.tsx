@@ -40,7 +40,7 @@ export const DeliverySettings = () => {
             ) : (
               <DeliveryEditor initialDeliveries={deliveries ?? []} onSubmit={async (deliveries) => {
                 await modifyGlobalDeliveries.mutateAsync({ deliveries });
-              }} isSubscriptionProduct={false} />
+              }} isSubscriptionProduct={false} defaultStack={false} />
             )}
           </DialogContent>
         </Dialog>

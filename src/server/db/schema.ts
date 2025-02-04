@@ -149,11 +149,12 @@ export const deliveries = pgTable('deliveries', {
     .defaultRandom(),
   type: text('type').notNull(),
   value: text('value').notNull(),
-  scope: uuid('scope').references(() => servers.id, { onDelete: "set null" }),
+  scope: uuid('scope').references(() => servers.id, { onDelete: "cascade" }),
   when: pgDeliveryWhen('when').notNull().default('purchase'),
   requireOnline: boolean('require_online').default(false).notNull(),
   delay: integer('delay').default(0).notNull(),
   global: boolean('global').default(false).notNull(),
+  stack: boolean('stack').default(true).notNull(),
   createdAt: timestamp('created_at', { precision: 3, mode: 'date' })
     .defaultNow()
     .notNull(),

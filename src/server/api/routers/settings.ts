@@ -40,6 +40,7 @@ export const settingsRouter = createTRPCRouter({
       ...d,
       id: d.id ?? uuid(),
       global: true,
+      stack: false,
     }));
     console.log(newDeliveries);
     await ctx.db.transaction(async (tx) => {

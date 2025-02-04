@@ -84,6 +84,7 @@ export const zodDelivery = z.object({
   requireOnline: z.boolean().default(false),
   delay: z.coerce.number().default(0),
   global: z.boolean().default(false),
+  stack: z.boolean().default(true),
 })
 export type Delivery = z.infer<typeof zodDelivery>;
 

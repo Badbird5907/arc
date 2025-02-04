@@ -176,6 +176,13 @@
       "when": 1735533354478,
       "tag": "0024_eager_carnage",
       "breakpoints": true
+    },
+    {
+      "idx": 25,
+      "version": "7",
+      "when": 1738651225305,
+      "tag": "0025_quiet_vermin",
+      "breakpoints": true
     }
   ]
 }

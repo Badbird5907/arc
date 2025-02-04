@@ -10,7 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { getVariableListAction } from "@/server/actions/variables";
 import { api } from "@/trpc/react";
-import { type Delivery, type ProductWithDeliveries, zodDelivery } from "@/types";
+import { type Delivery, zodDelivery } from "@/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { DotsHorizontalIcon, QuestionMarkCircledIcon } from "@radix-ui/react-icons";
 import { InfoIcon, PlusIcon, TrashIcon } from "lucide-react";
@@ -23,11 +23,13 @@ export const DeliveryEditor = ({
   initialDeliveries,
   onSubmit,
   isSubscriptionProduct = false,
+  defaultStack = true,
 }: { 
   initialDeliveries: Delivery[];
   onSubmit: (deliveries: Delivery[]) => Promise<void>;
-  isProduct?: boolean;
   isSubscriptionProduct?: boolean;
+  defaultStack?: boolean;
+
 }) => {
   const form = useForm<{ delivery: Delivery[] }>({
     defaultValues: { delivery: initialDeliveries },
@@ -132,7 +134,7 @@ export const DeliveryEditor = ({
               <CopyDelivery setDelivery={(delivery) => {
                 form.setValue("delivery", delivery);
               }} />
-              <Button type="button" onClick={() => append({ type: "command", value: "", scope: "", when: "purchase", requireOnline: false, delay: 0, global: false })} className="w-full md:w-fit">
+              <Button type="button" onClick={() => append({ type: "command", value: "", scope: "", when: "purchase", requireOnline: false, delay: 0, global: false, stack: defaultStack })} className="w-full md:w-fit">
                 <PlusIcon className="w-4 h-4" />
               </Button>
             </div>
@@ -143,8 +145,8 @@ export const DeliveryEditor = ({
         <div className="flex flex-col gap-4">
           <Form {...form}>
             <form onSubmit={handleSubmit} className="space-y-8">
-              {fields.map((field, index) => (
-                <div key={field.id} className="flex flex-col md:flex-row gap-2 w-full">
+              {fields?.map((field, index) => (
+                <div key={index} className="flex flex-col md:flex-row gap-2 w-full">
                   <FormField
                     control={form.control}
                     name={`delivery.${index}.when`}
@@ -228,16 +230,35 @@ export const DeliveryEditor = ({
                       <DialogDescription>
                         <span>Set the delivery options for this command.</span>
                       </DialogDescription>
-                      <div className="flex flex-col gap-2">
-                        <FormField
+                      <div className="flex flex-col gap-2 w-full">
+                        <div className="flex flex-row gap-2 w-full">
+                          <FormField
+                            control={form.control}
+                            name={`delivery.${index}.requireOnline`}
+                            render={({ field }) => (
+                              <FormItem className="w-full">
+                                <FormLabel>Require online</FormLabel>
+                                <Select {...field} onValueChange={(value) => field.onChange(value === "true")} value={field.value ? "true" : "false"}>
+                                  <SelectTrigger className="w-full">
+                                    <SelectValue placeholder="Require online" />
+                                  </SelectTrigger>
+                                  <SelectContent>
+                                    <SelectItem value="true">Yes</SelectItem>
+                                    <SelectItem value="false">No</SelectItem>
+                                  </SelectContent>
+                                </Select>
+                              </FormItem>
+                            )}
+                          />
+                          <FormField
                           control={form.control}
-                          name={`delivery.${index}.requireOnline`}
+                          name={`delivery.${index}.stack`}
                           render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>Require online</FormLabel>
+                            <FormItem className="w-full">
+                              <FormLabel>Stack commands</FormLabel>
                               <Select {...field} onValueChange={(value) => field.onChange(value === "true")} value={field.value ? "true" : "false"}>
                                 <SelectTrigger className="w-full">
-                                  <SelectValue placeholder="Require online" />
+                                  <SelectValue placeholder="Stack commands" />
                                 </SelectTrigger>
                                 <SelectContent>
                                   <SelectItem value="true">Yes</SelectItem>
@@ -247,6 +268,7 @@ export const DeliveryEditor = ({
                             </FormItem>
                           )}
                         />
+                        </div>
                         <FormField
                           control={form.control}
                           name={`delivery.${index}.delay`}

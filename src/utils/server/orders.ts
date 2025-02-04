@@ -25,20 +25,39 @@ export const queueCommandsWhere = async (when: (typeof deliveryWhen)[number], or
   const products = await resolveProducts(order);
   const queuedCommandsArr: QueuedCommand[] = [];
   
+  // get all possible global deliveries
+  const globalDeliveries = await db.query.deliveries.findMany({
+    where: (d, { and, eq, isNotNull }) => {
+      return and(
+        eq(d.global, true),
+        eq(d.when, when),
+        isNotNull(d.scope)
+      )
+    },
+  });
+
+  // process product-specific deliveries
   await Promise.all(products.map(async (product) => {
     await Promise.all(order.items.map(async (item) => {
       if (item.productId === product.id) {
+
         const deliveryIds = product.productToDelivery.map((d) => d.deliveryId).filter((id): id is string => id !== null);
         
-        const deliveries = await db.query.deliveries.findMany({
-          where: (d, { inArray, or, and, eq, isNotNull }) => {
+        const productDeliveries = await db.query.deliveries.findMany({
+          where: (d, { inArray, and, eq, isNotNull }) => {
             return and(
-              or(inArray(d.id, deliveryIds), eq(d.global, true)), // either from a product, or it is global
-              and(eq(d.when, when), isNotNull(d.scope)) // correct when and scope
+              inArray(d.id, deliveryIds),
+              eq(d.when, when),
+              isNotNull(d.scope)
             )
           },
         });
-        await Promise.all(deliveries.map(async (delivery) => {
+
+        // process both product-specific and global deliveries
+        const allDeliveries = [...productDeliveries, ...(item === order.items[0] ? globalDeliveries : [])];
+
+
+        await Promise.all(allDeliveries.map(async (delivery) => {
           // find a list of variables in the payload
           const vars = delivery.value.match(/\{([^}]+)\}/g);
           let payload = delivery.value;
@@ -64,17 +83,21 @@ export const queueCommandsWhere = async (when: (typeof deliveryWhen)[number], or
             }
           }
 
-          queuedCommandsArr.push({
-            id: uuidv4(),
-            createdAt: new Date(),
-            orderId: order.id,
-            minecraftUuid: order.playerUuid,
-            requireOnline: delivery.requireOnline,
-            delay: Number(delivery.delay),
-            payload,
-            server: delivery.scope!,
-            executed: false
-          });
+          // if stack is true, create multiple commands based on quantity
+          const iterations = delivery.stack ? item.quantity : 1;
+          for (let i = 0; i < iterations; i++) {
+            queuedCommandsArr.push({
+              id: uuidv4(),
+              createdAt: new Date(),
+              orderId: order.id,
+              minecraftUuid: order.playerUuid,
+              requireOnline: delivery.requireOnline,
+              delay: Number(delivery.delay),
+              payload,
+              server: delivery.scope!,
+              executed: false
+            });
+          }
         }));
       }
     }));
