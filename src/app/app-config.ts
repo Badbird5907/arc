@@ -13,9 +13,14 @@ export type SiteConfig = {
     className?: string | ((isActive?: boolean) => string);
     icon?: React.ElementType;
   }[];
+  legal: {
+    operator: string;
+    email: string;
+  };
   footer: {
     icons: {
       icon: React.ElementType;
+
       link: string;
     }[];
   };
@@ -28,6 +33,10 @@ export const appConfig: SiteConfig = {
   title: "Arc",
   description: "Arc is a Minecraft Server webstore made in Next.js, Supabase, and Drizzle.",
   shortDescription: "Fully customisable Minecraft Server Webstore",
+  legal: {
+    operator: "Arc",
+    email: "contact@badbird.dev",
+  },
   logo: null,
   nav: [
     {
