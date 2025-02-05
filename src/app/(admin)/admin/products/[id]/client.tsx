@@ -30,7 +30,7 @@ const ProductPageClient = ({ id }: { id: string }) => {
       </div>
       <DeliveryEditor initialDeliveries={product.deliveries} onSubmit={async (deliveries) => {
         await modifyDelivery.mutateAsync({ id, deliveries });
-      }} />
+      }} isSubscriptionProduct={product.type === "subscription"} />
     </div>
   );
 }
