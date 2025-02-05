@@ -17,8 +17,13 @@ export const variables: Variable[] = [
     }
     return player.data?.name ?? order.playerUuid;
   } },
+  { name: "quantity", description: "The quantity of the product", replace: async ({ order, product }) => {
+    const quantity = order.items.find((item) => item.productId === product.id)?.quantity;
+    return quantity ?? 0;
+  } },
   { name: "ip", description: "The IP address of the customer", replace: async ({ order }) => order.ipAddress },
   { name: "email", description: "The email address of the customer", replace: async ({ order }) => order.email },
+
   { name: "server", description: "The server scope of the delivery", replace: async ({ delivery }) => {
     return delivery ? delivery.scope : "";
   } },
