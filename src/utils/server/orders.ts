@@ -145,8 +145,8 @@ export const declineOrder = async (order: Order, reason: string) => {
     status: "canceled",
     metadata: {
       ...order.metadata,
-      tebex: {
-        ...order.metadata.tebex ?? {},
+      [order.provider]: {
+        ...order.metadata[order.provider] ?? {},
         declineReason: reason
       }
     }

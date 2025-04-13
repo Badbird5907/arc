@@ -88,7 +88,7 @@ export const zodDelivery = z.object({
 })
 export type Delivery = z.infer<typeof zodDelivery>;
 
-export type PaymentProvider = "tebex"; // | "coinbase" etc...
+export type PaymentProvider = "tebex" | "stripe"; // | "coinbase" etc...
 
 export type CategoryWithChildren = Category & {
   children?: Category[]; // children should never have their own children

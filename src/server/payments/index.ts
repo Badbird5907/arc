@@ -1,6 +1,7 @@
 import { db } from "@/server/db";
 import { coupons, orders, orderToCoupon } from "@/server/db/schema";
 import { TebexPaymentProvider } from "@/server/payments/impl/tebex";
+import { StripePaymentProvider } from "@/server/payments/impl/stripe";
 import { type PaymentProvider } from "@/types";
 import { type Checkout } from "@/types/checkout";
 import { getTotal, lookupProducts } from "@/utils/server/checkout";
@@ -8,9 +9,17 @@ import { getCouponsWithUses } from "@/utils/server/coupons";
 import { getIpAddress, getPlayer } from "@/utils/server/helpers";
 import { TRPCError } from "@trpc/server";
 import { eq, inArray } from "drizzle-orm";
+import { env } from "@/env";
 
 export const getAvailablePaymentProviders = async (_checkoutData: Checkout) => {
-  return ["tebex"]
+  const providers: PaymentProvider[] = [];
+  if (env.STRIPE_SECRET_KEY) {
+    providers.push("stripe");
+  }
+  if (env.TEBEX_PRIVATE_KEY && env.TEBEX_PROJECT_ID && env.TEBEX_WEBHOOK_SECRET) {
+    providers.push("tebex");
+  }
+  return providers;
 }
 
 export const checkout = async (checkoutData: Checkout, provider: string) => {
@@ -101,6 +110,8 @@ const getPaymentProvider = (provider: string) => {
   switch (provider) {
     case "tebex":
       return new TebexPaymentProvider();
+    case "stripe":
+      return new StripePaymentProvider();
     default:
       return null;
   }

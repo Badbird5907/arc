@@ -197,7 +197,7 @@ export const productRelations = relations(products, ({ one, many }) => ({
   productToDelivery: many(productToDelivery)
 }))
 
-export const paymentProviders = pgEnum("payment_provider", ["tebex"])
+export const paymentProviders = pgEnum("payment_provider", ["tebex", "stripe"])
 export const orderStatus = ["pending", "completed", "canceled", "refunded"] as const;
 export const pgOrderStatus = pgEnum("order_status", orderStatus)
 export const disputeState = pgEnum("dispute_state", ["open", "won", "lost", "closed"])

@@ -26,10 +26,12 @@ export const env = createEnv({
     UPSTASH_REDIS_REST_TOKEN: z.string(),
     DISABLE_CACHING: z.boolean().default(false),
     TURNSTILE_SECRET_KEY: z.string().optional(),
-    TEBEX_PRIVATE_KEY: z.string(),
-    TEBEX_PROJECT_ID: z.string(),
+    TEBEX_PRIVATE_KEY: z.string().optional(),
+    TEBEX_PROJECT_ID: z.string().optional(),
     TEBEX_WEBHOOK_SECRET: z.string().optional(),
     IP_ADDRESS_RESOLVE_HEADER: z.string().default("x-forwarded-for"), // Like x-forwarded-for
+    STRIPE_SECRET_KEY: z.string().optional(),
+    STRIPE_WEBHOOK_SECRET: z.string().optional(),
   },
 
   /**
@@ -63,6 +65,8 @@ export const env = createEnv({
     TEBEX_WEBHOOK_SECRET: process.env.TEBEX_WEBHOOK_SECRET,
     BASE_URL: process.env.NEXT_PUBLIC_BASE_URL,
     IP_ADDRESS_RESOLVE_HEADER: process.env.IP_ADDRESS_RESOLVE_HEADER,
+    STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY,
+    STRIPE_WEBHOOK_SECRET: process.env.STRIPE_WEBHOOK_SECRET,
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially

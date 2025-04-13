@@ -183,6 +183,13 @@
       "when": 1738651225305,
       "tag": "0025_quiet_vermin",
       "breakpoints": true
+    },
+    {
+      "idx": 26,
+      "version": "7",
+      "when": 1744510557607,
+      "tag": "0026_aromatic_sugar_man",
+      "breakpoints": true
     }
   ]
 }

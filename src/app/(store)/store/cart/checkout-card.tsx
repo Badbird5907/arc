@@ -67,7 +67,7 @@ export const CheckoutForm = ({ products }: {
     setStep("checkout");
     const values = form.getValues();
     void beginCheckout.mutateAsync({
-      provider: "tebex",
+      provider: "stripe",
       captcha: token,
       data: {
         username: player!.name,
