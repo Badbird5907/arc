@@ -105,7 +105,7 @@ const beginStripeCheckout = async (
     line_items: lineItems,
     mode: isSubscription ? 'subscription' : 'payment',
     success_url: `${env.BASE_URL}/store/checkout/callback/stripe/complete?session_id={CHECKOUT_SESSION_ID}`,
-    cancel_url: `${env.BASE_URL}/store/checkout/callback/stripe/cancel`,
+    cancel_url: `${env.BASE_URL}/store/checkout/callback/stripe/return`,
     customer_email: cart.info.email,
     client_reference_id: order.id,
     metadata: {
