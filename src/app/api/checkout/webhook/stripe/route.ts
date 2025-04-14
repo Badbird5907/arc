@@ -35,6 +35,7 @@ export const POST = async (req: Request) => {
   }
 
   console.log(`Processing Stripe event: ${event.type}`);
+  console.log(event);
 
   switch (event.type) {
     case "checkout.session.completed": {
@@ -46,13 +47,23 @@ export const POST = async (req: Request) => {
       }
       
       const orderId = session.client_reference_id;
-      const order = await db.query.orders.findFirst({
+      let order = await db.query.orders.findFirst({
         where: (o, { eq }) => eq(o.id, orderId)
       });
       
       if (!order) {
         console.warn(`Order not found for session ${session.id}!!`);
         return new Response("Order not found", { status: 200 });
+      }
+
+      if (order.providerOrderId?.startsWith("INTERNAL_stripe_session:")) {
+        await db.update(orders).set({
+          providerOrderId: session.payment_intent as string,
+        }).where(eq(orders.id, orderId));
+        order = {
+          ...order,
+          providerOrderId: session.payment_intent as string,
+        } // jank but who cares
       }
       
       await completeOrder(order);

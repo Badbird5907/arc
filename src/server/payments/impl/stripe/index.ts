@@ -104,7 +104,7 @@ const beginStripeCheckout = async (
   const session = await stripeClient.checkout.sessions.create({
     line_items: lineItems,
     mode: isSubscription ? 'subscription' : 'payment',
-    success_url: `${env.BASE_URL}/store/checkout/callback/stripe/success?session_id={CHECKOUT_SESSION_ID}`,
+    success_url: `${env.BASE_URL}/store/checkout/callback/stripe/complete?session_id={CHECKOUT_SESSION_ID}`,
     cancel_url: `${env.BASE_URL}/store/checkout/callback/stripe/cancel`,
     customer_email: cart.info.email,
     client_reference_id: order.id,
@@ -127,7 +127,7 @@ const beginStripeCheckout = async (
   return {
     metadata: session as unknown as Record<string, unknown>,
     updateOrder: {
-      providerOrderId: session.id,
+      providerOrderId: `INTERNAL_stripe_session:${session.id}`, // we will replace this with the payment intent id when we get the webhook
       subscriptionStatus: isSubscription ? 'active' as const : undefined,
     },
     link: session.url ?? '',

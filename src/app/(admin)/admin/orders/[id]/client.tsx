@@ -7,6 +7,7 @@ import { EditNotes } from "@/components/notes";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
 import { Spinner } from "@/components/ui/spinner";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { api } from "@/trpc/react";
@@ -46,6 +47,17 @@ export const OrderClient = ({ id }: { id: string }) => {
       executed: commands.filter((command) => command.executed),
     };
   }, [commands]);
+  const paymentUrl = useMemo(() => {
+    if (!data) return "#";
+    if (data.provider === "tebex") {
+      // data.provider === "tebex" ? `https://creator.tebex.io/payments?attribute%5B0%5D=txn_id&query%5B0%5D=${data.providerOrderId}&search_mode=and` : "#"
+      return `https://creator.tebex.io/payments?attribute%5B0%5D=txn_id&query%5B0%5D=${data.providerOrderId}&search_mode=and`;
+    }
+    if (data.provider === "stripe") {
+      return `https://dashboard.stripe.com/payments/${data.providerOrderId}`;
+    }
+    return "#";
+  }, [data]);
 
   if (isLoading) {
     return (
@@ -58,7 +70,7 @@ export const OrderClient = ({ id }: { id: string }) => {
     return notFound();
   }
   const playerName = (data as { player?: { name: string } }).player?.name ?? data.playerUuid;
-  const paymentUrl = data.provider === "tebex" ? `https://creator.tebex.io/payments?attribute%5B0%5D=txn_id&query%5B0%5D=${data.providerOrderId}&search_mode=and` : "#";
+ 
   return (
     <div className="flex flex-col gap-4">
       <div>
@@ -108,6 +120,25 @@ export const OrderClient = ({ id }: { id: string }) => {
                     <TableCell>
                       <span className="flex flex-row gap-2 items-center">
                         {data.provider}
+                        {data.providerOrderId && (
+                          <HoverCard>
+                            <HoverCardTrigger>
+                              <QuestionMarkCircledIcon className="h-4 w-4" />
+                            </HoverCardTrigger>
+                            <HoverCardContent className="w-full space-y-2">
+                              <p>Provider ID: {data.providerOrderId}</p>
+                              <Button variant="outline" className="w-full" onClick={() => {
+                                navigator.clipboard.writeText(data.providerOrderId!).then(() => {
+                                  toast.success("Copied to clipboard");
+                                }).catch(() => {
+                                  toast.error("Failed to copy to clipboard");
+                                });
+                              }}>
+                                Copy
+                              </Button>
+                            </HoverCardContent>
+                          </HoverCard>
+                        )}
                         <Link href={paymentUrl} target="_blank" className="text-muted-foreground hover:text-foreground transition-colors">
                           <LinkIcon className="h-4 w-4" />
                         </Link>
