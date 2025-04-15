@@ -26,6 +26,7 @@ const beginSingleApiCheckout = async (cart: Checkout,
   products: { product: Product; quantity: number; }[],
   order: Order,
   discounts: { name: string; amount: number }[]) => { // this api is just broken...
+  if (!tebexClient) throw new Error("Tebex is not configured");
   const basket: TebexBasket = {
     first_name: cart.info.firstName,
     last_name: cart.info.lastName,
@@ -71,7 +72,8 @@ const beginBasketApiCheckout = async (cart: Checkout,
   products: { product: Product; quantity: number; }[],
   order: Order,
   discounts: { name: string; amount: number }[]) => {
-    const basket: CreateBasketResponse = await tebexClient.createBasket({
+  if (!tebexClient) throw new Error("Tebex is not configured");
+  const basket: CreateBasketResponse = await tebexClient.createBasket({
       returnUrl: `${env.BASE_URL}/store/checkout/callback/tebex/return`,
       completeUrl: `${env.BASE_URL}/store/checkout/callback/tebex/complete`,
       firstName: cart.info.firstName,
@@ -87,11 +89,11 @@ const beginBasketApiCheckout = async (cart: Checkout,
     });
     console.log(" -> Basket created!");
     await Promise.all(products.map(async (product) => {
-      await tebexClient.addPackageToBasket(basket.ident, productToTebexPackage(product.product, product.quantity));
+      await tebexClient!.addPackageToBasket(basket.ident, productToTebexPackage(product.product, product.quantity));
     }));
     console.log(" -> Packages added!");
     await Promise.all(discounts.map(async (discount) => { // make sure the discounts appear below the packages
-      await tebexClient.addPackageToBasket(basket.ident, {
+      await tebexClient!.addPackageToBasket(basket.ident, {
         name: discount.name,
         price: -discount.amount,
         type: "single",
@@ -119,6 +121,7 @@ export class TebexPaymentProvider implements PaymentProvider {
                          order: Order,
                          discounts: { name: string; amount: number }[],
                         ) => {
+    if (!tebexClient) throw new Error("Tebex is not configured");
     if (products.every(product => product.quantity === 1)) { // single api checkout is broken and quantity doesn't work
       return beginSingleApiCheckout(cart, products, order, discounts);
     }
