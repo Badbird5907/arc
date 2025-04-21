@@ -128,6 +128,7 @@ export const couponsRouter = createTRPCRouter({
       id: z.string(),
     }))
     .mutation(async ({ input, ctx }) => {
+      await ctx.db.delete(orderToCoupon).where(eq(orderToCoupon.couponId, input.id));
       return await ctx.db.delete(coupons).where(eq(coupons.id, input.id));
     }),
   updateNotes: procedure("coupons:write")
