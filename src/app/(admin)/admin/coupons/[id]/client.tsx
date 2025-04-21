@@ -25,8 +25,17 @@ export const CouponsClient = ({ id }: { id: string }) => {
   const { data, isLoading, error } = api.coupons.getCoupon.useQuery({ id });
   const couponValid = useMemo(() => data?.coupon && isCouponValid(data.coupon), [data?.coupon]);
   const expired = useMemo(() => data?.coupon && isCouponExpired(data.coupon), [data?.coupon]);
-  const updateNotes = api.coupons.updateNotes.useMutation();
-  const deleteCoupon = api.coupons.deleteCoupon.useMutation();
+  const utils = api.useUtils();
+  const updateNotes = api.coupons.updateNotes.useMutation({
+    onSuccess: async () => {
+      await utils.coupons.getCoupon.invalidate({ id });
+    },
+  });
+  const deleteCoupon = api.coupons.deleteCoupon.useMutation({
+    onSuccess: async () => {
+      await utils.coupons.getCoupons.invalidate();
+    },
+  });
   const router = useRouter();
 
   const warning = useMemo(() => {
